@@ -211,6 +211,7 @@ def check_for_restart():
     
     for pair in pairs:
         if not os.path.isfile(os.path.join(datafolder, "roi", pair["id"])+".csv"):
+            logging.info(f"{pair['id']} is missing")
             return True
     return False
 
