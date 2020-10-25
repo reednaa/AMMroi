@@ -57,7 +57,7 @@ def block_to_datetime(block):
     return datetime.fromtimestamp(block_to_timestamp(block))
 
 
-def split_num_tokens_fairly(x, dist=1.3):
+def split_num_tokens_fairly(x, dist=1.1):
     return [round(x/dist), x-round(x/dist)]
 
 
