@@ -1,6 +1,7 @@
 *.dump
 
-data/
+*.csv
+*.json
 js
 
 #

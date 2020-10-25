@@ -35,7 +35,13 @@ client = Client(transport=transport, fetch_schema_from_transport=True)
 # Globals
 
 dirname = os.path.dirname(__file__)
+if not os.path.isdir(os.path.join(dirname, "../", "data")):
+    os.mkdir(os.path.join(dirname, "../", "data"))
+if not os.path.isdir(os.path.join(dirname, "../", "data", "uniswapv2")):
+    os.mkdir(os.path.join(dirname, "../", "data", "uniswapv2"))
 datafolder = os.path.join(dirname, "../", "data", "uniswapv2")
+
+
 
 current_block = web3.eth.getBlock('latest')["number"]
 
