@@ -183,6 +183,9 @@ def get_roi(restart=False, resolution=1500):
         for pair in pairs["pairs"]:
             if float(pair["totalSupply"]) == 0:
                 continue
+            if float(pair["reserve1"])/float(pair["reserve0"]) < 10**(-16):
+                # This means the token is borderline worthless. If it was below 10**18, then it is literally worthless. In some cases, the pool can be very unbalanced initially and this happens. In those cases, we need to skip ahead untill it has acheived some reserve balances.
+                continue
             # print(id_to_symbol[pair["id"]])
             _df = df_dic[pair["id"]]
             try:
@@ -201,6 +204,7 @@ def get_roi(restart=False, resolution=1500):
             set_time = time()
         blocknumber += resolution
     
+    logging.info("Saving to .csv")
     for key in df_dic:
         df_dic[key].to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) +".csv", index=False)
 
