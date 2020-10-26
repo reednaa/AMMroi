@@ -139,7 +139,7 @@ def get_roi(restart=False, resolution=1500):
         blocknumber = get_initial_blocknum()
     else:
         try:
-            blocknumber = df_dic[all_pairs[0]]["block"][-1]
+            blocknumber = int(df_dic[all_pairs[0]]["block"].iloc[-1]) + resolution
         except IndexError:
             logging.info("It seems like we are restarting anyway. If this is a mistake, cancel now.")
             sleep(0.8)
@@ -150,18 +150,18 @@ def get_roi(restart=False, resolution=1500):
                 id_to_symbol[pair["pair_id"]] = pair["id"]
             
                 df_dic[pair["pair_id"]] = pd.read_csv(os.path.join(datafolder, "roi", pair["id"]) +".csv")
-            blocknumber = get_initial_blocknum()
+            blocknumber = int(get_initial_blocknum())
 
     set_time = time()
     
     while blocknumber < current_block:
-        blocknumber_timestamp = block_to_timestamp(blocknumber)
+        blocknumber_timestamp = block_to_timestamp(int(blocknumber))
         tryings = 4
         for i in range(1,tryings+1):
             try:
                 query = gql("""
                     {
-                    pairs(block: {number: """ + str(blocknumber) + """} where: {id_in: """ + json.dumps(all_pairs) + """} orderBy: reserve0 orderDirection: desc) {
+                    pairs(block: {number: """ + str(blocknumber) + """} where: {id_in: """ + json.dumps(all_pairs) + """}) {
                         id
                         reserve0
                         reserve1
@@ -195,7 +195,7 @@ def get_roi(restart=False, resolution=1500):
                 sINV_zero = 0
                 prev_trade_volume = 0
             sINV = sqrt(float(pair["reserve1"])*float(pair["reserve0"]))/float(pair["totalSupply"])
-            data = {"block": blocknumber, "timestamp": blocknumber_timestamp, "ROI": sINV/sINV_zero if sINV_zero != 0 else 1, "Token Price": float(pair["reserve1"])/float(pair["reserve0"]), "Trade Volume": float(pair["volumeToken0"])-prev_trade_volume, "sINV": sINV}
+            data = {"block": int(blocknumber), "timestamp": blocknumber_timestamp, "ROI": sINV/sINV_zero if sINV_zero != 0 else 1, "Token Price": float(pair["reserve1"])/float(pair["reserve0"]), "Trade Volume": float(pair["volumeToken0"])-prev_trade_volume, "sINV": sINV}
             df_dic[pair["id"]] = df_dic[pair["id"]].append(data, ignore_index=True)
         
         rounds_per_set = 50
