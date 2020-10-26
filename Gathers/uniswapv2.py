@@ -188,11 +188,11 @@ def get_roi(restart=False, resolution=1500):
             try:
                 sINV_zero = _df["sINV"][0]
                 prev_trade_volume = sum(_df["Trade Volume"])
-            except:
-                sINV_zero = 1
+            except:  # This exception triggers when the list is empty. (Since then it is missing row 0). We need a benchmark for that. For this, we will create a unique situation, where we will set the sINV_zero to 0, as that cannot happen. We will then detect this when writing the data and set it to 1. (Since the return at t0 is 1.)
+                sINV_zero = 0
                 prev_trade_volume = 0
             sINV = sqrt(float(pair["reserve1"])*float(pair["reserve0"]))/float(pair["totalSupply"])
-            data = {"block": blocknumber, "timestamp": blocknumber_timestamp, "ROI": sINV/sINV_zero if sINV_zero != 1 else 1, "Token Price": float(pair["reserve1"])/float(pair["reserve0"]), "Trade Volume": float(pair["volumeToken0"])-prev_trade_volume, "sINV": sINV}
+            data = {"block": blocknumber, "timestamp": blocknumber_timestamp, "ROI": sINV/sINV_zero if sINV_zero != 0 else 1, "Token Price": float(pair["reserve1"])/float(pair["reserve0"]), "Trade Volume": float(pair["volumeToken0"])-prev_trade_volume, "sINV": sINV}
             df_dic[pair["id"]] = df_dic[pair["id"]].append(data, ignore_index=True)
         
         rounds_per_set = 50

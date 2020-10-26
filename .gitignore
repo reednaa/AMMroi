@@ -3,6 +3,7 @@
 *.csv
 *.json
 js
+*.zip
 
 #
 .DS_Store
