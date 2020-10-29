@@ -24,7 +24,7 @@ function getROIFromData(json_data, start_date) {
     }
     output_data = [];
     for (arr of json_data.slice(start_index)) {
-        output_data.push({x: arr[index_data]/arr[start_index], y: moment.unix(arr[index_time])});
+        output_data.push({x: arr[index_data]/json_data[start_index][index_data], y: moment.unix(arr[index_time])});
     }
     return output_data;
 }
