@@ -3,7 +3,7 @@ url = window.location.href.split("/")[2]
 console.log(url + "/data/uniswapv2/roi/" + "wbtc" + ".csv");
 
 function getDataForPair(pair) {
-    return Papa.parse(url + "/data/uniswapv2/roi/" + pair + ".csv", {
+    return Papa.parse("https://" + url + "/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
     });
 }
