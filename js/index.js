@@ -1,4 +1,4 @@
-url = window.location.href.split("/")[2]
+url = "https://lindgrenium.github.io/AMMroi/"
 
 console.log(url + "/data/uniswapv2/roi/" + "wbtc" + ".csv");
 
