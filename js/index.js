@@ -18,7 +18,7 @@ function getROIFromData(json_data, start_date) {
     let start_index;
     for (arr_index in json_data.slice(1)) {
         if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
-            start_index = arr+1;
+            start_index = arr_index+1;
             break;
         }
     }
