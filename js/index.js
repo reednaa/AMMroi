@@ -3,6 +3,7 @@ console.log("v1");
 function getDataForPair(pair) {
     return Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
+        complete: function(results) {console.log(results.data);}
     });
 }
 console.log(getDataForPair("wbtc"));
