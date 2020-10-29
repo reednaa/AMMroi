@@ -7,7 +7,7 @@ function fetchDataForPair(pair) {
         complete: function(results) {console.log(results.data);data=results.data}
     });
 }
-console.log(getDataForPair("wbtc"));
+console.log(fetchDataForPair("wbtc"));
 
 function getFeesFromData(json, start_date, end_date) {
 
