@@ -1,4 +1,4 @@
-
+console.log("v1")
 
 function getDataForPair(pair) {
     return Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
