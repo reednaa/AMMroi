@@ -1,5 +1,4 @@
 url = window.location.href.split("/")[2]
-// url = "file:///Users/AlexanderLindgren/Documents/Git/AMMroi"
 
 console.log(url + "/data/uniswapv2/roi/" + "wbtc" + ".csv");
 
