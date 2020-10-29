@@ -1,7 +1,7 @@
 
 
 function getDataForPair(pair) {
-    return Papa.parse("AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
+    return Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
     });
 }
