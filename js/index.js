@@ -1,4 +1,4 @@
-url = "https://lindgrenium.github.io/AMMroi/"
+url = "lindgrenium.github.io/AMMroi/"
 
 console.log(url + "/data/uniswapv2/roi/" + "wbtc" + ".csv");
 
