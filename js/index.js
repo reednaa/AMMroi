@@ -7,7 +7,7 @@ function fetchDataForPair(pair) {
         complete: function(results) {console.log(results.data);data=results.data}
     });
 }
-console.log(fetchDataForPair("wbtc"));
+// console.log(fetchDataForPair("wbtc"));
 
 function getROIFromData(json_data, start_date) {
     if (start_date) {
@@ -16,9 +16,9 @@ function getROIFromData(json_data, start_date) {
     let index_data = json_data[0].indexOf("ROI");
     let index_time = json_data[0].indexOf("Timestamp");
     let start_index;
-    for (arr in json_data.slice(1)) {
-        if (moment.unix(json_data[arr][index_time]) >= start_date) {
-            start_index = arr;
+    for (arr_index in json_data.slice(1)) {
+        if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
+            start_index = arr+1;
             break;
         }
     }
