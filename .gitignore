@@ -1,8 +1,6 @@
 *.dump
 
-*.csv
-*.json
-js
+
 *.zip
 
 #
