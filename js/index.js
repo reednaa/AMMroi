@@ -219,19 +219,19 @@ let app = new Vue({
                 download: true,
                 complete: function(results) {
                     let [outputFees, outputTP, outputROI] = convertData(results.data, start_date)
-                    chart.datasets.push(
+                    chart.data.datasets.push(
                         {
                             label: "Collected Fees",
                             data: outputFees
                         }
                     );
-                    chart.datasets.push(
+                    chart.data.datasets.push(
                         {
                             label: "Percentage against HODL",
                             data: outputTP
                         }
                     );
-                    chart.datasets.push(
+                    chart.data.datasets.push(
                         {
                             label: "Return",
                             data: outputROI
