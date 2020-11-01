@@ -243,7 +243,7 @@ let app = new Vue({
         fetchAllTokens: function() {
         let url = '/AMMroi/data/uniswapv2/tokens.json';
         fetch(url).then(res => res.json()).then((out) => {
-            app.listOfTokens = out;
+            app.listOfTokens = out["results"];
         });
 }
     },
