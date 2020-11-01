@@ -160,6 +160,11 @@ let app = new Vue({
                     ]
                     },
                     options: {
+                        elements: {
+                            line: {
+                                tension: 0 // disables bezier curves
+                            }
+                        },
                         scales: {
                             xAxes: [{
                                 type: "time",
@@ -222,19 +227,25 @@ let app = new Vue({
                     chart.data.datasets.push(
                         {
                             label: "Collected Fees",
-                            data: outputFees
+                            data: outputFees,
+                            backgroundColor: window.chartColors.blue,
+					        borderColor: window.chartColors.blue,
                         }
                     );
                     chart.data.datasets.push(
                         {
-                            label: "Percentage against HODL",
-                            data: outputTP
+                            label: "Impermanent loss",
+                            data: outputTP,
+                            backgroundColor: window.chartColors.red,
+					        borderColor: window.chartColors.red,
                         }
                     );
                     chart.data.datasets.push(
                         {
                             label: "Return",
-                            data: outputROI
+                            data: outputROI,
+                            backgroundColor: window.chartColors.green,
+					        borderColor: window.chartColors.green,
                         }
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
