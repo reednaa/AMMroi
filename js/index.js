@@ -211,7 +211,7 @@ let app = new Vue({
                 app.addData(chart, app.selectedAsset, false);
             }, 500);
         },
-        addData: function(chart, currency, start_time) {
+        addData: function(chart, currency, start_date) {
             if (!start_date) {
                 start_date = moment.unix(1);
             }
