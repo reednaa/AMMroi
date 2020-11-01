@@ -1,14 +1,16 @@
 console.log("v3");
 
 let data;
-let plotting_data;
+let ROIdata;
 function fetchDataForPair(pair) {
     Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
         complete: function(results) {
             console.log(results.data);
             data=results.data;
-            plotting_data = getROIFromData(data, false);
+            let d1 = getROIFromData(data, false);
+            let d2 = getILFromData(data, false);
+            createChart(d1, d2);
         }
     });
 }
@@ -66,24 +68,14 @@ function getILFromData(json, start_date) {
     return output_data;
 }
 
-const test_data = [{
-    x: -10,
-    y: 0
-}, {
-    x: 0,
-    y: 10
-}, {
-    x: 10,
-    y: 5
-}]
-
-function createChart(data) {
+function createChart(ROIdata, ILdata) {
+    let ROIdata = plotting_data;
     var ctx = document.getElementById('mainChart').getContext('2d');
     let chart = new Chart(ctx, {
         type: 'scatter',
         data: {
             datasets: [{
-                label: 'Scatter Dataset',
+                label: 'ROI',
                 data: data
             }]
         },
