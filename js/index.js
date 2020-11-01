@@ -125,6 +125,7 @@ function removeData(chart) {
 
 // var chart = createChart()
 
+fetchDataForPair("wbtc");
 
 
 
