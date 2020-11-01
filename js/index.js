@@ -19,7 +19,7 @@ function getROIFromData(json_data, start_date) {
         start_date = moment.unix(1);
     }
     let index_data = json_data[0].indexOf("ROI");
-    let index_time = json_data[0].indexOf("Timestamp");
+    let index_time = json_data[0].indexOf("timestamp");
     let start_index;
     for (arr_index in json_data.slice(1)) {
         if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
@@ -27,6 +27,8 @@ function getROIFromData(json_data, start_date) {
             break;
         }
     }
+    console.log(start_index);
+    console.log(index_data);
     output_data = [];
     const initialInv = json_data[start_index][index_data];
     for (arr of json_data.slice(start_index)) {
@@ -45,7 +47,7 @@ function getILFromData(json, start_date) {
         start_date = moment.unix(1);
     }
     let index_data = json_data[0].indexOf("Token Price");
-    let index_time = json_data[0].indexOf("Timestamp");
+    let index_time = json_data[0].indexOf("timestamp");
     let start_index;
     for (arr_index in json_data.slice(1)) {
         if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
