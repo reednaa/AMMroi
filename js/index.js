@@ -135,7 +135,7 @@ let app = new Vue({
     el: "#structure",
     data: {
         charts: [],
-        list_of_tokens: [],
+        listOfTokens: [],
         selectedAsset: false,
     },
     methods: {
@@ -210,12 +210,12 @@ let app = new Vue({
         fetchAllTokens: function() {
         let url = '/AMMroi/data/uniswapv2/tokens.json';
         fetch(url).then(res => res.json()).then((out) => {
-            app.list_of_tokens = out;
+            app.listOfTokens = out;
         });
 }
     },
     created() {
-        fetchAllTokens();
+        this.fetchAllTokens();
     }
 });
 
