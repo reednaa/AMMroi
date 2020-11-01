@@ -188,7 +188,7 @@ let app = new Vue({
                         },
                         tooltips: {
                             mode: 'index',
-                            intersect: true
+                            intersect: false
                           },
                           plugins: {
                             crosshair: {
