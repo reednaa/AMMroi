@@ -1,4 +1,4 @@
-console.log("v1");
+console.log("v2");
 
 let data;
 let plotting_data;
@@ -28,14 +28,42 @@ function getROIFromData(json_data, start_date) {
         }
     }
     output_data = [];
+    const initialInv = json_data[start_index][index_data];
     for (arr of json_data.slice(start_index)) {
-        output_data.push({x: arr[index_data]/json_data[start_index][index_data], y: moment.unix(arr[index_time])});
+        output_data.push(
+            {
+            x: moment.unix(arr[index_time]),
+            y: arr[index_data]/initialInv
+            }
+        );
     }
     return output_data;
 }
 
-function getILFromData(json, start_date, end_date) {
-    
+function getILFromData(json, start_date) {
+    if (start_date) {
+        start_date = moment.unix(1);
+    }
+    let index_data = json_data[0].indexOf("Token Price");
+    let index_time = json_data[0].indexOf("Timestamp");
+    let start_index;
+    for (arr_index in json_data.slice(1)) {
+        if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
+            start_index = arr_index+1;
+            break;
+        }
+    }
+    output_data = [];
+    const intialPrice = json_data[start_index][index_data];
+    for (arr of json_data.slice(start_index)) {
+        output_data.push(
+            {
+            x: moment.unix(arr[index_time]),
+            y: 2 * Math.sqrt(arr[index_data]/intialPrice)/(1 + arr[index_data]/intialPrice)
+            }
+        );
+    }
+    return output_data;
 }
 
 
