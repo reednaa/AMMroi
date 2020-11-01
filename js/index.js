@@ -1,10 +1,15 @@
 console.log("v1");
 
 let data;
+let plotting_data;
 function fetchDataForPair(pair) {
     Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
-        complete: function(results) {console.log(results.data);data=results.data}
+        complete: function(results) {
+            console.log(results.data);
+            data=results.data;
+            plotting_data = getROIFromData(data, false);
+        }
     });
 }
 // console.log(fetchDataForPair("wbtc"));
@@ -34,6 +39,7 @@ function getILFromData(json, start_date, end_date) {
 }
 
 
+
 var ctx = document.getElementById('mainChart').getContext('2d');
 var mixedChart = new Chart(ctx, {
     type: 'bar',
@@ -47,7 +53,7 @@ var mixedChart = new Chart(ctx, {
         // }, 
         {
             label: 'Line Dataset',
-            data: getROIFromData("wbtc", false),
+            data: plotting_data,
             type: 'line',
             // this dataset is drawn on top
             order: 2
