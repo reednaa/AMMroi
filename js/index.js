@@ -166,9 +166,9 @@ let app = new Vue({
                                 time : {
                                     tooltipFormat: 'll HH:mm'
                                 },
-                                // ticks: {
+                                ticks: {
                                 //     min: ROIdata[0]["x"]
-                                // }
+                                }
                             }]
                         },
                         tooltips: {
@@ -237,6 +237,8 @@ let app = new Vue({
                             data: outputROI
                         }
                     );
+                    chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
+                    chart.update();
                 }
             });
         },
