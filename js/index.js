@@ -81,7 +81,7 @@ function createChart(data) {
     return chart;
 }
 
-var chart = createChart()
+// var chart = createChart()
 
 
 
