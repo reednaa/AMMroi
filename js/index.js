@@ -187,7 +187,7 @@ let app = new Vue({
                             }]
                         },
                         tooltips: {
-                            mode: 'x',
+                            mode: 'index',
                             intersect: true
                           },
                           plugins: {
