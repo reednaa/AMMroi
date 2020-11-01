@@ -14,7 +14,7 @@ function fetchDataForPair(pair) {
 }
 // console.log(fetchDataForPair("wbtc"));
 
-function getROIFromData(json_data, start_date) {
+function fetchDataForPair(json_data, start_date) {
     if (start_date) {
         start_date = moment.unix(1);
     }
@@ -67,28 +67,21 @@ function getILFromData(json, start_date) {
 }
 
 
+function createChart(data) {
+    var ctx = document.getElementById('mainChart').getContext('2d');
+    let chart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Scatter Dataset',
+                data: data
+            }]
+        },
+    });
+    return chart;
+}
 
-var ctx = document.getElementById('mainChart').getContext('2d');
-var mixedChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        datasets: [
-        //     {
-        //     label: 'Bar Dataset',
-        //     data: [10, 20, 30, 40],
-        //     // this dataset is drawn below
-        //     order: 1
-        // }, 
-        {
-            label: 'Line Dataset',
-            data: plotting_data,
-            type: 'line',
-            // this dataset is drawn on top
-            order: 2
-        }],
-        //labels: ['January', 'February', 'March', 'April']
-    },
-});
+var chart = createChart()
 
 
 
