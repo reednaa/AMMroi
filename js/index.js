@@ -222,6 +222,7 @@ let app = new Vue({
                 } 
                 });
                 new_chart["chart"] = chart;
+                new_chart["name"] = app.selectedAsset + " " + new_chart.name
                 Vue.set(app.charts, dictSearch(app.charts, "name", name), new_chart);
                 app.addData(chart, app.selectedAsset, false);
             }, 500);
