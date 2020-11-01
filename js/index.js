@@ -14,6 +14,14 @@ function fetchDataForPair(pair) {
         }
     });
 }
+
+let list_of_tokens;
+function fetchAllTokens() {
+    let url = '/AMMroi/data/uniswapv2/tokens.json';
+    fetch(url).then(res => res.json()).then((out) => {
+    list_of_tokens = out;
+    });
+}
 // console.log(fetchDataForPair("wbtc"));
 
 function getROIFromData(json_data, start_date) {
@@ -71,7 +79,7 @@ function getILFromData(json_data, start_date) {
 function createChart(ROIdata, ILdata) {
     var ctx = document.getElementById('mainChart').getContext('2d');
     let chart = new Chart(ctx, {
-        type: 'scatter',
+        type: 'line',
         data: {
             datasets: [{
                 label: 'ROI',
@@ -97,6 +105,22 @@ function createChart(ROIdata, ILdata) {
         }
     });
     return chart;
+}
+
+function addData(chart, label, data) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+    });
+    chart.update();
+}
+
+function removeData(chart) {
+    chart.data.labels.pop();
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.pop();
+    });
+    chart.update();
 }
 
 // var chart = createChart()
