@@ -32,7 +32,7 @@ function getROIFromData(json_data, start_date) {
     for (arr of json_data.slice(start_index)) {
         output_data.push(
             {
-            x: moment.unix(arr[index_time]),
+            x: moment.unix(arr[index_time]).format('MMM Do YYYY, H:mm'),
             y: arr[index_data]/initialInv
             }
         );
@@ -58,7 +58,7 @@ function getILFromData(json, start_date) {
     for (arr of json_data.slice(start_index)) {
         output_data.push(
             {
-            x: moment.unix(arr[index_time]),
+            x: moment.unix(arr[index_time]).format('MMM Do YYYY, H:mm'),
             y: 2 * Math.sqrt(arr[index_data]/intialPrice)/(1 + arr[index_data]/intialPrice)
             }
         );
