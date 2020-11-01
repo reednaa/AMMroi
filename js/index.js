@@ -177,8 +177,8 @@ let app = new Vue({
                             }]
                         },
                         tooltips: {
-                            mode: 'interpolate',
-                            intersect: false
+                            mode: 'x',
+                            intersect: true
                           },
                         //   plugins: {
                         //     crosshair: {
