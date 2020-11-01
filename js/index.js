@@ -239,7 +239,8 @@ let app = new Vue({
                             label: "Collected Fees",
                             data: outputFees,
                             backgroundColor: window.chartColors.blue,
-					        borderColor: window.chartColors.blue,
+                            borderColor: window.chartColors.blue,
+                            fill: false,
                         }
                     );
                     chart.data.datasets.push(
@@ -248,6 +249,7 @@ let app = new Vue({
                             data: outputTP,
                             backgroundColor: window.chartColors.red,
 					        borderColor: window.chartColors.red,
+                            fill: false,
                         }
                     );
                     chart.data.datasets.push(
@@ -256,6 +258,7 @@ let app = new Vue({
                             data: outputROI,
                             backgroundColor: window.chartColors.green,
 					        borderColor: window.chartColors.green,
+                            fill: false,
                         }
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
