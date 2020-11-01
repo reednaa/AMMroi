@@ -27,7 +27,7 @@
                             <div class="select">
                                 <select v-model="selectedAsset">
                                     <option value="false" >Select Asset</option>
-                                    <option :value="dict.id" v-for="dict, index in listOfTokens">
+                                    <option :value="dict.id" v-for="dict in listOfTokens">
                                         {{dict.id}}
                                     </option>
                                 </select>
