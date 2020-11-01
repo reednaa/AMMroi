@@ -38,7 +38,7 @@ function convertData(json_data, start_date) {
             break;
         }
     }
-    output_Fees = [];
+    outputFees = [];
     const initialInv = json_data[start_index][index_ROI];
     for (arr of json_data.slice(start_index)) {
         output_Fees.push(
@@ -48,7 +48,7 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    output_TP = [];
+    outputTP = [];
     const intialPrice = json_data[start_index][index_TP];
     for (arr of json_data.slice(start_index)) {
         output_TP.push(
@@ -58,7 +58,7 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    output_ROI = [];
+    outputROI = [];
     for (arr of json_data.slice(start_index)) {
         output_ROI.push(
             {
@@ -67,7 +67,7 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    return [output_fees, output_TP, output_ROI]
+    return [outputFees, outputTP, outputROI]
 }
 
 
@@ -218,23 +218,23 @@ let app = new Vue({
             Papa.parse("/AMMroi/data/uniswapv2/roi/" + currency + ".csv", {
                 download: true,
                 complete: function(results) {
-                    output_fees, output_TP, output_ROI = convertData(results, start_date)
+                    outputFees, outputTP, outputROI = convertData(results, start_date)
                     chart.datasets.push(
                         {
                             label: "Collected Fees",
-                            data: output_fees
+                            data: outputFees
                         }
                     );
                     chart.datasets.push(
                         {
                             label: "Percentage against HODL",
-                            data: output_TP
+                            data: outputTP
                         }
                     );
                     chart.datasets.push(
                         {
                             label: "Return",
-                            data: output_ROI
+                            data: outputROI
                         }
                     );
                 }
