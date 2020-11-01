@@ -1,4 +1,4 @@
-console.log("v2");
+console.log("v3");
 
 let data;
 let plotting_data;
@@ -27,8 +27,6 @@ function getROIFromData(json_data, start_date) {
             break;
         }
     }
-    console.log(start_index);
-    console.log(index_data);
     output_data = [];
     const initialInv = json_data[start_index][index_data];
     for (arr of json_data.slice(start_index)) {
