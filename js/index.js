@@ -66,6 +66,16 @@ function getILFromData(json, start_date) {
     return output_data;
 }
 
+const test_data = [{
+    x: -10,
+    y: 0
+}, {
+    x: 0,
+    y: 10
+}, {
+    x: 10,
+    y: 5
+}]
 
 function createChart(data) {
     var ctx = document.getElementById('mainChart').getContext('2d');
