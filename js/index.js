@@ -74,7 +74,11 @@ function createChart(ROIdata, ILdata) {
         data: {
             datasets: [{
                 label: 'ROI',
-                data: data
+                data: ROIdata
+            },
+            {
+                label: 'IL',
+                data: ILdata
             }]
         },
         options: {
