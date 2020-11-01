@@ -41,7 +41,7 @@ function getROIFromData(json_data, start_date) {
     return output_data;
 }
 
-function getILFromData(json, start_date) {
+function getILFromData(json_data, start_date) {
     if (start_date) {
         start_date = moment.unix(1);
     }
