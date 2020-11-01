@@ -1,7 +1,6 @@
 console.log("v3");
 
 let data;
-let ROIdata;
 function fetchDataForPair(pair) {
     Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
@@ -69,7 +68,6 @@ function getILFromData(json, start_date) {
 }
 
 function createChart(ROIdata, ILdata) {
-    let ROIdata = plotting_data;
     var ctx = document.getElementById('mainChart').getContext('2d');
     let chart = new Chart(ctx, {
         type: 'scatter',
