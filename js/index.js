@@ -1,6 +1,7 @@
 console.log("v3");
 
 let data;
+let chart;
 function fetchDataForPair(pair) {
     Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
@@ -9,7 +10,7 @@ function fetchDataForPair(pair) {
             data=results.data;
             let d1 = getROIFromData(data, false);
             let d2 = getILFromData(data, false);
-            createChart(d1, d2);
+            chart = createChart(d1, d2);
         }
     });
 }
@@ -87,6 +88,9 @@ function createChart(ROIdata, ILdata) {
                     type: "time",
                     time : {
                         tooltipFormat: 'll HH:mm'
+                    },
+                    ticks: {
+                        min: ROIdata[0]["x"]
                     }
                 }]
             }
