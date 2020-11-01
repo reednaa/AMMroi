@@ -218,7 +218,7 @@ let app = new Vue({
             Papa.parse("/AMMroi/data/uniswapv2/roi/" + currency + ".csv", {
                 download: true,
                 complete: function(results) {
-                    output_fees, output_TP, output_ROI = convertData(results, start_time)
+                    output_fees, output_TP, output_ROI = convertData(results, start_date)
                     chart.datasets.push(
                         {
                             label: "Collected Fees",
