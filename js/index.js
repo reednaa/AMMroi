@@ -34,7 +34,7 @@ function getROIFromData(json_data, start_date) {
     for (arr of json_data.slice(start_index)) {
         output_data.push(
             {
-            x: moment.unix(arr[index_time]).toISOString(),
+            x: moment.unix(arr[index_time]),
             y: arr[index_data]/initialInv
             }
         );
@@ -60,7 +60,7 @@ function getILFromData(json, start_date) {
     for (arr of json_data.slice(start_index)) {
         output_data.push(
             {
-            x: moment.unix(arr[index_time]).toISOString(),
+            x: moment.unix(arr[index_time]),
             y: 2 * Math.sqrt(arr[index_data]/intialPrice)/(1 + arr[index_data]/intialPrice)
             }
         );
@@ -79,6 +79,16 @@ function createChart(ROIdata, ILdata) {
                 data: data
             }]
         },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: "time",
+                    time : {
+                        tooltipFormat: 'll HH:mm'
+                    }
+                }]
+            }
+        }
     });
     return chart;
 }
