@@ -247,11 +247,11 @@ let app = new Vue({
             });
         },
         fetchAllTokens: function() {
-        let url = '/data/uniswapv2/tokens.json';
-        fetch(url).then(res => res.json()).then((out) => {
-            app.listOfTokens = out["results"];
-        });
-    }
+            let url = '/data/uniswapv2/tokens.json';
+            fetch(url).then(res => res.json()).then((out) => {
+                app.listOfTokens = out["results"];
+            });
+        }
     },
     watch: {
         selectedAsset: function() {
