@@ -198,7 +198,7 @@ def get_roi(restart=False, resolution=1500):
             data = {"block": int(blocknumber), "timestamp": blocknumber_timestamp, "ROI": sINV/sINV_zero if sINV_zero != 0 else 1, "Token Price": float(pair["reserve1"])/float(pair["reserve0"]), "Trade Volume": float(pair["volumeToken0"])-prev_trade_volume, "sINV": sINV}
             df_dic[pair["id"]] = df_dic[pair["id"]].append(data, ignore_index=True)
         
-        rounds_per_set = 1
+        rounds_per_set = 50
         if round((current_block-blocknumber)/resolution) % rounds_per_set == 0:
             logging.info(f"{current_block-blocknumber} blocks remaning, {round((current_block-blocknumber)/resolution)} rounds left. Last set took {round(time()-set_time,3)} seconds, {round((time()-set_time)/rounds_per_set,3)} seconds per round. Time remaning: {round((time()-set_time)/rounds_per_set*(current_block-blocknumber)/resolution)} seconds")
             set_time = time()
