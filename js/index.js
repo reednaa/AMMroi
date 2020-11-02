@@ -1,4 +1,4 @@
-console.log("v3");
+alconst startInputCalender = flatpickr("#startInput", { "enableTime": true, "locale": "da" });
 
 window.chartColors = {
 	red: 'rgb(255, 99, 132)',
@@ -81,37 +81,6 @@ function convertData(json_data, start_date) {
 }
 
 
-function createChart(ROIdata, ILdata) {
-    var ctx = document.getElementById('mainChart').getContext('2d');
-    let chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: 'ROI',
-                data: ROIdata
-            },
-            {
-                label: 'IL',
-                data: ILdata
-            }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    type: "time",
-                    time : {
-                        tooltipFormat: 'll HH:mm'
-                    },
-                    ticks: {
-                        min: ROIdata[0]["x"]
-                    }
-                }]
-            }
-        }
-    });
-    return chart;
-}
-
 function addData(chart, label, data) {
     chart.data.labels.push(label);
     chart.data.datasets.forEach((dataset) => {
@@ -147,9 +116,18 @@ let app = new Vue({
         charts: [],
         listOfTokens: [],
         selectedAsset: false,
+        startInput: "",
+        isShake: false,
     },
     methods: {
         addChart: function() {
+            if (!this.selectedAsset) {
+                this.isShake = true;
+                setTimeout(function() {
+                    app.isShake = false;
+                }, 820);
+                return this.selectedAsset;
+            }
             let name = this.charts.length
             let new_chart = {name: name};
             this.charts.push(new_chart);
@@ -278,4 +256,5 @@ let app = new Vue({
         this.fetchAllTokens();
     }
 });
+
 

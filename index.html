@@ -15,6 +15,35 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js" integrity="sha256-BSZ2gjTJLE5ZEGH1e6beyHYNOITz6M26XFre9lEBdx8=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/l10n/da.js" integrity="sha256-btg10M6OuilEf55qRv0f370emD4TckUGmmEm03YaJtE=" crossorigin="anonymous"></script>
+    <style>
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+        
+        .is-shake {
+            animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+    </style>
 </head>
 <body>
     <div id="structure">
@@ -37,7 +66,10 @@
                             </div>
                         </div>
                         <div class="control">
-                            <button class="button" @click="addChart()" :class="{'is-sucess': selectedAsset, 'is-danger': !selectedAsset}">Add Chart</button>
+                            <input id="startDate" class="input" v-model="startInput" type="date" />
+                        </div>
+                        <div class="control">
+                            <button class="button" @click="addChart()" :class="{'is-sucess': selectedAsset, 'is-danger': !selectedAsset, 'is-shake': isShake}">Add Chart</button>
                         </div>
                     </div>
                 </h2>
