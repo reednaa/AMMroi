@@ -13,7 +13,7 @@ window.chartColors = {
 let data;
 let chart;
 function fetchDataForPair(pair) {
-    Papa.parse("/AMMroi/data/uniswapv2/roi/" + pair + ".csv", {
+    Papa.parse("/data/uniswapv2/roi/" + pair + ".csv", {
         download: true,
         complete: function(results) {
             console.log(results.data);
@@ -27,7 +27,7 @@ function fetchDataForPair(pair) {
 
 let list_of_tokens;
 function fetchAllTokens() {
-    let url = '/AMMroi/data/uniswapv2/tokens.json';
+    let url = '/data/uniswapv2/tokens.json';
     fetch(url).then(res => res.json()).then((out) => {
     list_of_tokens = out;
     });
@@ -231,7 +231,7 @@ let app = new Vue({
             if (!start_date) {
                 start_date = moment.unix(1);
             }
-            Papa.parse("/AMMroi/data/uniswapv2/roi/" + currency + ".csv", {
+            Papa.parse("/data/uniswapv2/roi/" + currency + ".csv", {
                 download: true,
                 complete: function(results) {
                     let [outputFees, outputTP, outputROI] = convertData(results.data, start_date)
@@ -268,7 +268,7 @@ let app = new Vue({
             });
         },
         fetchAllTokens: function() {
-        let url = '/AMMroi/data/uniswapv2/tokens.json';
+        let url = '/data/uniswapv2/tokens.json';
         fetch(url).then(res => res.json()).then((out) => {
             app.listOfTokens = out["results"];
         });

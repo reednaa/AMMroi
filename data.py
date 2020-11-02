@@ -23,4 +23,4 @@ if __name__ == "__main__":
     else:
         restart_required = uniswapv2.check_for_restart()
         logging.info(f"Restart of data is {'reccomended' if restart_required else 'not reccomended'}. We follow the reccomendation.")
-    uniswapv2.get_roi(restart=restart_required, resolution=50) # The resolution has a direct corrolation to how many rounds we need to fecth. It is, therefore, reccomended to keep it relativly low.
+    uniswapv2.get_roi(restart=restart_required, resolution=500) # The resolution has a direct corrolation to how many rounds we need to fecth. It is, therefore, reccomended to keep it relativly low.
