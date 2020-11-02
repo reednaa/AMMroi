@@ -223,7 +223,7 @@ let app = new Vue({
                 download: true,
                 complete: function(results) {
                     let [outputFees, outputTP, outputROI, outputProtected] = convertData(results.data, start_date)
-                    if (this.showProtected) {
+                    if (app.showProtected) {
                         chart.data.datasets.push(
                             {
                                 label: "Return w.o. IL.",
