@@ -259,7 +259,7 @@ let app = new Vue({
             Papa.parse("/data/uniswapv2/roi/" + this.selectedAsset + ".csv", {
                 download: true,
                 complete: function(results) {
-                    calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment.unix(results.data[1][0]), maxDate: "today", defaultDate: moment.unix(results.data[1][0])});
+                    calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment.unix(results.data[1][0]).toDate(), maxDate: "today", defaultDate: moment.unix(results.data[1][0]).toDate()});
                 }
             });
 
