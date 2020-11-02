@@ -48,7 +48,7 @@ function convertData(json_data, start_date) {
     if (!start_index) {
         start_index = 1;
     }
-    outputFees = [];
+    let outputFees = [];
     const initialInv = json_data[start_index][index_ROI];
     for (arr of json_data.slice(start_index)) {
         outputFees.push(
@@ -58,7 +58,7 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    outputTP = [];
+    let outputTP = [];
     const intialPrice = json_data[start_index][index_TP];
     for (arr of json_data.slice(start_index)) {
         outputTP.push(
@@ -68,7 +68,7 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    outputROI = [];
+    let outputROI = [];
     for (arr of json_data.slice(start_index)) {
         outputROI.push(
             {
