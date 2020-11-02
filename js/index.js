@@ -201,7 +201,7 @@ let app = new Vue({
                 new_chart["chart"] = chart;
                 new_chart["name"] = app.selectedAsset + " " + new_chart.name
                 Vue.set(app.charts, dictSearch(app.charts, "name", name), new_chart);
-                app.addData(chart, app.selectedAsset, app.selectedDate);
+                app.addData(chart, app.selectedAsset, moment(app.selectedDate));
             }, 500);
         },
         addData: function(chart, currency, start_date) {
@@ -249,7 +249,12 @@ let app = new Vue({
         fetch(url).then(res => res.json()).then((out) => {
             app.listOfTokens = out["results"];
         });
-}
+    }
+    },
+    watch: {
+        selectedAsset: function() {
+
+        }
     },
     created() {
         this.fetchAllTokens();
