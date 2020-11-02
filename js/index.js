@@ -78,7 +78,16 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    return [outputFees, outputTP, outputROI]
+    let outputProtected = [];
+    for (arr of json_data.slice(start_index)) {
+        outputROI.push(
+            {
+            x: moment.unix(arr[index_time]),
+            y: (arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1
+            }
+        );
+    }
+    return [outputFees, outputTP, outputROI, outputProtected]
 }
 
 
@@ -120,6 +129,7 @@ let app = new Vue({
         selectedDate: "",
         isShake: false,
         calender: "",
+        showProtected: false,
     },
     methods: {
         addChart: function() {
@@ -214,7 +224,7 @@ let app = new Vue({
             Papa.parse("/data/uniswapv2/roi/" + currency + ".csv", {
                 download: true,
                 complete: function(results) {
-                    let [outputFees, outputTP, outputROI] = convertData(results.data, start_date)
+                    let [outputFees, outputTP, outputROI, outputProtected] = convertData(results.data, start_date)
                     chart.data.datasets.push(
                         {
                             label: "Collected Fees",
@@ -242,6 +252,17 @@ let app = new Vue({
                             fill: false,
                         }
                     );
+                    if (this.showProtected) {
+                        chart.data.datasets.push(
+                            {
+                                label: "Return",
+                                data: outputProtected,
+                                backgroundColor: window.chartColors.yellow,
+                                borderColor: window.chartColors.yellow,
+                                fill: false,
+                            }
+                        );
+                    }
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
                 }
@@ -267,7 +288,6 @@ let app = new Vue({
                     );
                 }
             });
-
         }
     },
     created() {
