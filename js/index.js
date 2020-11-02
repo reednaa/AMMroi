@@ -127,7 +127,7 @@ let app = new Vue({
         selectedDate: "",
         isShake: false,
         calender: "",
-        showProtected: false,
+        showProtected: true,
     },
     methods: {
         addChart: function() {
