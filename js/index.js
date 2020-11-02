@@ -255,11 +255,11 @@ let app = new Vue({
     },
     watch: {
         selectedAsset: function() {
-            this.calender.destory();
+            calender.destory();
             Papa.parse("/data/uniswapv2/roi/" + pair + ".csv", {
                 download: true,
                 complete: function(results) {
-                    app.calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment.unix(results.data[1][0]), maxDate: "today", defaultDate: moment.unix(results.data[1][0])});
+                    calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment.unix(results.data[1][0]), maxDate: "today", defaultDate: moment.unix(results.data[1][0])});
                 }
             });
 
@@ -267,6 +267,7 @@ let app = new Vue({
     },
     created() {
         this.fetchAllTokens();
-        this.calender = flatpickr("#startDate", { "enableTime": true, "locale": "da" });
     }
 });
+
+let calender = flatpickr("#startDate", { "enableTime": true, "locale": "da" });
