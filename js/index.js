@@ -223,6 +223,17 @@ let app = new Vue({
                 download: true,
                 complete: function(results) {
                     let [outputFees, outputTP, outputROI, outputProtected] = convertData(results.data, start_date)
+                    if (this.showProtected) {
+                        chart.data.datasets.push(
+                            {
+                                label: "Return w.o. IL.",
+                                data: outputProtected,
+                                backgroundColor: window.chartColors.yellow,
+                                borderColor: window.chartColors.yellow,
+                                fill: false,
+                            }
+                        );
+                    };
                     chart.data.datasets.push(
                         {
                             label: "Collected Fees",
@@ -250,17 +261,6 @@ let app = new Vue({
                             fill: false,
                         }
                     );
-                    if (this.showProtected) {
-                        chart.data.datasets.push(
-                            {
-                                label: "Return w.o. IL.",
-                                data: outputProtected,
-                                backgroundColor: window.chartColors.yellow,
-                                borderColor: window.chartColors.yellow,
-                                fill: false,
-                            }
-                        );
-                    }
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
                 }
