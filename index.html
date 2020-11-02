@@ -75,14 +75,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="control is-expanded">
+                            <div class="control">
                                 <input id="startDate" class="input" v-model="selectedDate" type="date" />
                             </div>
-                            <div class="control">
-                                <button class="button" @click="addChart()"
-                                    :class="{'is-sucess': selectedAsset, 'is-danger': !selectedAsset, 'is-shake': isShake}">Add
-                                    Chart</button>
-                            </div>
+                        </div>
+                        <div class="control">
+                            <button class="button" @click="addChart()"
+                                :class="{'is-sucess': selectedAsset, 'is-danger': !selectedAsset, 'is-shake': isShake}">Add
+                                Chart</button>
                         </div>
                         <div class="control">
                             <label class="checkbox">
