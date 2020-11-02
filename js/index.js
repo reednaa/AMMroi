@@ -41,7 +41,7 @@ function convertData(json_data, start_date) {
     for (arr_index in json_data.slice(1)) {
         console.log(arr_index + "|" + json_data[arr_index][index_time] + "|" + start_date);
         if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
-            start_index = arr_index+1;
+            start_index = Number(arr_index)+1;
             break;
         }
     }
@@ -260,8 +260,7 @@ let app = new Vue({
             Papa.parse("/data/uniswapv2/roi/" + this.selectedAsset + ".csv", {
                 download: true,
                 complete: function(results) {
-                    console.log(moment.unix(results.data[1][0]).toDate());
-                    calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment.unix(results.data[1][0]).toDate(), maxDate: "today", defaultDate: moment.unix(results.data[1][0]).toDate(),
+                    calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment.unix(results.data[1][1]).toDate(), maxDate: "today", defaultDate: moment.unix(results.data[1][1]).toDate(),
                     onClose: function(selectedDates, dateStr, instance){
                         app.selectedDate = dateStr;
                      }}
