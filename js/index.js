@@ -118,6 +118,7 @@ let app = new Vue({
         selectedAsset: false,
         selectedDate: "",
         isShake: false,
+        calender: "",
     },
     methods: {
         addChart: function() {
@@ -254,13 +255,18 @@ let app = new Vue({
     },
     watch: {
         selectedAsset: function() {
-
+            this.calender.destory();
+            Papa.parse("/data/uniswapv2/roi/" + pair + ".csv", {
+                download: true,
+                complete: function(results) {
+                    app.calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment(results.data[1][0]), maxDate: "today", defaultDate: moment(results.data[1][0])});
+                }
+            });
+            
         }
     },
     created() {
         this.fetchAllTokens();
+        this.calender = flatpickr("#startDate", { "enableTime": true, "locale": "da" });
     }
 });
-
-
-const startInputCalender = flatpickr("#startDate", { "enableTime": true, "locale": "da" });
