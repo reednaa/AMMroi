@@ -1,4 +1,4 @@
-const startInputCalender = flatpickr("#startInput", { "enableTime": true, "locale": "da" });
+const startInputCalender = flatpickr("#startDate", { "enableTime": true, "locale": "da" });
 
 window.chartColors = {
 	red: 'rgb(255, 99, 132)',
