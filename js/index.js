@@ -1,4 +1,3 @@
-const startInputCalender = flatpickr("#startDate", { "enableTime": true, "locale": "da" });
 
 window.chartColors = {
 	red: 'rgb(255, 99, 132)',
@@ -116,7 +115,7 @@ let app = new Vue({
         charts: [],
         listOfTokens: [],
         selectedAsset: false,
-        startInput: "",
+        selectedDate: "",
         isShake: false,
     },
     methods: {
@@ -202,7 +201,7 @@ let app = new Vue({
                 new_chart["chart"] = chart;
                 new_chart["name"] = app.selectedAsset + " " + new_chart.name
                 Vue.set(app.charts, dictSearch(app.charts, "name", name), new_chart);
-                app.addData(chart, app.selectedAsset, false);
+                app.addData(chart, app.selectedAsset, app.selectedDate);
             }, 500);
         },
         addData: function(chart, currency, start_date) {
@@ -258,3 +257,4 @@ let app = new Vue({
 });
 
 
+const startInputCalender = flatpickr("#startDate", { "enableTime": true, "locale": "da" });
