@@ -78,7 +78,7 @@ function convertData(json_data, start_date) {
     }
     let outputProtected = [];
     for (arr of json_data.slice(start_index)) {
-        outputROI.push(
+        outputProtected.push(
             {
             x: moment.unix(arr[index_time]),
             y: (arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1
@@ -253,7 +253,7 @@ let app = new Vue({
                     if (this.showProtected) {
                         chart.data.datasets.push(
                             {
-                                label: "Return",
+                                label: "Return w.o. IL.",
                                 data: outputProtected,
                                 backgroundColor: window.chartColors.yellow,
                                 borderColor: window.chartColors.yellow,
