@@ -47,6 +47,7 @@ function convertData(json_data, start_date) {
             break;
         }
     }
+    console.log(start_index);
     outputFees = [];
     const initialInv = json_data[start_index][index_ROI];
     for (arr of json_data.slice(start_index)) {
