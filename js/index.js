@@ -17,9 +17,6 @@ function fetchDataForPair(pair) {
         complete: function(results) {
             console.log(results.data);
             data=results.data;
-            let d1 = getROIFromData(data, false);
-            let d2 = getILFromData(data, false);
-            chart = createChart(d1, d2);
         }
     });
 }
@@ -48,6 +45,9 @@ function convertData(json_data, start_date) {
         }
     }
     console.log(start_index);
+    if (!start_index) {
+        start_index = 1;
+    }
     outputFees = [];
     const initialInv = json_data[start_index][index_ROI];
     for (arr of json_data.slice(start_index)) {
