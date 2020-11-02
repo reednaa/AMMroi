@@ -83,6 +83,12 @@
                                     :class="{'is-sucess': selectedAsset, 'is-danger': !selectedAsset, 'is-shake': isShake}">Add
                                     Chart</button>
                             </div>
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" v-model="showProtected">
+                                    Show without impermanent loss
+                                  </label>
+                            </div>
                         </div>
                     </h2>
                 </div>
