@@ -255,7 +255,7 @@ let app = new Vue({
     },
     watch: {
         selectedAsset: function() {
-            calender.destory();
+            calender.destroy();
             Papa.parse("/data/uniswapv2/roi/" + pair + ".csv", {
                 download: true,
                 complete: function(results) {
