@@ -39,6 +39,7 @@ function convertData(json_data, start_date) {
     let index_time = json_data[0].indexOf("timestamp");
     let start_index;
     for (arr_index in json_data.slice(1)) {
+        console.log(arr_index + "|" + json_data[arr_index][index_time] + "|" + start_date);
         if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
             start_index = arr_index+1;
             break;
