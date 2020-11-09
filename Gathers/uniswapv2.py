@@ -6,7 +6,7 @@ from web3 import Web3
 import pandas as pd
 import os
 from asyncio.exceptions import TimeoutError
-from math import sqrt
+from math import sqrt, ceil
 from time import time, sleep
 
 import logging
@@ -61,9 +61,51 @@ def split_num_tokens_fairly(x, dist=1.1):
     return [round(x/dist), x-round(x/dist)]
 
 
+def dividor(array, parts=0, length=0): # Need either parts or length
+    if length:
+        size = length
+        parts = ceil(len(array)/size)
+    else:
+        size = ceil(len(array)/parts)
+    for part in range(0, parts):
+        yield array[size*part:size + size*part]
+
+
 #
 # Queries
 # 
+
+def query_data(all_pairs, df_dic, id_to_symbol, blocknumber, tries=5):
+    exchange_data = []
+    for pairs in dividor(all_pairs, length=52):
+        for i in range(1,tries+1):
+            try:
+                query_txt = """
+                    {
+                    pairs(block: {number: """ + str(blocknumber) + """} where: {id_in: """ + json.dumps(pairs) + """ }) {
+                        id
+                        reserve0
+                        reserve1
+                        totalSupply
+                        volumeToken0
+                        }
+                    }"""
+                query = gql(query_txt)
+                responce = client.execute(query)
+                exchange_data += responce["pairs"]
+            except Exception as E:
+                logging.error(responce, E)
+                logging.info(f"We lost connection. We will try again in {i} second, trying {tries-i} more times.")
+                sleep(i)
+            else:
+                break
+        if i == tries:
+            logging.info("We can't continue. Saving data")
+            for key in df_dic:
+                df_dic[key].to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) +".csv", index=False)
+            raise(gql.transport.exceptions.TransportServerError)
+    return exchange_data
+
 
 def get_initial_blocknum():
     query = gql("""
@@ -153,34 +195,15 @@ def get_roi(restart=False, resolution=1500):
             blocknumber = int(get_initial_blocknum())
 
     set_time = time()
+    logging.info(f"Current, Starting blocknumber {current_block, blocknumber}, difference {current_block-blocknumber} blocks.")
     
     while blocknumber < current_block:
         blocknumber_timestamp = block_to_timestamp(int(blocknumber))
         tryings = 4
-        for i in range(1,tryings+1):
-            try:
-                query = gql("""
-                    {
-                    pairs(block: {number: """ + str(blocknumber) + """} where: {id_in: """ + json.dumps(all_pairs) + """}) {
-                        id
-                        reserve0
-                        reserve1
-                        totalSupply
-                        volumeToken0
-                        }
-                    }""")
-                pairs = client.execute(query)
-            except gql.transport.exceptions.TransportServerError:
-                logging.info(f"We lost connection. We will try again in {i} second, trying {tryings-i} more times.")
-                sleep(i)
-            finally:
-                break
-        if i == tryings:
-            logging.info("We can't continue. Saving data")
-            for key in df_dic:
-                df_dic[key].to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) +".csv", index=False)
-            raise(gql.transport.exceptions.TransportServerError)
-        for pair in pairs["pairs"]:
+
+        exchange_data = query_data(all_pairs, df_dic, id_to_symbol, blocknumber)
+        
+        for pair in exchange_data:
             if float(pair["totalSupply"]) == 0:
                 continue
             if float(pair["reserve1"])/float(pair["reserve0"]) < 10**(-16):
@@ -198,7 +221,7 @@ def get_roi(restart=False, resolution=1500):
             data = {"block": int(blocknumber), "timestamp": blocknumber_timestamp, "ROI": sINV/sINV_zero if sINV_zero != 0 else 1, "Token Price": float(pair["reserve1"])/float(pair["reserve0"]), "Trade Volume": float(pair["volumeToken0"])-prev_trade_volume, "sINV": sINV}
             df_dic[pair["id"]] = df_dic[pair["id"]].append(data, ignore_index=True)
         
-        rounds_per_set = 50
+        rounds_per_set = 10
         if round((current_block-blocknumber)/resolution) % rounds_per_set == 0:
             logging.info(f"{current_block-blocknumber} blocks remaning, {round((current_block-blocknumber)/resolution)} rounds left. Last set took {round(time()-set_time,3)} seconds, {round((time()-set_time)/rounds_per_set,3)} seconds per round. Time remaning: {round((time()-set_time)/rounds_per_set*(current_block-blocknumber)/resolution)} seconds")
             set_time = time()
