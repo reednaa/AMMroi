@@ -94,8 +94,8 @@ def query_data(all_pairs, df_dic, id_to_symbol, blocknumber, tries=5):
                 responce = client.execute(query)
                 exchange_data += responce["pairs"]
             except Exception as E:
-                logging.error(responce, E)
-                logging.info(f"We lost connection. We will try again in {i} second, trying {tries-i} more times.")
+                # logging.error(E)
+                logging.info(f"Query broke. Potentially bad connection. We will try again in {i} second, trying {tries-i} more times.")
                 sleep(i)
             else:
                 break
