@@ -238,7 +238,7 @@ let app = new Vue({
                                 backgroundColor: window.chartColors.yellow,
                                 borderColor: window.chartColors.yellow,
                                 fill: false,
-                                lineTension: 0
+                                steppedLine: "middle"
                             }
                         );
                     };
@@ -249,7 +249,7 @@ let app = new Vue({
                             backgroundColor: window.chartColors.blue,
                             borderColor: window.chartColors.blue,
                             fill: false,
-                            lineTension: 0
+                            steppedLine: "middle"
                         }
                     );
                     chart.data.datasets.push(
@@ -259,7 +259,7 @@ let app = new Vue({
                             backgroundColor: window.chartColors.red,
 					        borderColor: window.chartColors.red,
                             fill: false,
-                            lineTension: 0
+                            steppedLine: "middle"
                         }
                     );
                     chart.data.datasets.push(
@@ -269,6 +269,7 @@ let app = new Vue({
                             backgroundColor: window.chartColors.green,
 					        borderColor: window.chartColors.green,
                             fill: false,
+                            steppedLine: "middle"
                         }
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
