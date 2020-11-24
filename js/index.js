@@ -128,6 +128,7 @@ let app = new Vue({
         isShake: false,
         calender: "",
         showProtected: true,
+        lastChart: "",
     },
     methods: {
         addChart: function() {
@@ -138,11 +139,12 @@ let app = new Vue({
                 }, 820);
                 return this.selectedAsset;
             }
-            let name = this.charts.length
-            let new_chart = {name: name};
+            let id = this.charts.length;
+            let new_chart = {name: id, id: id};
             this.charts.push(new_chart);
+            this.lastChart = id;
             setTimeout(function() {
-                var ctx = document.getElementById(name).getContext('2d');
+                var ctx = document.getElementById(id).getContext('2d');
                 let chart = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -210,7 +212,7 @@ let app = new Vue({
                 } 
                 });
                 new_chart["chart"] = chart;
-                new_chart["name"] = app.selectedAsset + " " + new_chart.name
+                new_chart["name"] = app.selectedAsset;
                 Vue.set(app.charts, dictSearch(app.charts, "name", name), new_chart);
                 app.addData(chart, app.selectedAsset, moment(app.selectedDate));
             }, 500);
@@ -222,7 +224,7 @@ let app = new Vue({
             Papa.parse("/data/uniswapv2/roi/" + currency + ".csv", {
                 download: true,
                 complete: function(results) {
-                    let [outputFees, outputTP, outputROI, outputProtected] = convertData(results.data, start_date)
+                    let [outputFees, outputTP, outputROI, outputProtected] = convertData(results.data, start_date);
                     if (app.showProtected) {
                         chart.data.datasets.push(
                             {
@@ -263,6 +265,7 @@ let app = new Vue({
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
+                    app.chart[app.lastChart] = app.selectedAsset + " " + outputProtected[0]["x"].format('YYYY-MM-DD') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD');
                 }
             });
         },
