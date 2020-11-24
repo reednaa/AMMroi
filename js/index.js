@@ -151,7 +151,7 @@ let app = new Vue({
             setTimeout(function() {
                 var ctx = document.getElementById(id).getContext('2d');
                 let chart = new Chart(ctx, {
-                    type: 'scatter',
+                    type: 'line',
                     data: {
                         datasets: [
                         //     {
@@ -238,6 +238,7 @@ let app = new Vue({
                                 backgroundColor: window.chartColors.yellow,
                                 borderColor: window.chartColors.yellow,
                                 fill: false,
+                                lineTension: 0
                             }
                         );
                     };
@@ -248,6 +249,7 @@ let app = new Vue({
                             backgroundColor: window.chartColors.blue,
                             borderColor: window.chartColors.blue,
                             fill: false,
+                            lineTension: 0
                         }
                     );
                     chart.data.datasets.push(
@@ -257,6 +259,7 @@ let app = new Vue({
                             backgroundColor: window.chartColors.red,
 					        borderColor: window.chartColors.red,
                             fill: false,
+                            lineTension: 0
                         }
                     );
                     chart.data.datasets.push(
