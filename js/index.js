@@ -265,7 +265,7 @@ let app = new Vue({
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
-                    app.charts[app.lastChart] = app.selectedAsset + " " + outputProtected[0]["x"].format('YYYY-MM-DD') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD');
+                    app.charts[app.lastChart]["name"] = app.selectedAsset + " " + outputProtected[0]["x"].format('YYYY-MM-DD') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD');
                 }
             });
         },

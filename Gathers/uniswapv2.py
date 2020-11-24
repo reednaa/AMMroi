@@ -77,7 +77,7 @@ def dividor(array, parts=0, length=0): # Need either parts or length
 
 def query_data(all_pairs, df_dic, id_to_symbol, blocknumber, tries=5):
     exchange_data = []
-    for pairs in dividor(all_pairs, length=52):
+    for pairs in dividor(all_pairs, length=26):
         for i in range(1,tries+1):
             try:
                 query_txt = """
