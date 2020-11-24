@@ -151,7 +151,7 @@ let app = new Vue({
             setTimeout(function() {
                 var ctx = document.getElementById(id).getContext('2d');
                 let chart = new Chart(ctx, {
-                    type: 'line',
+                    type: 'scatter',
                     data: {
                         datasets: [
                         //     {
