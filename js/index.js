@@ -9,6 +9,11 @@ window.chartColors = {
 	grey: 'rgb(201, 203, 207)'
 };
 
+function round(num, n) {
+    const rounder = Math.pow(10, n);
+    return Math.round(num * rounder) / rounder;
+}
+
 let data;
 let chart;
 function fetchDataForPair(pair) {
@@ -53,7 +58,7 @@ function convertData(json_data, start_date) {
         outputFees.push(
             {
             x: moment.unix(arr[index_time]),
-            y: arr[index_ROI]/initialInv
+            y: round(arr[index_ROI]/initialInv, 4)
             }
         );
     }
@@ -63,7 +68,7 @@ function convertData(json_data, start_date) {
         outputTP.push(
             {
             x: moment.unix(arr[index_time]),
-            y: 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)
+            y: round(2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice), 4)
             }
         );
     }
@@ -72,7 +77,7 @@ function convertData(json_data, start_date) {
         outputROI.push(
             {
             x: moment.unix(arr[index_time]),
-            y: (arr[index_ROI]/initialInv) * (2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice))
+            y: round((arr[index_ROI]/initialInv) * (2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)), 4)
             }
         );
     }
@@ -81,7 +86,7 @@ function convertData(json_data, start_date) {
         outputProtected.push(
             {
             x: moment.unix(arr[index_time]),
-            y: (arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1
+            y: round((arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1, 4)
             }
         );
     }
