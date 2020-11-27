@@ -51,4 +51,4 @@ let app = new Vue({
         this.protections.sort((a,b) => a[0] - b[0]);
     }
 
-})
+});
