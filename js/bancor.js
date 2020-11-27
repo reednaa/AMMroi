@@ -4,17 +4,18 @@
 let app = new Vue({
     el: '#app',
     data: {
+        web3: false,
         LiquidityProtectionStore: "",
         protections: [],
         protectionMaxID: 0,
         
     },
     methods: {
-    setProvider: function() {
+        setProvider: function() {
         let ethereum = window.ethereum;
         ethereum.enable().then(function(x) {app.setupWeb3()});
     },
-    setupWeb3: function () {
+        setupWeb3: function () {
         let ethereum = window.ethereum;
         this.web3 = new Web3(ethereum);
         this.web3.eth.getAccounts().then(
@@ -22,8 +23,7 @@ let app = new Vue({
         ); 
         this.LiquidityProtectionStore = new this.web3.eth.Contract(LiquidityProtectionStore, "0xf5FAB5DBD2f3bf675dE4cB76517d4767013cfB55");
         },
-    },
-    getProtectionMaxID: function () {
+        getProtectionMaxID: function () {
         this.LiquidityProtectionStore.getPastEvents(ProtectionAdded, {}).then(function(events) {
             console.log(events);
             this.protectionMaxID = events.length;
@@ -49,6 +49,7 @@ let app = new Vue({
             }
         }
         this.protections.sort((a,b) => a[0] - b[0]);
-    }
+    },
+}
 
 });
