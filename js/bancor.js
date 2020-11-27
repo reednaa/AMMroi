@@ -7,7 +7,7 @@ let app = new Vue({
         web3: false,
         LiquidityProtectionStore: "",
         protections: [],
-        protectionMaxID: 0,
+        protectionMaxID: 1000,
         
     },
     methods: {
@@ -17,23 +17,23 @@ let app = new Vue({
     },
         setupWeb3: function () {
         let ethereum = window.ethereum;
-        this.web3 = new Web3(ethereum);
+        // this.web3 = new Web3(ethereum);
+        this.web3 = new Web3.providers.HttpProvider('https://mainnet.infura.io/4e3b160a19f845858bd42d301f00222e');
         this.web3.eth.getAccounts().then(
             (accounts) => app.selectedAccount = accounts[0]
         ); 
         this.LiquidityProtectionStore = new this.web3.eth.Contract(LiquidityProtectionStore, "0xf5FAB5DBD2f3bf675dE4cB76517d4767013cfB55");
-        },
-        getProtectionMaxID: function () {
-        this.LiquidityProtectionStore.getPastEvents(ProtectionAdded, {}).then(function(events) {
-            console.log(events);
-            this.protectionMaxID = events.length;
-        });
     },
+        // getProtectionMaxID: function () {
+        // this.LiquidityProtectionStore.getPastEvents("ProtectionAdded", {}).then(function(events) {
+        //     console.log(events);
+        //     this.protectionMaxID = events.length;
+        // });
     getAllProtections: function () {
         for (let i = 0;i<this.protectionMaxID;i++) {
             this.LiquidityProtectionStore.methods.protectedLiquidity(i).call().then(
                 function(value) {
-                    app.protections.push([0, value]);
+                    app.protections.push([i, value]);
                 }
             )
         }
@@ -51,5 +51,4 @@ let app = new Vue({
         this.protections.sort((a,b) => a[0] - b[0]);
     },
 }
-
 });
