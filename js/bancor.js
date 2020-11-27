@@ -7,6 +7,7 @@ let app = new Vue({
         web3: false,
         LiquidityProtectionStore: "",
         protections: [],
+        parsedProtections: [],
         protectionMaxID: 1000,
         
     },
@@ -16,7 +17,7 @@ let app = new Vue({
     },
         setupWeb3: function () {
         // let ethereum = window.ethereum;
-        const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/4e3b160a19f845858bd42d301f00222e');
+        const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e');
         this.web3 = new Web3(provider);
         // this.web3.eth.getAccounts().then(
         //     (accounts) => app.selectedAccount = accounts[0]
@@ -36,7 +37,6 @@ let app = new Vue({
                 }
             )
         }
-        this.LiquidityProtectionStore.methods.protectedLiquidity
     },
     sortProtections: function () {
         // First purne all non needed entries
@@ -49,5 +49,19 @@ let app = new Vue({
         }
         this.protections.sort((a,b) => a[0] - b[0]);
     },
+    parseProtections: function() {
+        for (protection in this.protections) {
+            const pp = this.protections[protection][1]
+            this.parsedProtections[protection] = {id: this.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], timestamp: pp[7]}; 
+            const ST = new this.web3.eth.Contract(SmartToken, protections[protection][1]);
+            const EC20 = new this.web3.eth.Contract(ERC20, protections[protection][2]);
+            ST.methods.symbol().call().then(function(value) {
+                app.parsedProtections[protection].pool = value;
+            });
+            EC20.methods.symbol().call().then(function(value) {
+                app.parsedProtections[protection].token = value;
+            });
+        }
+    }
 }
 });

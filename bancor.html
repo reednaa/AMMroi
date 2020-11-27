@@ -59,21 +59,8 @@
     <div id="app">
         <button @click="setProvider()" class="is-large button" id="connect" v-if="web3 == false">Connect wallet</button>
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
-        <!-- <div style="min-width: 230px;" class="column" v-for="dn in privateDarknodes"> -->
-            <div style="min-width: 230px;" class="column">
+        <div style="min-width: 230px;" class="column" v-for="protection in protections">
             <div class="card">
-                <!-- <header class="card-header">
-                    <p class="card-header-title">
-                        {{easyShowEthereumAddress(dn)}} 
-                        <div class="card-header-icon">
-                            <button class="button is-small is-white">
-                                <span class="icon" @click="toClipBoard(dn)">
-                                    <i class="fas fa-clipboard"></i>
-                                </span>
-                            </button>
-                        </div>
-                    </p>
-                </header> -->
                 <div class="card-content">
                     <div class="media">
                         <div class="media-left">
@@ -82,11 +69,22 @@
                             </svg>
                         </div>
                         <div class="media-content">
-                            <p class="title is-4">ethereumAddress</p>
-                            <p class="subtitle is-6">ethereumAddress</p>
+                            <p class="title is-4">{{protection[0]}}</p>
+                            <p class="subtitle is-6">{{protection[0]}}</p>
                         </div>
                     </div>
                     <div class="content">
+                        Token {{protection[2]}}
+                        <br>
+                        Pool {{protection[1]}}
+                        <br>
+                        Pool Token Amount {{protection[3]}}
+                        <br>
+                        Original deposit {{protection[4]}}
+                        <br>
+                        Rate {{protection[5]/protection[6]}}
+                        <br>
+                        Timestamp {{protection[7]}}
                     </div>
                 </div>
             </div>
