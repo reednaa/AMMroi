@@ -16,7 +16,7 @@ let app = new Vue({
         ethereum.enable().then(function(x) {app.setupWeb3()});
     },
         setupWeb3: function () {
-        let ethereum = window.ethereum;
+        // let ethereum = window.ethereum;
         // this.web3 = new Web3(ethereum);
         this.web3 = new Web3.providers.HttpProvider('https://mainnet.infura.io/4e3b160a19f845858bd42d301f00222e');
         this.web3.eth.getAccounts().then(
