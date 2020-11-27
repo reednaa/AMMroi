@@ -10,17 +10,17 @@ let app = new VTTCue({
         
     },
     methods: {
-        setProvider: function() {
+    setProvider: function() {
         let ethereum = window.ethereum;
         ethereum.enable().then(function(x) {app.setupWeb3()});
     },
     setupWeb3: function () {
-            let ethereum = window.ethereum;
-            this.web3 = new Web3(ethereum);
-            this.web3.eth.getAccounts().then(
-                (accounts) => app.selectedAccount = accounts[0]
-            ); 
-            this.LiquidityProtectionStore = new this.web3.eth.Contract(LiquidityProtectionStore, "0xf5FAB5DBD2f3bf675dE4cB76517d4767013cfB55");
+        let ethereum = window.ethereum;
+        this.web3 = new Web3(ethereum);
+        this.web3.eth.getAccounts().then(
+            (accounts) => app.selectedAccount = accounts[0]
+        ); 
+        this.LiquidityProtectionStore = new this.web3.eth.Contract(LiquidityProtectionStore, "0xf5FAB5DBD2f3bf675dE4cB76517d4767013cfB55");
         },
     },
     getProtectionMaxID: function () {
