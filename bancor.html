@@ -57,6 +57,7 @@
 
 <body>
     <div id="app">
+        <button @click="setProvider()" class="is-large button" id="connect">Connect wallet</button>
         <div style="min-width: 230px;" class="column" v-for="dn in privateDarknodes">
             <div class="card">
                 <!-- <header class="card-header">

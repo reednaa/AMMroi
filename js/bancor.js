@@ -10,7 +10,11 @@ let app = new VTTCue({
         
     },
     methods: {
-        setupWeb3: function () {
+        setProvider: function() {
+        let ethereum = window.ethereum;
+        ethereum.enable().then(function(x) {app.setupWeb3()});
+    },
+    setupWeb3: function () {
             let ethereum = window.ethereum;
             this.web3 = new Web3(ethereum);
             this.web3.eth.getAccounts().then(
