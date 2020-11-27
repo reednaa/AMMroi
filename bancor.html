@@ -57,7 +57,7 @@
 
 <body>
     <div id="app">
-        <button @click="setProvider()" class="is-large button" id="connect" v-if="web == false">Connect wallet</button>
+        <button @click="setProvider()" class="is-large button" id="connect" v-if="web3 == false">Connect wallet</button>
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
         <!-- <div style="min-width: 230px;" class="column" v-for="dn in privateDarknodes"> -->
             <div style="min-width: 230px;" class="column">
