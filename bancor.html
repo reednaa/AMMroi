@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <title>Uniswap v2 pool information</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.css"
+        integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"
+        integrity="sha256-Xjq9HM9n3XzT47n/NmSEaJUwPi7hme++D8mxHfSr+0Q=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@1.1.6/dist/chartjs-plugin-crosshair.min.js"
+        integrity="sha256-r/9biws8g6l28IaMAzQW4jw/wTmuDPmcEaXn1qqD9iM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"
+        integrity="sha256-BSZ2gjTJLE5ZEGH1e6beyHYNOITz6M26XFre9lEBdx8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/l10n/da.js"
+        integrity="sha256-btg10M6OuilEf55qRv0f370emD4TckUGmmEm03YaJtE=" crossorigin="anonymous"></script>
+    <style>
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        .is-shake {
+            animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div style="min-width: 230px;" class="column" v-for="dn in privateDarknodes">
+            <div class="card">
+                <!-- <header class="card-header">
+                    <p class="card-header-title">
+                        {{easyShowEthereumAddress(dn)}} 
+                        <div class="card-header-icon">
+                            <button class="button is-small is-white">
+                                <span class="icon" @click="toClipBoard(dn)">
+                                    <i class="fas fa-clipboard"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </p>
+                </header> -->
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <svg :data-jdenticon-value="dn.substring(0,20)" width="48" height="48">
+                                Jdenticon
+                            </svg>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">{{divideShowEthereumAddress(dn, true)}}..</p>
+                            <p class="subtitle is-6">{{divideShowEthereumAddress(dn, false)}}</p>
+                        </div>
+                        </div>
+                    <div class="content">
+                        Owner: {{easyShowEthereumAddress(darknodesInformation[dn].operator)}}
+                        <br>
+                        Claimed Fees: {{roundValue(darknodesInformation[dn].fee)}}
+                        <br>
+                        Pending Fees: {{roundValue(pendingRewardPool/allDarknodes.length/10**8)}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.0.1" async>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
+
+<script src="/DarknodeWithdrawMultiple/js/abi.js"></script>
+<script src="/DarknodeWithdrawMultiple/js/bancor.js"></script>
+
+</html>
