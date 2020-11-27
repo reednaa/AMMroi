@@ -62,6 +62,11 @@ let app = new Vue({
                 app.parsedProtections[protection].token = value;
             });
         }
+    },
+},
+    watch: {
+        protections: function(val, old) {
+            app.sortProtections();
+        }
     }
-}
 });
