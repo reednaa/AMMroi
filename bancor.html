@@ -58,7 +58,8 @@
 <body>
     <div id="app">
         <button @click="setProvider()" class="is-large button" id="connect">Connect wallet</button>
-        <div style="min-width: 230px;" class="column" v-for="dn in privateDarknodes">
+        <!-- <div style="min-width: 230px;" class="column" v-for="dn in privateDarknodes"> -->
+            <div style="min-width: 230px;" class="column">
             <div class="card">
                 <!-- <header class="card-header">
                     <p class="card-header-title">
@@ -80,16 +81,11 @@
                             </svg>
                         </div>
                         <div class="media-content">
-                            <p class="title is-4">{{divideShowEthereumAddress(dn, true)}}..</p>
-                            <p class="subtitle is-6">{{divideShowEthereumAddress(dn, false)}}</p>
+                            <p class="title is-4">ethereumAddress</p>
+                            <p class="subtitle is-6">ethereumAddress</p>
                         </div>
                         </div>
                     <div class="content">
-                        Owner: {{easyShowEthereumAddress(darknodesInformation[dn].operator)}}
-                        <br>
-                        Claimed Fees: {{roundValue(darknodesInformation[dn].fee)}}
-                        <br>
-                        Pending Fees: {{roundValue(pendingRewardPool/allDarknodes.length/10**8)}}
                     </div>
                 </div>
             </div>
