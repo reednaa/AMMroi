@@ -59,7 +59,7 @@
     <div id="app">
         <button @click="setProvider()" class="is-large button" id="connect" v-if="web3 == false">Connect wallet</button>
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
-        <div style="min-width: 230px;" class="column" v-for="protection in protections">
+        <div style="min-width: 230px;" class="column" v-for="protection in parsedProtections">
             <div class="card">
                 <div class="card-content">
                     <div class="media">
@@ -69,22 +69,22 @@
                             </svg>
                         </div>
                         <div class="media-content">
-                            <p class="title is-4">{{protection[0]}}</p>
-                            <p class="subtitle is-6">{{protection[0]}}</p>
+                            <p class="title is-4">{{protection.owner}}</p>
+                            <p class="subtitle is-6">{{protection.owner}}</p>
                         </div>
                     </div>
                     <div class="content">
-                        Token {{protection[2]}}
+                        Token {{protection.token}}
                         <br>
-                        Pool {{protection[1]}}
+                        Pool {{protection.pool}}
                         <br>
-                        Pool Token Amount {{protection[3]}}
+                        Pool Token Amount {{protection.pt}}
                         <br>
-                        Original deposit {{protection[4]}}
+                        Original deposit {{protection.reserve}}
                         <br>
-                        Rate {{protection[5]/protection[6]}}
+                        Rate {{protection.rate}}
                         <br>
-                        Timestamp {{protection[7]}}
+                        Timestamp {{protection.timestamp}}
                     </div>
                 </div>
             </div>
