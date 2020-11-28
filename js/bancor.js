@@ -33,11 +33,17 @@ async function parseProtections() {
         if (app.translator[pp[2]]) {
             app.parsedProtections[protection].token = app.translator[pp[2]];
         } else {
+            try {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
             await EC20.methods.symbol().call().then(function(value) {
                 app.translator[pp[2]] = value;
                 app.parsedProtections[protection].token = value;
             });
+        }
+        catch(err) {
+            console.log(pp[2]);
+            app.parsedProtections[protection].token = pp[2];
+        }
         }
     }
     app.parsedProtectionInc += 1;
