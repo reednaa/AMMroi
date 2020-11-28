@@ -19,25 +19,25 @@ async function getAllProtections() {
 async function parseProtections() {
     for (protection in app.protections) {
         const pp = app.protections[protection][1]
-        app.parsedProtections[protection] = {id: app.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7]}; 
+        Vue.set(app.parsedProtections, protection, {id: app.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7]});
 
         if (app.translator[pp[1]]) {
-            app.parsedProtections[protection].pool = app.translator[pp[1]];
+            Vue.set(app.parsedProtections, protection, {pool: app.translator[pp[1]], ...app.parsedProtections[protection]});
         } else {
             const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
             await ST.methods.symbol().call().then(function(value) {
                 app.translator[pp[1]] = value;
-                app.parsedProtections[protection].pool = value;
+                Vue.set(app.parsedProtections, protection, {pool: value, ...app.parsedProtections[protection]});
             });
         }
         if (app.translator[pp[2]]) {
-            app.parsedProtections[protection].token = app.translator[pp[2]];
+            Vue.set(app.parsedProtections, protection, {token: app.translator[pp[2]], ...app.parsedProtections[protection]});
         } else {
             try {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
             await EC20.methods.symbol().call().then(function(value) {
                 app.translator[pp[2]] = value;
-                app.parsedProtections[protection].token = value;
+                Vue.set(app.parsedProtections, protection, {token: value, ...app.parsedProtections[protection]});
             });
         }
         catch(err) {
@@ -46,7 +46,6 @@ async function parseProtections() {
         }
         }
     }
-    app.parsedProtectionInc += 1;
 }
 
 
@@ -99,6 +98,6 @@ let app = new Vue({
         }
     },
     created() {
-        app.setProvider();
+        this.setProvider();
     }
 });
