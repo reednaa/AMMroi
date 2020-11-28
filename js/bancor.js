@@ -69,15 +69,6 @@ let app = new Vue({
         //     console.log(events);
         //     this.protectionMaxID = events.length;
         // });
-    getAllProtections: function () {
-        for (let i = 0;i<this.protectionMaxID;i++) {
-            this.LiquidityProtectionStore.methods.protectedLiquidity(i).call().then(
-                function(value) {
-                    app.protections.push([i, value]);
-                }
-            )
-        }
-    },
     sortProtections: function () {
         // First purne all non needed entries
         let clone = [...this.protections];
@@ -88,20 +79,6 @@ let app = new Vue({
             }
         }
         this.protections.sort((a,b) => a[0] - b[0]);
-    },
-    parseProtections: function() {
-        for (protection in this.protections) {
-            const pp = this.protections[protection][1]
-            this.parsedProtections[protection] = {id: this.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7]}; 
-            const ST = new this.web3.eth.Contract(SmartToken, pp[1]);
-            const EC20 = new this.web3.eth.Contract(ERC20, pp[2]);
-            ST.methods.symbol().call().then(function(value) {
-                app.parsedProtections[protection].pool = value;
-            });
-            EC20.methods.symbol().call().then(function(value) {
-                app.parsedProtections[protection].token = value;
-            });
-        }
     },
 },
     watch: {
