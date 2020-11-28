@@ -289,7 +289,7 @@ let app = new Vue({
                     );
                     chart.data.datasets.push(
                         {
-                            label: "Impermanent loss",
+                            label: "Impermanent Loss",
                             data: outputTP,
                             backgroundColor: window.chartColors.red,
 					        borderColor: window.chartColors.red,
@@ -299,7 +299,7 @@ let app = new Vue({
                     );
                     chart.data.datasets.push(
                         {
-                            label: "Uniswap return",
+                            label: "Uniswap Return",
                             data: outputROI,
                             backgroundColor: window.chartColors.green,
 					        borderColor: window.chartColors.green,
