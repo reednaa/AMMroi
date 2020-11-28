@@ -50,8 +50,8 @@ async function parseProtections() {
         } else {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
             await EC20.methods.decimals().call().then(function(value) {
-                app.decmials[pp[2]] = value;
-                Vue.set(app.parsedProtections, protection, {decmials: value, ...app.parsedProtections[protection]});
+                app.decimals[pp[2]] = value;
+                Vue.set(app.parsedProtections, protection, {decimals: value, ...app.parsedProtections[protection]});
             });
         }
     }
