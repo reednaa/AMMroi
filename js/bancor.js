@@ -44,6 +44,15 @@ async function parseProtections() {
             console.log(pp[2]);
             app.parsedProtections[protection].token = pp[2];
         }
+    }
+        if (app.decimals[pp[2]]) {
+            Vue.set(app.parsedProtections, protection, {decimals: app.decmials[pp[2]], ...app.parsedProtections[protection]});
+        } else {
+            const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
+            await EC20.methods.decimals().call().then(function(value) {
+                app.decmials[pp[2]] = value;
+                Vue.set(app.parsedProtections, protection, {decmials: value, ...app.parsedProtections[protection]});
+            });
         }
     }
 }
@@ -58,7 +67,8 @@ let app = new Vue({
         parsedProtections: [],
         parsedProtectionInc: 0,
         protectionMaxID: 1000,
-        translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR"}
+        translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR"},
+        decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18}
     },
     methods: {
         setProvider: function() {
