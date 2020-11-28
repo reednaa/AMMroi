@@ -55,6 +55,9 @@ async function parseProtections() {
             });
         }
     }
+    setTimeout(function () {
+        jdenticon();
+    }, 1000);
 }
 
 
