@@ -1,7 +1,7 @@
 
 async function getAllProtections() {
     for (let i = 0; i < app.protectionMaxID; i++) {
-        const value = await app.LiquidityProtectionStore.methods.protectedLiquidity(i).call();
+        const value = await app.LiquidityProtectionStore.methods.protectedLiquidity(i).call().then((value) => app.protections.push([i, value]));
         app.protections.push([i, value]);
     }
 }
@@ -70,9 +70,9 @@ let app = new Vue({
         }
     },
 },
-    watch: {
-        protections: function(val, old) {
-            app.sortProtections();
-        }
-    }
+    // watch: {
+    //     protections: function(val, old) {
+    //         app.sortProtections();
+    //     }
+    // }
 });
