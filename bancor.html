@@ -59,7 +59,6 @@
     <div id="app">
         <button @click="setProvider()" class="is-large button" id="connect" v-if="web3 == false">Connect wallet</button>
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
-        {{protections.length}}
         <button @click="getAllProtections()" class="is-large button" v-if="protections.length  == 0">getAllProtections() {{protections.length}} </button>
         <button @click="getAllProtections()" class="is-large button" v-else disabled>getAllProtections() {{protections.length}} </button>
         <button @click="parseProtections()" class="is-large button">parseProtections()</button>
@@ -75,22 +74,22 @@
                                 </svg>
                             </div>
                             <div class="media-content">
-                                <p class="title is-4" style="text-overflow: ellipsis;">{{protection.owner}}</p>
+                                <p class="title is-4" style="text-overflow: ellipsis;">{{protection.owner, protection.id}}</p>
                                 <p class="subtitle is-6" style="text-overflow: ellipsis;">{{protection.owner}}</p>
                             </div>
                         </div>
                         <div class="content">
-                            Token {{protection.token}}
+                            Token: {{protection.token}}
                             <br>
-                            Pool {{protection.pool}}
+                            Pool: {{protection.pool}}
                             <br>
-                            Pool Token Amount {{protection.pt}}
+                            Pool Token Amount: {{protection.pt/10**18}}
                             <br>
-                            Original deposit {{protection.reserve}}
+                            Original deposit: {{protection.reserve/10**protection.decimals}}
                             <br>
-                            Rate {{protection.rate}}
+                            Rate: {{protection.rate}}
                             <br>
-                            Timestamp {{protection.timestamp}}
+                            Timestamp: {{protection.timestamp}}
                         </div>
                     </div>
                 </div>
