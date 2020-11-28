@@ -6,7 +6,7 @@ async function getAllProtections() {
             }
         )
     }
-},
+}
 
 
 let app = new Vue({
