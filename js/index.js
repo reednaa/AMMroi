@@ -95,7 +95,7 @@ function convertData(json_data, start_date) {
         let IL = 2*Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice);
         let ROI = arr[index_ROI]/initialInv-1;
         let t = moment.unix(arr[index_time]).diff(moment.unix(json_data.slice(start_index)[0][index_time]), "minutes")
-        let protection = 0
+        let protection = 0;
         if (0 <= t/1440 < 30) {
             protection = 0;
         } else if (30 <= t/1440 < 100) {
