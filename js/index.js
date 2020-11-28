@@ -93,7 +93,7 @@ function convertData(json_data, start_date) {
     let bancorProtected = [];
     for (arr of json_data.slice(start_index)) {
         let IL = 2*Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice);
-        let ROI = arr[index_ROI]/initialInv-1;
+        let ROI = arr[index_ROI]/initialInv;
         let t = moment.unix(arr[index_time]).diff(moment.unix(json_data.slice(start_index)[0][index_time]), "minutes")
         let protection = 0;
         if (0 <= t/1440 < 30) {
