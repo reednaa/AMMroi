@@ -38,7 +38,7 @@ async function parseProtections() {
             });
         }
     }
-},
+}
 
 
 let app = new Vue({
