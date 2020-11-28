@@ -299,7 +299,7 @@ let app = new Vue({
                     );
                     chart.data.datasets.push(
                         {
-                            label: "Return",
+                            label: "Uniswap return",
                             data: outputROI,
                             backgroundColor: window.chartColors.green,
 					        borderColor: window.chartColors.green,
