@@ -40,6 +40,7 @@ async function parseProtections() {
             });
         }
     }
+    app.parsedProtectionInc += 1;
 }
 
 
@@ -50,6 +51,7 @@ let app = new Vue({
         LiquidityProtectionStore: "",
         protections: [],
         parsedProtections: [],
+        parsedProtectionInc: 0,
         protectionMaxID: 1000,
         translator: {}
     },
