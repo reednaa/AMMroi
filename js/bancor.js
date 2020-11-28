@@ -20,14 +20,23 @@ async function parseProtections() {
     for (protection in app.protections) {
         const pp = app.protections[protection][1]
         app.parsedProtections[protection] = {id: app.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7]}; 
-        const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
-        const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
-        ST.methods.symbol().call().then(function(value) {
-            app.parsedProtections[protection].pool = value;
-        });
-        await EC20.methods.symbol().call().then(function(value) {
-            app.parsedProtections[protection].token = value;
-        });
+
+        if (app.translator[pp[1]]) {
+            app.parsedProtections[protection].pool = app.translator[pp[1]];
+        } else {
+            const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
+            await ST.methods.symbol().call().then(function(value) {
+                app.translator[pp[1]] = value;
+                app.parsedProtections[protection].pool = value;
+            });
+        }
+        if (app.translator[pp[2]]) {
+            const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
+            await EC20.methods.symbol().call().then(function(value) {
+                app.translator[pp[2]] = value;
+                app.parsedProtections[protection].token = value;
+            });
+        }
     }
 },
 
@@ -40,7 +49,7 @@ let app = new Vue({
         protections: [],
         parsedProtections: [],
         protectionMaxID: 1000,
-        
+        translator: {}
     },
     methods: {
         setProvider: function() {
