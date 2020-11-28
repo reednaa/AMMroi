@@ -61,7 +61,7 @@
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
         {{protections.length}}
 
-        <div style="min-width: 230px;" class="column" v-for="protection in parsedProtections" v-bind:key="protection.id">
+        <div style="min-width: 230px;" class="column" v-for="protection in parsedProtections" v-bind:key="parsedProtectionInc">
             <div class="card">
                 <div class="card-content">
                     <div class="media">

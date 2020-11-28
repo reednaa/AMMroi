@@ -59,7 +59,7 @@ let app = new Vue({
         parsedProtections: [],
         parsedProtectionInc: 0,
         protectionMaxID: 1000,
-        translator: {0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE: "eth", 0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2: "mkr"}
+        translator: {0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE: "ETH", 0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2: "MKR"}
     },
     methods: {
         setProvider: function() {
