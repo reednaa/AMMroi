@@ -1,5 +1,5 @@
 
-function getAllProtections() {
+async function getAllProtections() {
     for (let i = 0; i < app.protectionMaxID; i++) {
         app.LiquidityProtectionStore.methods.protectedLiquidity(i).call().then(
             function(value) {
