@@ -62,7 +62,7 @@ let app = new Vue({
     },
     methods: {
         setProvider: function() {
-        app.setupWeb3();
+            app.setupWeb3();
     },
         setupWeb3: function () {
         // let ethereum = window.ethereum;
@@ -72,6 +72,12 @@ let app = new Vue({
         //     (accounts) => app.selectedAccount = accounts[0]
         // ); 
         this.LiquidityProtectionStore = new this.web3.eth.Contract(LiquidityProtectionStore, "0xf5FAB5DBD2f3bf675dE4cB76517d4767013cfB55");
+    },
+    getAllProtections: function () {
+        getAllProtections();
+    },
+    parseProtections: function () {
+        parseProtections();
     },
         // getProtectionMaxID: function () {
         // this.LiquidityProtectionStore.getPastEvents("ProtectionAdded", {}).then(function(events) {
@@ -97,7 +103,4 @@ let app = new Vue({
         }
         }
     },
-    created() {
-        this.setProvider();
-    }
 });

@@ -60,6 +60,8 @@
         <button @click="setProvider()" class="is-large button" id="connect" v-if="web3 == false">Connect wallet</button>
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
         {{protections.length}}
+        <button @click="getAllProtections()" class="is-large button">getAllProtections() {{protections.length}} </button>
+        <button @click="parseProtections()" class="is-large button">parseProtections()</button>
 
         <div style="min-width: 230px;" class="column" v-for="protection in parsedProtections" :key="protection.id">
             <div class="card">
