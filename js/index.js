@@ -90,7 +90,28 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    return [outputFees, outputTP, outputROI, outputProtected]
+    let bancorProtected = [];
+    for (arr of json_data.slice(start_index)) {
+        let IL = 2*Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice);
+        let ROI = arr[index_ROI]/initialInv-1;
+        let t = moment.unix(arr[index_time]).diff(moment.unix(json_data.slice(start_index)[0][index_time]), "days")
+        if (0 <= t < 30) {
+            let protection = 0;
+        } else if (30 <= t < 100) {
+            let protection = t/100
+        } else {
+            let protection = 1
+        }
+        bancorProtected.push(
+            {
+            x: moment.unix(arr[index_time]),
+            y: round(
+                ROI*IL + protection*(1-IL)
+                , 4)
+            }
+        );
+    }
+    return [outputFees, outputTP, outputROI, outputProtected, bancorProtected]
 }
 
 
@@ -134,6 +155,7 @@ let app = new Vue({
         calender: "",
         showProtected: true,
         lastChart: "",
+        bancorProtected: false,
     },
     methods: {
         addChart: function() {
@@ -229,7 +251,7 @@ let app = new Vue({
             Papa.parse("/data/uniswapv2/roi/" + currency + ".csv", {
                 download: true,
                 complete: function(results) {
-                    let [outputFees, outputTP, outputROI, outputProtected] = convertData(results.data, start_date);
+                    let [outputFees, outputTP, outputROI, outputProtected, bancorProtected] = convertData(results.data, start_date);
                     if (app.showProtected) {
                         chart.data.datasets.push(
                             {
@@ -242,6 +264,18 @@ let app = new Vue({
                             }
                         );
                     };
+                    if (app.bancorProtected) {
+                        chart.data.datasets.push(
+                            {
+                                label: "Return w.o. IL.",
+                                data: bancorProtected,
+                                backgroundColor: window.chartColors.yellow,
+                                borderColor: window.chartColors.yellow,
+                                fill: false,
+                                steppedLine: "middle"
+                            }
+                        );
+                    }
                     chart.data.datasets.push(
                         {
                             label: "Collected Fees",
@@ -298,6 +332,20 @@ let app = new Vue({
                     );
                 }
             });
+        },
+        showProtected: function(val, oldval) {
+            if (val) {
+                if (this.bancorProtected) {
+                    this.bancorProtected = !this.bancorProtected;
+                }
+            }
+        },
+        bancorProtected: function(val, oldval) {
+            if (val) {
+                if (this.showProtected) {
+                    this.showProtected = !this.bancorProtected;
+                }
+            }
         }
     },
     created() {

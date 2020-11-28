@@ -39,12 +39,12 @@ async function parseProtections() {
                 app.translator[pp[2]] = value;
                 Vue.set(app.parsedProtections, protection, {token: value, ...app.parsedProtections[protection]});
             });
+            }
+            catch(err) {
+                console.log(pp[2]);
+                app.parsedProtections[protection].token = pp[2];
+            }
         }
-        catch(err) {
-            console.log(pp[2]);
-            app.parsedProtections[protection].token = pp[2];
-        }
-    }
         if (app.decimals[pp[2]]) {
             Vue.set(app.parsedProtections, protection, {decimals: app.decmials[pp[2]], ...app.parsedProtections[protection]});
         } else {
