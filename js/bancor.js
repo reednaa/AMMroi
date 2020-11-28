@@ -1,6 +1,6 @@
 async function getAllProtections() {
-    for (let i = 0;i<this.protectionMaxID;i++) {
-        await this.LiquidityProtectionStore.methods.protectedLiquidity(i).call().then(
+    for (let i = 0;i<app.protectionMaxID;i++) {
+        await app.LiquidityProtectionStore.methods.protectedLiquidity(i).call().then(
             function(value) {
                 app.protections.push([i, value]);
             }
