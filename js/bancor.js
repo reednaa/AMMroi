@@ -1,12 +1,35 @@
 async function getAllProtections() {
-    for (let i = 0;i<app.protectionMaxID;i++) {
-        await app.LiquidityProtectionStore.methods.protectedLiquidity(i).call().then(
+    const passes = 10;
+    for (let i = 0; i < app.protectionMaxID; i += passes) {
+        for (let q = 0; q < (passes-1); q++) {
+            app.LiquidityProtectionStore.methods.protectedLiquidity(i+q).call().then(
+                function(value) {
+                    app.protections.push([i+q, value]);
+                }
+            );
+        }
+        await app.LiquidityProtectionStore.methods.protectedLiquidity(i+passes-1).call().then(
             function(value) {
-                app.protections.push([i, value]);
+                app.protections.push([i+passes-1, value]);
             }
-        )
+        );
     }
 }
+
+async function parseProtections() {
+    for (protection in app.protections) {
+        const pp = app.protections[protection][1]
+        app.parsedProtections[protection] = {id: app.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7]}; 
+        const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
+        const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
+        ST.methods.symbol().call().then(function(value) {
+            app.parsedProtections[protection].pool = value;
+        });
+        await EC20.methods.symbol().call().then(function(value) {
+            app.parsedProtections[protection].token = value;
+        });
+    }
+},
 
 
 let app = new Vue({
@@ -74,8 +97,9 @@ let app = new Vue({
 },
     watch: {
         protections: function(val, old) {
-        if ((val.length >= protectionMaxID))
+        if ((val.length >= this.protectionMaxID)) {
             app.sortProtections();
+        }
         }
     }
 });
