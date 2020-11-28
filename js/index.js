@@ -267,7 +267,7 @@ let app = new Vue({
                     if (app.bancorProtected) {
                         chart.data.datasets.push(
                             {
-                                label: "Return w.o. IL.",
+                                label: "Bancor Protected",
                                 data: bancorProtected,
                                 backgroundColor: window.chartColors.yellow,
                                 borderColor: window.chartColors.yellow,
