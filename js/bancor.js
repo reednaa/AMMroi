@@ -1,5 +1,5 @@
 async function getAllProtections() {
-    const passes = 10;
+    const passes = 8;
     for (let i = 0; i < app.protectionMaxID; i += passes) {
         for (let q = 0; q < (passes-1); q++) {
             app.LiquidityProtectionStore.methods.protectedLiquidity(i+q).call().then(
@@ -26,7 +26,7 @@ async function parseProtections() {
         } else {
             const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
             await ST.methods.symbol().call().then(function(value) {
-                app.translator[pp[1]] = value;
+                Vue.set(app.translator, pp[1], value);
                 Vue.set(app.parsedProtections, protection, {pool: value, ...app.parsedProtections[protection]});
             });
         }
@@ -36,7 +36,7 @@ async function parseProtections() {
             try {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
             await EC20.methods.symbol().call().then(function(value) {
-                app.translator[pp[2]] = value;
+                Vue.set(app.translator, pp[2], value);
                 Vue.set(app.parsedProtections, protection, {token: value, ...app.parsedProtections[protection]});
             });
             }
@@ -50,7 +50,7 @@ async function parseProtections() {
         } else {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
             await EC20.methods.decimals().call().then(function(value) {
-                app.decimals[pp[2]] = value;
+                Vue.set(app.decimals, pp[2], value);
                 Vue.set(app.parsedProtections, protection, {decimals: value, ...app.parsedProtections[protection]});
             });
         }
@@ -69,51 +69,85 @@ let app = new Vue({
         protections: [],
         parsedProtections: [],
         parsedProtectionInc: 0,
-        protectionMaxID: 4000,
+        protectionMaxID: 5000,
         translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR"},
-        decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18}
+        decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18},
+        TKNprices: {""},
+        BNTprices: {},
+        PTprices: {},
+        ready: false,
     },
     methods: {
         setProvider: function() {
             app.setupWeb3();
-    },
-        setupWeb3: function () {
-        // let ethereum = window.ethereum;
-        const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e');
-        this.web3 = new Web3(provider);
-        // this.web3.eth.getAccounts().then(
-        //     (accounts) => app.selectedAccount = accounts[0]
-        // ); 
-        this.LiquidityProtectionStore = new this.web3.eth.Contract(LiquidityProtectionStore, "0xf5FAB5DBD2f3bf675dE4cB76517d4767013cfB55");
-    },
-    getAllProtections: function () {
-        getAllProtections();
-    },
-    parseProtections: function () {
-        parseProtections();
-    },
+        },
+        setupWeb3: function() {
+            // let ethereum = window.ethereum;
+            const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e');
+            this.web3 = new Web3(provider);
+            // this.web3.eth.getAccounts().then(
+            //     (accounts) => app.selectedAccount = accounts[0]
+            // ); 
+            this.LiquidityProtectionStore = new this.web3.eth.Contract(LiquidityProtectionStore, "0xf5FAB5DBD2f3bf675dE4cB76517d4767013cfB55");
+        },
+        getAllProtections: function() {
+            getAllProtections();
+            this.ready = false;
+        },
+        parseProtections: function() {
+            parseProtections();
+        },
         // getProtectionMaxID: function () {
         // this.LiquidityProtectionStore.getPastEvents("ProtectionAdded", {}).then(function(events) {
         //     console.log(events);
         //     this.protectionMaxID = events.length;
         // });
-    sortProtections: function () {
-        // First purne all non needed entries
-        let clone = [...this.protections];
-        this.protections = [];
-        for (protection in clone) {
-            if (clone[protection][1][0] != "0x0000000000000000000000000000000000000000") {
-            this.protections.push(clone[protection]);
+        sortProtections: function() {
+            // First purne all non needed entries
+            let clone = [...this.protections];
+            this.protections = [];
+            for (protection in clone) {
+                if (clone[protection][1][0] != "0x0000000000000000000000000000000000000000") {
+                this.protections.push(clone[protection]);
+                }
             }
-        }
-        this.protections.sort((a,b) => a[0] - b[0]);
+            this.protections.sort((a,b) => a[0] - b[0]);
+            setTimeout(function() {
+                parseProtections();
+            }, 500).then((v) => app.ready = true);
+        },
+        easyParse: function (toParse) {
+            // Requires one to first use parseProtections to create the translator.
+            let parseReturn = [];
+            for (protection in toParse) {
+                const pp = toParse[protection][1]
+                parseReturn[protection] = {id: toParse[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7], pool: this.translator[pp[1]], token: this.translator[pp[2]], decimals: this.decimals[pp[2]]};
+            }
+            return parseReturn;
+        },
+        // list.filter(protection => protection.pool == ETHBNT)
+        // getProtectionForPool: function(protectionSubset, index, value) {
+        //     let subsetReturn = [];
+        //     for (protection in protectionSubset) {
+        //         if (protectionSubset[protection][index] = value) {
+        //             subsetReturn[protection] = protectionSubset[protection]
+        //         }
+        //     }
+        //     return subsetReturn;
+        // },
     },
-},
     watch: {
         protections: function(val, old) {
-        if ((val.length >= this.protectionMaxID)) {
-            app.sortProtections();
-        }
+            if ((val.length >= this.protectionMaxID)) {
+                app.sortProtections();
+            }
+        },
+        translator: function(val, old) {
+            for (pool in val) {
+                if (pool.includes("BNT")) {
+                    const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
+                }
+            }
         }
     },
 });

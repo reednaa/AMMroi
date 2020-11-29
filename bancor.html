@@ -61,7 +61,22 @@
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
         <button @click="getAllProtections()" class="is-large button" v-if="protections.length  == 0">getAllProtections() {{protections.length}} </button>
         <button @click="getAllProtections()" class="is-large button" v-else disabled>getAllProtections() {{protections.length}} </button>
-        <button @click="parseProtections()" class="is-large button">parseProtections()</button>
+
+        <!-- <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Pool
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+                        BNT staked
+                    </th>
+                </tr>
+            </thead>
+        </table> -->
 
         <div class="columns is-multiline">
             <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections" :key="protection.id">
