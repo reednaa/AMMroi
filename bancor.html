@@ -78,7 +78,39 @@
             </thead>
         </table> -->
 
-        <div class="columns is-multiline">
+        <div class="tabs">
+            <ul>
+              <li @click="site = 0" :class="{is-active: site = 0}"><a>Pools</a></li>
+              <li @click="site = 1" :class="{is-active: site = 1}"><a>Protections</a></li>
+              <li @click="site = 2" :class="{is-active: site = 2}"><a>User</a></li>
+            </ul>
+        </div>
+
+        <table class="table" v-if="site = 1">
+            <thead>
+                <tr>
+                    <th>Pool</th>
+                    <th>Token</th>
+                    <th>Staked</th>
+                    <th></th>
+                    <th>Token</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody v-for="element in translator.filter(tkn => translator[tkn].includes('bnt'))">
+                <tr>
+                    <td>{{element}}</td>
+                    <td>{{element.replace("BNT","")}}</th>
+                    <td>{{dictSum(parsedProtections.filter(protection => protection.token == element.replace("BNT","")), "reserve")}}</td>
+                    <td></td>
+                    <td>BNT</td>
+                    <td>{{dictSum(parsedProtections.filter(protection => protection.pool == element).filter(protection => protection.token == element.replace("BNT","")), "reserve")}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div class="columns is-multiline" v-if="site == 1">
             <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections" :key="protection.id">
                 <div class="card">
                     <div class="card-content">
@@ -94,17 +126,46 @@
                             </div>
                         </div>
                         <div class="content">
-                            Token: {{protection.token}}
-                            <br>
-                            Pool: {{protection.pool}}
-                            <br>
-                            Pool Token Amount: {{protection.pt/10**18}}
-                            <br>
-                            Original deposit: {{protection.reserve/10**protection.decimals}}
-                            <br>
-                            Rate: {{protection.rate}}
-                            <br>
-                            Timestamp: {{protection.timestamp}}
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            {{protection.pool}}
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                        <th>
+                                            Pool Tokens
+                                        </th>
+                                        <th>
+                                            Rate
+                                        </th>
+                                        <th>
+                                            Timestamp
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            {{protection.token}}
+                                        </td>
+                                        <th>
+                                            {{protection.reserve/10**protection.decimals}}
+                                        </th>
+                                        <th>
+                                            {{protection.pt/10**18}}
+                                        </th>
+                                        <th>
+                                            {{protection.rate}}
+                                        </th>
+                                        <th>
+                                            {{protection.timestamp}}
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

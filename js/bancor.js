@@ -60,6 +60,33 @@ async function parseProtections() {
     }, 1000);
 }
 
+function reverseLookup(dict, value) {
+    for (header in dict) {
+        if (dict[header] == value) {
+            return header;
+        }
+    }
+}
+
+async function ensurePrices(pools) {
+    const reserve0 = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
+    for (pool of pools) {
+        const ST = new app.web3.eth.Contract(SmartToken, pool);
+        const totalSupply = await ST.methods.totalSupply().call()/10**18;
+        const poolAddress = await ST.methods.owner().call();
+        const pool = new app.web3.eth.Contract(poolAbi, poolAddress);
+        // Prices are BNT/TKN
+        const reserve1 = await pool.methods.reserveTokens(1).call();
+
+        const reserve0Balance = await pool.methods.reserveBalance(reserve0).call()/10**18;
+        const reserve1Balance = await pool.methods.reserveBalance(reserve1).call()/10**app.decimals[reserve1];
+
+        Vue.set(app.TKNprices, reserve1, reserve0Balance/reserve1Balance);
+        Vue.set(app.PTprices, reserve0 + reserve1, reserve0Balance/totalSupply);
+        Vue.set(app.PTprices, reserve1 + reserve0, reserve1Balance/totalSupply);
+    }
+}
+
 
 let app = new Vue({
     el: '#app',
@@ -72,10 +99,10 @@ let app = new Vue({
         protectionMaxID: 5000,
         translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR"},
         decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18},
-        TKNprices: {""},
-        BNTprices: {},
+        TKNprices: {},
         PTprices: {},
         ready: false,
+        site: 0,
     },
     methods: {
         setProvider: function() {
@@ -125,6 +152,13 @@ let app = new Vue({
             }
             return parseReturn;
         },
+        dictSum: function(dict, index) {
+            let toReturn = 0;
+            for (element in dict) {
+                toReturn += dict[element][index];
+            }
+            return toReturn;
+        }
         // list.filter(protection => protection.pool == ETHBNT)
         // getProtectionForPool: function(protectionSubset, index, value) {
         //     let subsetReturn = [];
@@ -145,9 +179,9 @@ let app = new Vue({
         translator: function(val, old) {
             for (pool in val) {
                 if (pool.includes("BNT")) {
-                    const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
+                    const ST = new app.web3.eth.Contract(SmartToken, pool);
                 }
             }
         }
-    },
+    }
 });
