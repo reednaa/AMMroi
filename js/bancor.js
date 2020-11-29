@@ -102,7 +102,7 @@ let app = new Vue({
         TKNprices: {},
         PTprices: {},
         ready: false,
-        site: 0,
+        site: 1,
     },
     methods: {
         setProvider: function() {
