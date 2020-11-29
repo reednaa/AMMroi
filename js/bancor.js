@@ -58,6 +58,7 @@ async function parseProtections() {
     setTimeout(function () {
         jdenticon();
     }, 1000);
+    app.ready = true;
 }
 
 function reverseLookup(dict, value) {
@@ -141,7 +142,7 @@ let app = new Vue({
             this.protections.sort((a,b) => a[0] - b[0]);
             setTimeout(function() {
                 parseProtections();
-            }, 500).then((v) => app.ready = true);
+            }, 500);
         },
         easyParse: function (toParse) {
             // Requires one to first use parseProtections to create the translator.
@@ -158,17 +159,17 @@ let app = new Vue({
                 toReturn += dict[element][index];
             }
             return toReturn;
-        }
+        },
         // list.filter(protection => protection.pool == ETHBNT)
-        // getProtectionForPool: function(protectionSubset, index, value) {
-        //     let subsetReturn = [];
-        //     for (protection in protectionSubset) {
-        //         if (protectionSubset[protection][index] = value) {
-        //             subsetReturn[protection] = protectionSubset[protection]
-        //         }
-        //     }
-        //     return subsetReturn;
-        // },
+        filterDict: function(protectionSubset, index, value) {
+            let subsetReturn = [];
+            for (protection in protectionSubset) {
+                if (protectionSubset[protection][index] = value) {
+                    subsetReturn[protection] = protectionSubset[protection]
+                }
+            }
+            return subsetReturn;
+        },
     },
     watch: {
         protections: function(val, old) {

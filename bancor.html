@@ -86,90 +86,97 @@
             </ul>
         </div>
 
-        <table class="table" v-if="site == 0">
-            <thead>
-                <tr>
-                    <th>Pool</th>
-                    <th>Token</th>
-                    <th>Staked</th>
-                    <th></th>
-                    <th>Token</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody v-for="element in translator.filter(tkn => translator[tkn].includes('bnt'))">
-                <tr>
-                    <td>{{element}}</td>
-                    <td>{{element.replace("BNT","")}}</th>
-                    <td>{{dictSum(parsedProtections.filter(protection => protection.token == element.replace("BNT","")), "reserve")}}</td>
-                    <td></td>
-                    <td>BNT</td>
-                    <td>{{dictSum(parsedProtections.filter(protection => protection.pool == element).filter(protection => protection.token == element.replace("BNT","")), "reserve")}}</td>
-                </tr>
-            </tbody>
-        </table>
-
-
-        <div class="columns is-multiline" v-if="site == 1">
-            <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections" :key="protection.id">
-                <div class="card">
-                    <div class="card-content">
-                        <div class="media">
-                            <div class="media-left">
-                                <svg :data-jdenticon-value="protection.owner.substring(0,20)" width="48" height="48">
-                                    Jdenticon
-                                </svg>
+        <div v-if="parsedProtections">
+            <table class="table" v-if="site == 0">
+                <thead>
+                    <tr>
+                        <th>Pool</th>
+                        <th>Token</th>
+                        <th>Staked</th>
+                        <th></th>
+                        <th>Token</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody v-for="element in translator.filter(tkn => translator[tkn].includes('bnt'))">
+                    <tr>
+                        <td>{{element}}</td>
+                        <td>{{element.replace("BNT","")}}</th>
+                        <td>
+                            {{dictSum(filterDict(parsedProtections, "token", element.replace("BNT","")), "reserve")}}
+                        </td>
+                        <td></td>
+                        <td>BNT</td>
+                        <td>
+                            {{dictSum(filterDict(filterDict(parsedProtections, "pool", element), "token", element.replace("BNT","")), "reserve")}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="columns is-multiline" v-else-if="site == 1">
+                <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections" :key="protection.id">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-left">
+                                    <svg :data-jdenticon-value="protection.owner.substring(0,20)" width="48" height="48">
+                                        Jdenticon
+                                    </svg>
+                                </div>
+                                <div class="media-content">
+                                    <p class="title is-4" style="text-overflow: ellipsis;">{{protection.owner}}, {{protection.id}}</p>
+                                    <p class="subtitle is-6" style="text-overflow: ellipsis;">{{protection.owner}}</p>
+                                </div>
                             </div>
-                            <div class="media-content">
-                                <p class="title is-4" style="text-overflow: ellipsis;">{{protection.owner}}, {{protection.id}}</p>
-                                <p class="subtitle is-6" style="text-overflow: ellipsis;">{{protection.owner}}</p>
+                            <div class="content">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                {{protection.pool}}
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                            <th>
+                                                Pool Tokens
+                                            </th>
+                                            <th>
+                                                Rate
+                                            </th>
+                                            <th>
+                                                Timestamp
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {{protection.token}}
+                                            </td>
+                                            <th>
+                                                {{(protection.reserve/10**protection.decimals).toFixed(4)}}
+                                            </th>
+                                            <th>
+                                                {{(protection.pt/10**18).toFixed(4)}}
+                                            </th>
+                                            <th>
+                                                {{(protection.rate).toFixed(5)}}
+                                            </th>
+                                            <th>
+                                                {{protection.timestamp}}
+                                            </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                        <div class="content">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            {{protection.pool}}
-                                        </th>
-                                        <th>
-                                            Amount
-                                        </th>
-                                        <th>
-                                            Pool Tokens
-                                        </th>
-                                        <th>
-                                            Rate
-                                        </th>
-                                        <th>
-                                            Timestamp
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            {{protection.token}}
-                                        </td>
-                                        <th>
-                                            {{protection.reserve/10**protection.decimals}}
-                                        </th>
-                                        <th>
-                                            {{protection.pt/10**18}}
-                                        </th>
-                                        <th>
-                                            {{protection.rate}}
-                                        </th>
-                                        <th>
-                                            {{protection.timestamp}}
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div v-else>
+            Loading
         </div>
     </div>
 </body>
