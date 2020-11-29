@@ -80,9 +80,9 @@
 
         <div class="tabs">
             <ul>
-              <li @click="site = 0" :class="{is-active: site = 0}"><a>Pools</a></li>
-              <li @click="site = 1" :class="{is-active: site = 1}"><a>Protections</a></li>
-              <li @click="site = 2" :class="{is-active: site = 2}"><a>User</a></li>
+              <li @click="site = 0" :class="{is-active: site == 0}"><a>Pools</a></li>
+              <li @click="site = 1" :class="{is-active: site == 1}"><a>Protections</a></li>
+              <li @click="site = 2" :class="{is-active: site == 2}"><a>User</a></li>
             </ul>
         </div>
 
