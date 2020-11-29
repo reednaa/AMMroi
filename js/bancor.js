@@ -1,5 +1,5 @@
 async function getAllProtections() {
-    const passes = 8;
+    const passes = 6;
     for (let i = 0; i < app.protectionMaxID; i += passes) {
         for (let q = 0; q < (passes-1); q++) {
             app.LiquidityProtectionStore.methods.protectedLiquidity(i+q).call().then(
@@ -161,7 +161,7 @@ let app = new Vue({
             return toReturn;
         },
         reverseLookup: function(dict, value) {
-            return reverseLookup(dict, value)
+            return reverseLookup(dict, value);
         },
         // list.filter(protection => protection.pool == ETHBNT)
         filterDict: function(protectionSubset, index, f) {
