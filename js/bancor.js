@@ -160,6 +160,9 @@ let app = new Vue({
             }
             return toReturn;
         },
+        reverseLookup: function(dict, value) {
+            return reverseLookup(dict, value)
+        },
         // list.filter(protection => protection.pool == ETHBNT)
         filterDict: function(protectionSubset, index, f) {
             let subsetReturn = [];
