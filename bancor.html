@@ -62,22 +62,6 @@
         <button @click="getAllProtections()" class="is-large button" v-if="protections.length  == 0">getAllProtections() {{protections.length}} </button>
         <button @click="getAllProtections()" class="is-large button" v-else disabled>getAllProtections() {{protections.length}} </button>
 
-        <!-- <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        Pool
-                    </th>
-                    <th>
-
-                    </th>
-                    <th>
-                        BNT staked
-                    </th>
-                </tr>
-            </thead>
-        </table> -->
-
         <div class="tabs">
             <ul>
               <li @click="site = 0" :class="{'is-active': site == 0}"><a>Pools</a></li>
@@ -98,17 +82,17 @@
                         <th>Amount</th>
                     </tr>
                 </thead>
-                <tbody v-for="element in filterDict(translator, tkn, (e) => e.includes('BNT'))">
+                <tbody v-for="element in filterDict(translator, false, (e) => (e.includes('BNT')) && (e != 'BNT'))">
                     <tr>
                         <td>{{element}}</td>
                         <td>{{element.replace("BNT","")}}</th>
                         <td>
-                            {{dictSum(filterDict(parsedProtections, "token", element.replace("BNT","")), (e) => e == "reserve")}}
+                            {{((dictSum(filterDict(parsedProtections, "token", (e) => e == element.replace("BNT","")), "reserve"))/10**translator[element.replace("BNT", "")]).toFixed(2)}}
                         </td>
                         <td></td>
                         <td>BNT</td>
                         <td>
-                            {{dictSum(filterDict(filterDict(parsedProtections, "pool", (e) => e == element), "token", element.replace("BNT","")), (e) => e == "reserve")}}
+                            {{((dictSum(filterDict(filterDict(parsedProtections, "pool", (e) => e == element), "token", (e) => e == "BNT"), "reserve"))/10**18).toFixed(2)}}
                         </td>
                     </tr>
                 </tbody>

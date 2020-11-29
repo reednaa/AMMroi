@@ -17,7 +17,7 @@ async function getAllProtections() {
 }
 
 async function parseProtections() {
-    for (protection in app.protections) {
+    for (let protection in app.protections) {
         const pp = app.protections[protection][1]
         Vue.set(app.parsedProtections, protection, {id: app.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7]});
 
@@ -62,7 +62,7 @@ async function parseProtections() {
 }
 
 function reverseLookup(dict, value) {
-    for (header in dict) {
+    for (let header in dict) {
         if (dict[header] == value) {
             return header;
         }
@@ -71,7 +71,7 @@ function reverseLookup(dict, value) {
 
 async function ensurePrices(pools) {
     const reserve0 = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
-    for (pool of pools) {
+    for (let pool of pools) {
         const ST = new app.web3.eth.Contract(SmartToken, pool);
         const totalSupply = await ST.methods.totalSupply().call()/10**18;
         const poolAddress = await ST.methods.owner().call();
@@ -134,7 +134,7 @@ let app = new Vue({
             // First purne all non needed entries
             let clone = [...this.protections];
             this.protections = [];
-            for (protection in clone) {
+            for (let protection in clone) {
                 if (clone[protection][1][0] != "0x0000000000000000000000000000000000000000") {
                 this.protections.push(clone[protection]);
                 }
@@ -147,7 +147,7 @@ let app = new Vue({
         easyParse: function (toParse) {
             // Requires one to first use parseProtections to create the translator.
             let parseReturn = [];
-            for (protection in toParse) {
+            for (let protection in toParse) {
                 const pp = toParse[protection][1]
                 parseReturn[protection] = {id: toParse[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7], pool: this.translator[pp[1]], token: this.translator[pp[2]], decimals: this.decimals[pp[2]]};
             }
@@ -155,17 +155,23 @@ let app = new Vue({
         },
         dictSum: function(dict, index) {
             let toReturn = 0;
-            for (element in dict) {
-                toReturn += dict[element][index];
+            for (let ee in dict) {
+                toReturn += Number(dict[ee][index]);
             }
             return toReturn;
         },
         // list.filter(protection => protection.pool == ETHBNT)
         filterDict: function(protectionSubset, index, f) {
             let subsetReturn = [];
-            for (protection in protectionSubset) {
-                if (f(protectionSubset[protection][index])) {
-                    subsetReturn[protection] = protectionSubset[protection]
+            for (let protection in protectionSubset) {
+                if (!index) {
+                    if (f(protectionSubset[protection])) {
+                        subsetReturn.push(protectionSubset[protection]);
+                    }
+                } else {
+                    if (f(protectionSubset[protection][index])) {
+                        subsetReturn.push(protectionSubset[protection]);
+                    }
                 }
             }
             return subsetReturn;
@@ -178,7 +184,7 @@ let app = new Vue({
             }
         },
         translator: function(val, old) {
-            for (pool in val) {
+            for (let pool in val) {
                 if (pool.includes("BNT")) {
                     const ST = new app.web3.eth.Contract(SmartToken, pool);
                 }
