@@ -87,7 +87,7 @@
                         <td>{{element}}</td>
                         <td>{{element.replace("BNT","")}}</th>
                         <td>
-                            {{((dictSum(filterDict(parsedProtections, "token", (e) => e == element.replace("BNT","")), "reserve"))/10**translator[element.replace("BNT", "")]).toFixed(2)}}
+                            {{((dictSum(filterDict(parsedProtections, "token", (e) => e == element.replace("BNT","")), "reserve"))/10**decimals[element.replace("BNT", "")]).toFixed(2)}}
                         </td>
                         <td></td>
                         <td>BNT</td>
