@@ -98,17 +98,17 @@
                         <th>Amount</th>
                     </tr>
                 </thead>
-                <tbody v-for="element in translator.filter(tkn => translator[tkn].includes('bnt'))">
+                <tbody v-for="element in filterDict(translator, tkn, (e) => e.includes('BNT'))">
                     <tr>
                         <td>{{element}}</td>
                         <td>{{element.replace("BNT","")}}</th>
                         <td>
-                            {{dictSum(filterDict(parsedProtections, "token", element.replace("BNT","")), "reserve")}}
+                            {{dictSum(filterDict(parsedProtections, "token", element.replace("BNT","")), (e) => e == "reserve")}}
                         </td>
                         <td></td>
                         <td>BNT</td>
                         <td>
-                            {{dictSum(filterDict(filterDict(parsedProtections, "pool", element), "token", element.replace("BNT","")), "reserve")}}
+                            {{dictSum(filterDict(filterDict(parsedProtections, "pool", (e) => e == element), "token", element.replace("BNT","")), (e) => e == "reserve")}}
                         </td>
                     </tr>
                 </tbody>

@@ -161,10 +161,10 @@ let app = new Vue({
             return toReturn;
         },
         // list.filter(protection => protection.pool == ETHBNT)
-        filterDict: function(protectionSubset, index, value) {
+        filterDict: function(protectionSubset, index, f) {
             let subsetReturn = [];
             for (protection in protectionSubset) {
-                if (protectionSubset[protection][index] = value) {
+                if (f(protectionSubset[protection][index])) {
                     subsetReturn[protection] = protectionSubset[protection]
                 }
             }
