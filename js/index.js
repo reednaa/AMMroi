@@ -58,7 +58,7 @@ function convertData(json_data, start_date) {
         outputFees.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round(arr[index_ROI]/initialInv - 1, 4)
+            y: round((arr[index_ROI]/initialInv - 1)*100, 4)
             }
         );
     }
@@ -68,7 +68,7 @@ function convertData(json_data, start_date) {
         outputTP.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round(1 - 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice), 4)
+            y: round((1 - 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice))*100, 4)
             }
         );
     }
@@ -77,7 +77,7 @@ function convertData(json_data, start_date) {
         outputROI.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round((arr[index_ROI]/initialInv) * (2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice))-1, 4)
+            y: round(((arr[index_ROI]/initialInv) * (2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice))-1)*100, 4)
             }
         );
     }
@@ -86,7 +86,7 @@ function convertData(json_data, start_date) {
         outputProtected.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round((arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1-1, 4)
+            y: round(((arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1-1)*100, 4)
             }
         );
     }
@@ -205,7 +205,7 @@ let app = new Vue({
                             }],
                             yAxes: [{
                                 ticks: {
-                                       callback: function(value){return value*100+ "%"}
+                                       callback: function(value){return value+ "%"}
                                     }}
                                 ]
                         },
