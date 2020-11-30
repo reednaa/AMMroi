@@ -202,7 +202,12 @@ let app = new Vue({
                                 ticks: {
                                 //     min: ROIdata[0]["x"]
                                 }
-                            }]
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                       callback: function(value){return value*100+ "%"}
+                                    }}
+                                ]
                         },
                         tooltips: {
                             mode: 'index',
