@@ -107,7 +107,7 @@ function convertData(json_data, start_date) {
             {
             x: moment.unix(arr[index_time]),
             y: round(
-                ROI*IL + protection*(1-IL)-1
+                (ROI*IL + protection*(1-IL)-1)*100
                 , 4)
             }
         );
