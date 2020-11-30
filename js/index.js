@@ -62,13 +62,13 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    let outputTP = [];
+    let outputTP = []; // Impermanent loss, I can't remember why it is named TP
     const intialPrice = json_data[start_index][index_TP];
     for (arr of json_data.slice(start_index)) {
         outputTP.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round((1 - 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice))*100, 4)
+            y: round((2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice) - 1)*100, 4)
             }
         );
     }
@@ -353,7 +353,7 @@ let app = new Vue({
                     this.showProtected = !this.bancorProtected;
                 }
             }
-        }
+        },
     },
     created() {
         this.fetchAllTokens();
