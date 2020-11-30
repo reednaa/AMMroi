@@ -58,7 +58,7 @@ function convertData(json_data, start_date) {
         outputFees.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round(arr[index_ROI]/initialInv, 4)
+            y: round(arr[index_ROI]/initialInv - 1, 4)
             }
         );
     }
