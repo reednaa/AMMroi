@@ -68,7 +68,7 @@ function convertData(json_data, start_date) {
         outputTP.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round(2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice), 4)
+            y: round(1 - 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice), 4)
             }
         );
     }
@@ -77,7 +77,7 @@ function convertData(json_data, start_date) {
         outputROI.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round((arr[index_ROI]/initialInv) * (2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)), 4)
+            y: round((arr[index_ROI]/initialInv) * (2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice))-1, 4)
             }
         );
     }
@@ -86,7 +86,7 @@ function convertData(json_data, start_date) {
         outputProtected.push(
             {
             x: moment.unix(arr[index_time]),
-            y: round((arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1, 4)
+            y: round((arr[index_ROI]/initialInv-1) * ( 2 * Math.sqrt(arr[index_TP]/intialPrice)/(1 + arr[index_TP]/intialPrice)) + 1-1, 4)
             }
         );
     }
@@ -107,7 +107,7 @@ function convertData(json_data, start_date) {
             {
             x: moment.unix(arr[index_time]),
             y: round(
-                ROI*IL + protection*(1-IL)
+                ROI*IL + protection*(1-IL)-1
                 , 4)
             }
         );
