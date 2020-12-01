@@ -57,7 +57,7 @@ async function parseProtections() {
     }
     setTimeout(function () {
         jdenticon();
-    }, 1000);
+    }, 100);
     app.ready = true;
 }
 
@@ -77,14 +77,17 @@ async function ensurePrices(pools) {
         const poolAddress = await ST.methods.owner().call();
         const pool = new app.web3.eth.Contract(poolAbi, poolAddress);
         // Prices are BNT/TKN
-        const reserve1 = await pool.methods.reserveTokens(1).call();
+        let reserve1 = await pool.methods.reserveTokens(1).call();
+        if (app.translator[reserve1] == "BNT") {
+            reserve1 = await pool.methods.reserveTokens(0).call();
+        } // This is because I am 100% lazy. reserve1 is always non-bnt
 
         const reserve0Balance = await pool.methods.reserveBalance(reserve0).call()/10**18;
         const reserve1Balance = await pool.methods.reserveBalance(reserve1).call()/10**app.decimals[reserve1];
 
         Vue.set(app.TKNprices, reserve1, reserve0Balance/reserve1Balance);
         Vue.set(app.reserves, reserve1, [reserve0Balance, reserve1Balance]);
-        Vue.set(app.totalSupply, poolAddress, totalSupply);
+        Vue.set(app.totalSupply, a, totalSupply);
     }
 }
 
@@ -217,21 +220,26 @@ let app = new Vue({
                     protection = this.parsedProtections[p];
                 }
             }
-            const r0 = protection.rate;
+            const r0 = Number(protection.rate);
             let r1;
             let reserve;
-            const totalSupply = this.totalSupply[reverseLookup(this.translator, protection.pool)];
+            const totalSupply = Number(this.totalSupply[reverseLookup(this.translator, protection.pool)]);
             if (protection.token == "BNT") {
                 const token = protection.pool.replace("BNT", "");
                 const tokenAddress = reverseLookup(this.translator, token);
                 r1 = 1/(this.TKNprices[tokenAddress]);
-                reserve = this.reserves[protection.pool.replace("BNT", "")][0];
+                reserve = Number(this.reserves[reverseLookup(this.translator, protection.pool.replace("BNT", ""))][0]);
             } else {
                 const tokenAddress = reverseLookup(this.translator, protection.token);
-                r1 = this.TKNprices[tokenAddress];
-                reserve = this.reserves[protection.pool.replace("BNT", "")][1];
+                r1 = Number(this.TKNprices[tokenAddress]);
+                try {
+                reserve = Number(this.reserves[reverseLookup(this.translator, protection.pool.replace("BNT", ""))][1]);
+                }
+                catch(err) {
+                    console.log(protection.id);
+                }
             }
-            return Math.sqrt(r1/r0) * (reserve/totalSupply * protection.pt/10**18)/(protection.reserve/protection.decimals);
+            return Math.sqrt(r1/r0) * (reserve/totalSupply * Number(protection.pt)*2/10**18)/(Number(protection.reserve)/10**Number(protection.decimals));
         }
     },
     watch: {
@@ -249,7 +257,12 @@ let app = new Vue({
         },
         site: function(val, old) {
             if (val == 1) {
-                setTimeout(() => jdenticon(), 500);
+                setTimeout(() => jdenticon(), 350);
+            }
+        },
+        ready: function(val, old) {
+            if (val) {
+                app.getPricesForAll();
             }
         }
     }

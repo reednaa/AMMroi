@@ -149,40 +149,40 @@
                                             </th>
                                         </tr>
                                     </tbody>
-                                </table>
-                                <table class="table" v-if="pricesReady">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                IL
-                                            </th>
-                                            <th>
-                                                Unprotected
-                                            </th>
-                                            <th>
-                                                Protected
-                                            </th>
-                                            <th>
-                                                Protected return
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                {{1 - impermanentLoss(protection.id)}}
-                                            </td>
-                                            <th>
-                                                {{Fees(protection.id) * impermanentLoss(protection.id) - 1}}
-                                            </th>
-                                            <th>
-                                                {{(Fees(protection.id) - 1) * impermanentLoss(protection.id) + 1}}
-                                            </th>
-                                            <th>
-                                                WIP
-                                            </th>
-                                        </tr>
-                                    </tbody>
+                                    <template v-if="pricesReady">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    IL
+                                                </th>
+                                                <th>
+                                                    Unprotected
+                                                </th>
+                                                <th>
+                                                    Protected
+                                                </th>
+                                                <th>
+                                                    WIP
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    {{((1 - impermanentLoss(protection.id))*100).toFixed(4)}}%
+                                                </td>
+                                                <th>
+                                                    {{((Fees(protection.id) * impermanentLoss(protection.id) - 1)*100).toFixed(4)}}%
+                                                </th>
+                                                <th>
+                                                    {{(((Fees(protection.id) - 1) * impermanentLoss(protection.id))*100).toFixed(4)}}%
+                                                </th>
+                                                <th>
+                                                    WIP
+                                                </th>
+                                            </tr>
+                                        </tbody>
+                                    </template>
                                 </table>
                             </div>
                         </div>
