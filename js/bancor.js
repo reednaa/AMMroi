@@ -108,6 +108,7 @@ let app = new Vue({
         reserves: {},
         pricesReady: false,
         ready: false,
+        calculatedReady: false,
         site: 1,
     },
     methods: {
@@ -242,12 +243,14 @@ let app = new Vue({
             return Math.sqrt(r1/r0) * (reserve/totalSupply * Number(protection.pt)*2/10**18)/(Number(protection.reserve)/10**Number(protection.decimals));
         },
         addCalculatedData: function() {
+            this.calculatedReady = false;
             for (let pp in this.parsedProtections) {
                 const protection = this.parsedProtections[pp];
                 const IL = this.impermanentLoss(protection.id);
                 const fees = this.fees(protection.id);
                 Vue.set(this.parsedProtections, pp, {IL:IL, fees:fees, ...protection})
             }
+            this.calculatedReady = true;
         }
     },
     watch: {
