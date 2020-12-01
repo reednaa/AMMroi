@@ -242,11 +242,11 @@ let app = new Vue({
             return Math.sqrt(r1/r0) * (reserve/totalSupply * Number(protection.pt)*2/10**18)/(Number(protection.reserve)/10**Number(protection.decimals));
         },
         addCalculatedData: function() {
-            for (pp in this.protection) {
-                const protection = this.protection[pp];
+            for (pp in this.parsedProtections) {
+                const protection = this.parsedProtections[pp];
                 const IL = impermanentLoss(protection.id);
                 const fees = Fees(protection.id);
-                Vue.set(this.protection, pp, {IL:IL, fees:fees, ...protection})
+                Vue.set(this.parsedProtections, pp, {IL:IL, fees:fees, ...protection})
             }
         }
     },
