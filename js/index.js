@@ -336,7 +336,7 @@ let app = new Vue({
                         app.selectedDate = dateStr;
                      }}
                     );
-                    app.selectedDate = moment.unix(results.data[1][1]).format("YYYY-MM-DD HH-mm");
+                    app.selectedDate = moment.unix(results.data[1][1]).format("YYYY-MM-DD HH:mm");
                 }
             });
         },

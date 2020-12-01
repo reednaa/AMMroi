@@ -189,7 +189,7 @@ let app = new Vue({
             ensurePrices(allPools);
         },
         toHumanTime: function(timestamp) {
-            return moment.unix(timestamp).format("YYYY-MM-DD HH-mm");
+            return moment.unix(timestamp).format("YYYY-MM-DD HH:mm");
         },
         impermanentLoss: function(protectionID) {
             let protection;
