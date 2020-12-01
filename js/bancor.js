@@ -244,8 +244,12 @@ let app = new Vue({
     },
     watch: {
         protections: function(val, old) {
-            if ((val.length > Number(this.protectionMaxID))) {
-                app.sortProtections();
+            if ((val.length >= Number(this.protectionMaxID))) {
+                setTimeout(function() {
+                    if (app.protections.length == val.length) {
+                        app.sortProtections();
+                    }
+                }, 100);
             }
         },
         translator: function(val, old) {
