@@ -82,11 +82,13 @@
                                 </div>
                             </div>
                         </template>
-                        <div class="control" v-else>
+                        <div class="field" v-else>
                             <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID"></progress>
                         </div>
-                        <div class="control">
-                            {{parsedProtections.length}}/{{protectionMaxID}}
+                        <div class="field">
+                            <div class="control">
+                                {{protections.length}}/{{protectionMaxID}}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,11 +97,15 @@
                         <label class="label">Parsing</label>
                     </div>
                     <div class="field-body">
-                        <div class="control">
-                            <progress class="progress" style="width: 20vw;"" :value="parsedProtections.length" :max="protections.length"></progress>
+                        <div class="field">
+                            <div class="control">
+                                <progress class="progress is-link" style="width: 20vw;"" :value="parsedProtections.length" :max="protections.length"></progress>
+                            </div>
                         </div>
-                        <div class="control">
-                            {{parsedProtections.length}}/{{protections.length}}
+                        <div class="field">
+                            <div class="control">
+                                {{parsedProtections.length}}/{{protections.length}}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -109,7 +115,7 @@
                     </div>
                     <div class="field-body">
                         <div class="control">
-                            <progress class="progress" style="width: 20vw;" max="1"></progress>
+                            <progress class="progress is-success" style="width: 20vw;" max="1"></progress>
                         </div>
                     </div>
                 </div>
