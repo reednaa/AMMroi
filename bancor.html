@@ -117,7 +117,7 @@
                     </div>
                     <div class="field-body">
                         <div class="field">
-                            <progress class="progress is-success" style="width: 20vw;" :value="Object.keys(app.totalSupply).length*2" :max="Object.keys(app.translator).length"></progress>
+                            <progress class="progress is-success" style="width: 20vw;" :value="dictLength(totalSupply)*2" :max="dictLength(translator)"></progress>
                         </div>
                     </div>
                 </div>
@@ -276,6 +276,6 @@
 <script type="text/javascript" src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
 
 <script src="/js/abi.js"></script>
-<script src="/js/bancor.js?v=6"></script>
+<script src="/js/bancor.js?v=7"></script>
 
 </html>
