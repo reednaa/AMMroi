@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-    <title>Uniswap v2 pool information</title>
+    <title>Bancor Network information</title>
     <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
         integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
@@ -26,23 +26,19 @@
         integrity="sha256-btg10M6OuilEf55qRv0f370emD4TckUGmmEm03YaJtE=" crossorigin="anonymous"></script>
     <style>
         @keyframes shake {
-
             10%,
             90% {
                 transform: translate3d(-1px, 0, 0);
             }
-
             20%,
             80% {
                 transform: translate3d(2px, 0, 0);
             }
-
             30%,
             50%,
             70% {
                 transform: translate3d(-4px, 0, 0);
             }
-
             40%,
             60% {
                 transform: translate3d(4px, 0, 0);
@@ -51,6 +47,12 @@
 
         .is-shake {
             animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        .address {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -108,11 +110,12 @@
                                     </svg>
                                 </div>
                                 <div class="media-content">
-                                    <p class="title is-4" style="text-overflow: ellipsis;">{{protection.owner}}, {{protection.id}}</p>
-                                    <p class="subtitle is-6" style="text-overflow: ellipsis;">{{protection.owner}}</p>
+                                    <p class="title is-4 address is-hidden-mobile" style="width: 35vw;">{{protection.owner}}, {{protection.id}}</p>
+                                    <p class="title is-4 address is-hidden-tablet" style="width:80vw;">{{protection.owner}}, {{protection.id}}</p>
+                                    <!-- <p class="subtitle is-6" style="text-overflow: ellipsis;">{{protection.owner}}</p> -->
                                 </div>
                             </div>
-                            <div class="content">
+                            <div class="content" style="overflow: scroll;">
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -170,6 +173,6 @@
 <script type="text/javascript" src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
 
 <script src="/js/abi.js"></script>
-<script src="/js/bancor.js?v=4"></script>
+<script src="/js/bancor.js?v=5"></script>
 
 </html>

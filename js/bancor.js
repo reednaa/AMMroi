@@ -71,8 +71,8 @@ function reverseLookup(dict, value) {
 
 async function ensurePrices(pools) {
     const reserve0 = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C"
-    for (let pool of pools) {
-        const ST = new app.web3.eth.Contract(SmartToken, pool);
+    for (let a of pools) {
+        const ST = new app.web3.eth.Contract(SmartToken, a);
         const totalSupply = await ST.methods.totalSupply().call()/10**18;
         const poolAddress = await ST.methods.owner().call();
         const pool = new app.web3.eth.Contract(poolAbi, poolAddress);
@@ -83,8 +83,8 @@ async function ensurePrices(pools) {
         const reserve1Balance = await pool.methods.reserveBalance(reserve1).call()/10**app.decimals[reserve1];
 
         Vue.set(app.TKNprices, reserve1, reserve0Balance/reserve1Balance);
-        Vue.set(app.PTprices, reserve0 + reserve1, reserve0Balance/totalSupply);
-        Vue.set(app.PTprices, reserve1 + reserve0, reserve1Balance/totalSupply);
+        Vue.set(app.PTbalances, reserve1, [reserve0Balance, reserve1Balance]);
+        Vue.set(app.totalSupply, reserve1 + reserve0, totalSupply)
     }
 }
 
@@ -100,6 +100,7 @@ let app = new Vue({
         protectionMaxID: 5000,
         translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR"},
         decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18},
+        totalSupply: {},
         TKNprices: {},
         PTprices: {},
         ready: false,
@@ -178,6 +179,13 @@ let app = new Vue({
                 }
             }
             return subsetReturn;
+        },
+        getPricesForAll: function() {
+            let allPools = [];
+            for (let p of this.filterDict(this.translator, false, (e) => e.includes("BNT") && e != "BNT")) {
+                allPools.push(this.reverseLookup(this.translator, p))
+            }
+            ensurePrices(allPools);
         },
     },
     watch: {
