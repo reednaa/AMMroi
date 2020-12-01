@@ -63,6 +63,7 @@
         <button class="is-large button" id="connect" v-else disabled>Connected</button>
         <button @click="getAllProtections()" class="is-large button" v-if="protections.length  == 0">getAllProtections() {{protections.length}} </button>
         <button @click="getAllProtections()" class="is-large button" v-else disabled>getAllProtections() {{protections.length}} </button>
+        <input class="input" v-model="protectionMaxID">
 
         <div class="tabs">
             <ul>

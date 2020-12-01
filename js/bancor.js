@@ -1,6 +1,6 @@
 async function getAllProtections() {
     const passes = 6;
-    for (let i = 0; i < app.protectionMaxID; i += passes) {
+    for (let i = 0; i < Number(app.protectionMaxID); i += passes) {
         for (let q = 0; q < (passes-1); q++) {
             app.LiquidityProtectionStore.methods.protectedLiquidity(i+q).call().then(
                 function(value) {
@@ -244,7 +244,7 @@ let app = new Vue({
     },
     watch: {
         protections: function(val, old) {
-            if ((val.length >= this.protectionMaxID)) {
+            if ((val.length >= Number(this.protectionMaxID))) {
                 app.sortProtections();
             }
         },
