@@ -59,11 +59,49 @@
 
 <body>
     <div id="app">
-        <button @click="setProvider()" class="is-large button" id="connect" v-if="web3 == false">Connect wallet</button>
-        <button class="is-large button" id="connect" v-else disabled>Connected</button>
-        <button @click="getAllProtections()" class="is-large button" v-if="protections.length  == 0">getAllProtections() {{protections.length}} </button>
-        <button @click="getAllProtections()" class="is-large button" v-else disabled>getAllProtections() {{protections.length}} </button>
-        <input class="input" v-model="protectionMaxID">
+        <div class="field is-horizontal">
+            <div class="field is-grouped">
+                <div class="field-label" v-if="!ready">
+                    Loading data
+                </div>
+                <div class="field-body">
+                    <div class="control" v-if="protections.length  == 0">
+                        <button @click="getAllProtections()" class="is-large button">Load protections</button>
+                    </div>
+                    <div class="control" v-if="protection.length == 0">
+                        <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
+                    </div>
+                    <div class="control" v-else>
+                        <progress class="progress" value="protections.length" :max="protectionMaxID"></progress>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-grouped" v-else-if="!pricesReady">
+                <div class="field-label">
+                    Parsing
+                </div>
+                <div class="field-body">
+                    <div class="control" v-else>
+                        <progress class="progress" value="parsedProtections.length" :max="protections.length"></progress>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-grouped">
+            <div class="control">
+                <button @click="getAllProtections()" class="is-large button" v-if="protections.length  == 0">Load protections</button>
+                <button @click="getAllProtections()" class="is-large button" v-else disabled>Protections loading</button>
+            </div>
+            <div class="control">
+                <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID" v-if="protection.length == 0">
+                <progress class="progress" value="protections.length" :max="protectionMaxID">15%</progress>
+            </div>
+            <div class="control">
+                <button class="button" disabled></button>
+            </div>
+        </div>
+        
+        
 
         <div class="tabs">
             <ul>

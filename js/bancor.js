@@ -282,5 +282,8 @@ let app = new Vue({
                 this.addCalculatedData();
             }
         }
+    },
+    created: function() {
+        this.setProvider();
     }
 });
