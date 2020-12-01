@@ -186,7 +186,7 @@ let app = new Vue({
             for (let p of this.filterDict(this.translator, false, (e) => e.includes("BNT") && e != "BNT")) {
                 allPools.push(this.reverseLookup(this.translator, p))
             }
-            ensurePrices(allPools);
+            ensurePrices(allPools).then(() => app.pricesReady = true);
         },
         toHumanTime: function(timestamp) {
             return moment.unix(timestamp).format("YYYY-MM-DD HH:mm");
@@ -220,7 +220,7 @@ let app = new Vue({
             const r0 = protection.rate;
             let r1;
             let reserve;
-            const totalSupply = this.totalSupply[reverseLookup(this.translator, proteciton.pool)];
+            const totalSupply = this.totalSupply[reverseLookup(this.translator, protection.pool)];
             if (protection.token == "BNT") {
                 const token = protection.pool.replace("BNT", "");
                 const tokenAddress = reverseLookup(this.translator, token);
@@ -231,7 +231,7 @@ let app = new Vue({
                 r1 = this.TKNprices[tokenAddress];
                 reserve = this.reserves[protection.pool.replace("BNT", "")][1];
             }
-            return Math.sqrt(r1/r0) * (reserve/totalSupply * protection.pt/10**18)/(proteciton.reserve/proteciton.decimals);
+            return Math.sqrt(r1/r0) * (reserve/totalSupply * protection.pt/10**18)/(protection.reserve/protection.decimals);
         }
     },
     watch: {
@@ -249,7 +249,7 @@ let app = new Vue({
         },
         site: function(val, old) {
             if (val == 1) {
-                setTimeout(() => jdenticion(), 500);
+                setTimeout(() => jdenticon(), 500);
             }
         }
     }
