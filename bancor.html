@@ -70,14 +70,18 @@
                 </div>
                 <div class="field-body">
                     <template v-if="protections.length  == 0">
-                        <div class="control">
-                            <button @click="getAllProtections()" class="button">Load protections</button>
+                        <div class="field">
+                            <div class="control">
+                                <button @click="getAllProtections()" class="button">Load protections</button>
+                            </div>
                         </div>
-                        <div class="control">
-                            <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
+                        <div class="field">
+                            <div class="control">
+                                <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
+                            </div>
                         </div>
                     </template>
-                    <progress class="progress" :value="protections.length" :max="protectionMaxID"></progress>
+                    <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID" v-else></progress>
                 </div>
             </div>
             <div class="field is-grouped" v-else-if="!pricesReady">
@@ -85,8 +89,7 @@
                     <label class="label">Parsing</label>
                 </div>
                 <div class="field-body">
-                        <progress class="progress" :value="parsedProtections.length"
-                        :max="protections.length"></progress>
+                    <progress class="progress" style="width: 20vw;"" :value="parsedProtections.length" :max="protections.length"></progress>
                 </div>
             </div>
             <div class="field is-grouped" v-else-if="!calculatedReady">
