@@ -66,7 +66,7 @@
         <div class="field is-horizontal">
             <div class="field is-grouped">
                 <div class="field-label" v-if="!ready">
-                    Loading data
+                    <label class="label">Loading data</label>
                 </div>
                 <div class="field-body">
                     <template v-if="protections.length  == 0">
@@ -84,7 +84,7 @@
             </div>
             <div class="field is-grouped" v-else-if="!pricesReady">
                 <div class="field-label">
-                    Parsing
+                    <label class="label">Parsing</label>
                 </div>
                 <div class="field-body">
                     <div class="control" v-else>
