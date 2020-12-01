@@ -253,7 +253,7 @@ let app = new Vue({
             this.calculatedReady = true;
         },
         dictLength: function(dict) {
-            return Object.keys(dict);
+            return Object.keys(dict).length;
         }
     },
     watch: {
