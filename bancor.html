@@ -69,12 +69,14 @@
                     Loading data
                 </div>
                 <div class="field-body">
-                    <div class="control" v-if="protections.length  == 0">
-                        <button @click="getAllProtections()" class="is-large button">Load protections</button>
-                    </div>
-                    <div class="control" v-if="protections.length == 0">
-                        <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
-                    </div>
+                    <template v-if="protections.length  == 0">
+                        <div class="control">
+                            <button @click="getAllProtections()" class="button">Load protections</button>
+                        </div>
+                        <div class="control">
+                            <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
+                        </div>
+                    </template>
                     <div class="control" v-else>
                         <progress class="progress" value="protections.length" :max="protectionMaxID"></progress>
                     </div>
