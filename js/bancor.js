@@ -251,6 +251,9 @@ let app = new Vue({
                 Vue.set(this.parsedProtections, pp, {IL:IL, fees:fees, ...protection})
             }
             this.calculatedReady = true;
+        },
+        dictLength: function(dict) {
+            return Object.keys(dict);
         }
     },
     watch: {

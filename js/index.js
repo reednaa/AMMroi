@@ -323,9 +323,6 @@ let app = new Vue({
             fetch(url).then(res => res.json()).then((out) => {
                 app.listOfTokens = (out["results"]).sort((a,b) => (a.id > b.id));
             });
-        },
-        dictLength: function(dict) {
-            return Object.keys(dict);
         }
     },
     watch: {
