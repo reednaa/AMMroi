@@ -244,8 +244,8 @@ let app = new Vue({
     },
     watch: {
         protections: function(val, old) {
-            if ((val.length >= Number(this.protectionMaxID))) {
-                setTimeout(app.sortProtections(), 100);
+            if ((val.length > Number(this.protectionMaxID))) {
+                app.sortProtections();
             }
         },
         translator: function(val, old) {
