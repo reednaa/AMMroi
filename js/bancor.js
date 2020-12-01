@@ -284,6 +284,6 @@ let app = new Vue({
         }
     },
     created: function() {
-        this.setProvider();
+        setTimeout(() => app.setProvider(), 200);
     }
 });
