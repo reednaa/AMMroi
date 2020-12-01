@@ -82,7 +82,9 @@
                                 </div>
                             </div>
                         </template>
-                        <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID" v-else></progress>
+                        <div class="control">
+                            <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID" v-else></progress>
+                        </div>
                     </div>
                 </div>
                 <div class="field is-grouped" v-else-if="!pricesReady">
@@ -90,7 +92,9 @@
                         <label class="label">Parsing</label>
                     </div>
                     <div class="field-body">
-                        <progress class="progress" style="width: 20vw;"" :value="parsedProtections.length" :max="protections.length"></progress>
+                        <div class="control">
+                            <progress class="progress" style="width: 20vw;"" :value="parsedProtections.length" :max="protections.length"></progress>
+                        </div>
                     </div>
                 </div>
                 <div class="field is-grouped" v-else-if="!calculatedReady">
@@ -98,7 +102,9 @@
                         <label class="label">Calculating</label>
                     </div>
                     <div class="field-body">
-                        <progress class="progress" style="width: 20vw;" max="1"></progress>
+                        <div class="control">
+                            <progress class="progress" style="width: 20vw;" max="1"></progress>
+                        </div>
                     </div>
                 </div>
             </div>
