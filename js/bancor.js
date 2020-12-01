@@ -83,8 +83,8 @@ async function ensurePrices(pools) {
         const reserve1Balance = await pool.methods.reserveBalance(reserve1).call()/10**app.decimals[reserve1];
 
         Vue.set(app.TKNprices, reserve1, reserve0Balance/reserve1Balance);
-        Vue.set(app.PTbalances, reserve1, [reserve0Balance, reserve1Balance]);
-        Vue.set(app.totalSupply, reserve1 + reserve0, totalSupply)
+        Vue.set(app.reserves, reserve1, [reserve0Balance, reserve1Balance]);
+        Vue.set(app.totalSupply, poolAddress, totalSupply);
     }
 }
 
@@ -102,7 +102,8 @@ let app = new Vue({
         decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18},
         totalSupply: {},
         TKNprices: {},
-        PTprices: {},
+        reserves: {},
+        pricesReady: false,
         ready: false,
         site: 1,
     },
@@ -187,6 +188,51 @@ let app = new Vue({
             }
             ensurePrices(allPools);
         },
+        toHumanTime: function(timestamp) {
+            return moment.unix(timestamp).format("YYYY-MM-DD HH-mm");
+        },
+        impermanentLoss: function(protectionID) {
+            let protection;
+            for (let p in this.parsedProtections) {
+                if (this.parsedProtections[p].id == protectionID) {
+                    protection = this.parsedProtections[p];
+                }
+            }
+            const r0 = protection.rate;
+            const r1;
+            if (protection.token == "BNT") {
+                const token = protection.pool.replace("BNT", "");
+                const tokenAddress = reverseLookup(this.translator, token);
+                r1 = 1/(this.TKNprices[tokenAddress]);
+            } else {
+                const tokenAddress = reverseLookup(this.translator, protection.token);
+                r1 = this.TKNprices[tokenAddress];
+            }
+            return (2 * Math.sqrt(r1/r0))/(1+r1/r0);
+        },
+        Fees: function(protectionID) {
+            let protection;
+            for (let p in this.parsedProtections) {
+                if (this.parsedProtections[p].id == protectionID) {
+                    protection = this.parsedProtections[p];
+                }
+            }
+            const r0 = protection.rate;
+            const r1;
+            const reserve;
+            const totalSupply = this.totalSupply[reverseLookup(this.translator, proteciton.pool)];
+            if (protection.token == "BNT") {
+                const token = protection.pool.replace("BNT", "");
+                const tokenAddress = reverseLookup(this.translator, token);
+                r1 = 1/(this.TKNprices[tokenAddress]);
+                reserve = this.reserves[protection.pool.replace("BNT", "")][0];
+            } else {
+                const tokenAddress = reverseLookup(this.translator, protection.token);
+                r1 = this.TKNprices[tokenAddress];
+                reserve = this.reserves[protection.pool.replace("BNT", "")][1];
+            }
+            return Math.sqrt(r1/r0) * (reserve/totalSupply * protection.pt/10**18)/(proteciton.reserve/proteciton.decimals);
+        }
     },
     watch: {
         protections: function(val, old) {
@@ -199,6 +245,11 @@ let app = new Vue({
                 if (pool.includes("BNT")) {
                     const ST = new app.web3.eth.Contract(SmartToken, pool);
                 }
+            }
+        },
+        site: function(val, old) {
+            if (val == 1) {
+                setTimeout(() => jdenticion(), 500);
             }
         }
     }

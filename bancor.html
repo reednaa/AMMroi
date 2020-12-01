@@ -110,9 +110,9 @@
                                     </svg>
                                 </div>
                                 <div class="media-content">
-                                    <p class="title is-4 address is-hidden-mobile" style="width: 35vw;">{{protection.owner}}, {{protection.id}}</p>
+                                    <p class="title is-4 address is-hidden-mobile" style="width: 35vw;">{{protection.owner}}</p>
                                     <p class="title is-4 address is-hidden-tablet" style="width:80vw;">{{protection.owner}}, {{protection.id}}</p>
-                                    <!-- <p class="subtitle is-6" style="text-overflow: ellipsis;">{{protection.owner}}</p> -->
+                                    <p class="subtitle is-6" style="text-overflow: ellipsis;">{{toHumanTime(protection.timestamp)}}, {{protection.id}}</p>
                                 </div>
                             </div>
                             <div class="content" style="overflow: scroll;">
@@ -131,9 +131,6 @@
                                             <th>
                                                 Rate
                                             </th>
-                                            <th>
-                                                Timestamp
-                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -150,8 +147,39 @@
                                             <th>
                                                 {{(protection.rate).toFixed(5)}}
                                             </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table" v-if="pricesReady">
+                                    <thead>
+                                        <tr>
                                             <th>
-                                                {{protection.timestamp}}
+                                                IL
+                                            </th>
+                                            <th>
+                                                Unprotected
+                                            </th>
+                                            <th>
+                                                Protected
+                                            </th>
+                                            <th>
+                                                Protected return
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {{1 - impermanentLoss(protection.id)}}
+                                            </td>
+                                            <th>
+                                                {{Fees(protection.id) * impermanentLoss(protection.id) - 1}}
+                                            </th>
+                                            <th>
+                                                {{(Fees(protection.id) - 1) * impermanentLoss(protection.id) + 1}}
+                                            </th>
+                                            <th>
+                                                WIP
                                             </th>
                                         </tr>
                                     </tbody>
