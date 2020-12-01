@@ -199,7 +199,7 @@ let app = new Vue({
                 }
             }
             const r0 = protection.rate;
-            const r1;
+            let r1;
             if (protection.token == "BNT") {
                 const token = protection.pool.replace("BNT", "");
                 const tokenAddress = reverseLookup(this.translator, token);
@@ -218,8 +218,8 @@ let app = new Vue({
                 }
             }
             const r0 = protection.rate;
-            const r1;
-            const reserve;
+            let r1;
+            let reserve;
             const totalSupply = this.totalSupply[reverseLookup(this.translator, proteciton.pool)];
             if (protection.token == "BNT") {
                 const token = protection.pool.replace("BNT", "");
