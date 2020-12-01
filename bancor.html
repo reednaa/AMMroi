@@ -26,19 +26,23 @@
         integrity="sha256-btg10M6OuilEf55qRv0f370emD4TckUGmmEm03YaJtE=" crossorigin="anonymous"></script>
     <style>
         @keyframes shake {
+
             10%,
             90% {
                 transform: translate3d(-1px, 0, 0);
             }
+
             20%,
             80% {
                 transform: translate3d(2px, 0, 0);
             }
+
             30%,
             50%,
             70% {
                 transform: translate3d(-4px, 0, 0);
             }
+
             40%,
             60% {
                 transform: translate3d(4px, 0, 0);
@@ -68,7 +72,7 @@
                     <div class="control" v-if="protections.length  == 0">
                         <button @click="getAllProtections()" class="is-large button">Load protections</button>
                     </div>
-                    <div class="control" v-if="protection.length == 0">
+                    <div class="control" v-if="protections.length == 0">
                         <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
                     </div>
                     <div class="control" v-else>
@@ -82,32 +86,21 @@
                 </div>
                 <div class="field-body">
                     <div class="control" v-else>
-                        <progress class="progress" value="parsedProtections.length" :max="protections.length"></progress>
+                        <progress class="progress" value="parsedProtections.length"
+                            :max="protections.length"></progress>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="field is-grouped">
-            <div class="control">
-                <button @click="getAllProtections()" class="is-large button" v-if="protections.length  == 0">Load protections</button>
-                <button @click="getAllProtections()" class="is-large button" v-else disabled>Protections loading</button>
-            </div>
-            <div class="control">
-                <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID" v-if="protection.length == 0">
-                <progress class="progress" value="protections.length" :max="protectionMaxID">15%</progress>
-            </div>
-            <div class="control">
-                <button class="button" disabled></button>
-            </div>
-        </div>
-        
-        
+
+
+
 
         <div class="tabs">
             <ul>
-              <li @click="site = 0" :class="{'is-active': site == 0}"><a>Pools</a></li>
-              <li @click="site = 1" :class="{'is-active': site == 1}"><a>Protections</a></li>
-              <li @click="site = 2" :class="{'is-active': site == 2}"><a>User</a></li>
+                <li @click="site = 0" :class="{'is-active': site == 0}"><a>Pools</a></li>
+                <li @click="site = 1" :class="{'is-active': site == 1}"><a>Protections</a></li>
+                <li @click="site = 2" :class="{'is-active': site == 2}"><a>User</a></li>
             </ul>
         </div>
 
@@ -139,19 +132,24 @@
                 </tbody>
             </table>
             <div class="columns is-multiline" v-else-if="site == 1">
-                <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections" :key="protection.id">
+                <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections"
+                    :key="protection.id">
                     <div class="card">
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-left">
-                                    <svg :data-jdenticon-value="protection.owner.substring(0,20)" width="48" height="48">
+                                    <svg :data-jdenticon-value="protection.owner.substring(0,20)" width="48"
+                                        height="48">
                                         Jdenticon
                                     </svg>
                                 </div>
                                 <div class="media-content">
-                                    <p class="title is-4 address is-hidden-mobile" style="width: 35vw;">{{protection.owner}}</p>
-                                    <p class="title is-4 address is-hidden-tablet" style="width:80vw;">{{protection.owner}}, {{protection.id}}</p>
-                                    <p class="subtitle is-6" style="text-overflow: ellipsis;">{{toHumanTime(protection.timestamp)}}, {{protection.id}}</p>
+                                    <p class="title is-4 address is-hidden-mobile" style="width: 35vw;">
+                                        {{protection.owner}}</p>
+                                    <p class="title is-4 address is-hidden-tablet" style="width:80vw;">
+                                        {{protection.owner}}, {{protection.id}}</p>
+                                    <p class="subtitle is-6" style="text-overflow: ellipsis;">
+                                        {{toHumanTime(protection.timestamp)}}, {{protection.id}}</p>
                                 </div>
                             </div>
                             <div class="content" style="overflow: scroll;">
