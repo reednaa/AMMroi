@@ -65,7 +65,7 @@
     <div id="app">
         <div class="section" v-if="!calculatedReady">
             <div class="field is-horizontal">
-                <div class="field is-grouped" v-if="!ready">
+                <div class="field is-grouped" v-if="parsedProtections.length == 0">
                     <div class="field-label">
                         <label class="label">Loading data</label>
                     </div>
@@ -92,7 +92,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="field is-grouped" v-else-if="!pricesReady">
+                <div class="field is-grouped" v-else-if="!ready">
                     <div class="field-label">
                         <label class="label">Parsing</label>
                     </div>
