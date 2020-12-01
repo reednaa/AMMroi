@@ -63,41 +63,43 @@
 
 <body>
     <div id="app">
-        <div class="field is-horizontal">
-            <div class="field is-grouped" v-if="!ready">
-                <div class="field-label">
-                    <label class="label">Loading data</label>
-                </div>
-                <div class="field-body">
-                    <template v-if="protections.length  == 0">
-                        <div class="field">
-                            <div class="control">
-                                <button @click="getAllProtections()" class="button">Load protections</button>
+        <div class="section" v-if="!calculatedReady">
+            <div class="field is-horizontal">
+                <div class="field is-grouped" v-if="!ready">
+                    <div class="field-label">
+                        <label class="label">Loading data</label>
+                    </div>
+                    <div class="field-body">
+                        <template v-if="protections.length  == 0">
+                            <div class="field">
+                                <div class="control">
+                                    <button @click="getAllProtections()" class="button">Load protections</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="field">
-                            <div class="control">
-                                <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
+                            <div class="field">
+                                <div class="control">
+                                    <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
+                                </div>
                             </div>
-                        </div>
-                    </template>
-                    <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID" v-else></progress>
+                        </template>
+                        <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID" v-else></progress>
+                    </div>
                 </div>
-            </div>
-            <div class="field is-grouped" v-else-if="!pricesReady">
-                <div class="field-label">
-                    <label class="label">Parsing</label>
+                <div class="field is-grouped" v-else-if="!pricesReady">
+                    <div class="field-label">
+                        <label class="label">Parsing</label>
+                    </div>
+                    <div class="field-body">
+                        <progress class="progress" style="width: 20vw;"" :value="parsedProtections.length" :max="protections.length"></progress>
+                    </div>
                 </div>
-                <div class="field-body">
-                    <progress class="progress" style="width: 20vw;"" :value="parsedProtections.length" :max="protections.length"></progress>
-                </div>
-            </div>
-            <div class="field is-grouped" v-else-if="!calculatedReady">
-                <div class="field-label">
-                    <label class="label">Calculating</label>
-                </div>
-                <div class="field-body">
-                    <progress class="progress" max="1"></progress>
+                <div class="field is-grouped" v-else-if="!calculatedReady">
+                    <div class="field-label">
+                        <label class="label">Calculating</label>
+                    </div>
+                    <div class="field-body">
+                        <progress class="progress" style="width: 20vw;" max="1"></progress>
+                    </div>
                 </div>
             </div>
         </div>
