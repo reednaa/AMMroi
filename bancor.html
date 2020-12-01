@@ -83,7 +83,9 @@
                             </div>
                         </template>
                         <div class="field" v-else>
-                            <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID"></progress>
+                            <div class="control">
+                                <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID"></progress>
+                            </div>
                         </div>
                         <div class="field">
                             <div class="control">
