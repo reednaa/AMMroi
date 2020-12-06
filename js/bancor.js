@@ -212,7 +212,7 @@ let app = new Vue({
                 const tokenAddress = reverseLookup(this.translator, protection.token);
                 r1 = this.TKNprices[tokenAddress];
             }
-            return (2 * Math.sqrt(r1/r0))/(1+r1/r0);
+            return (2 * Math.sqrt(r0/r1))/(1+r0/r1);
         },
         fees: function(protectionID) {
             let protection;
@@ -240,7 +240,7 @@ let app = new Vue({
                     console.log(protection.id);
                 }
             }
-            return Math.sqrt(r1/r0) * (reserve/totalSupply * Number(protection.pt)*2/10**18)/(Number(protection.reserve)/10**Number(protection.decimals));
+            return Math.sqrt(r0/r1) * (reserve/totalSupply * Number(protection.pt)*2/10**18)/(Number(protection.reserve)/10**Number(protection.decimals));
         },
         addCalculatedData: function() {
             this.calculatedReady = false;
