@@ -19,7 +19,7 @@ async function getAllProtections() {
 async function parseProtections() {
     for (let protection in app.protections) {
         const pp = app.protections[protection][1]
-        Vue.set(app.parsedProtections, protection, {id: app.protections[protection][0], owner: pp[0], rate: pp[5]/pp[6], reserve: pp[4], pt: pp[3], timestamp: pp[7]});
+        Vue.set(app.parsedProtections, protection, {id: app.protections[protection][0], owner: pp[0], rate: pp[6]/pp[5], reserve: pp[4], pt: pp[3], timestamp: pp[7]});
 
         if (app.translator[pp[1]]) {
             Vue.set(app.parsedProtections, protection, {pool: app.translator[pp[1]], ...app.parsedProtections[protection]});
