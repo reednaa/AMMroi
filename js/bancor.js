@@ -212,7 +212,7 @@ let app = new Vue({
                 const tokenAddress = reverseLookup(this.translator, protection.token);
                 r1 = this.TKNprices[tokenAddress];
             }
-            return (2 * Math.sqrt(r0/r1))/(1+r0/r1);
+            return (2 * Math.sqrt(r1/r0))/(1+r1/r0);
         },
         fees: function(protectionID) {
             let protection;
@@ -228,11 +228,11 @@ let app = new Vue({
             if (protection.token == "BNT") {
                 const token = protection.pool.replace("BNT", "");
                 const tokenAddress = reverseLookup(this.translator, token);
-                r1 = 1/(this.TKNprices[tokenAddress]);
+                r1 = (this.TKNprices[tokenAddress]);
                 reserve = Number(this.reserves[reverseLookup(this.translator, protection.pool.replace("BNT", ""))][0]);
             } else {
                 const tokenAddress = reverseLookup(this.translator, protection.token);
-                r1 = Number(this.TKNprices[tokenAddress]);
+                r1 = 1/Number(this.TKNprices[tokenAddress]);
                 try {
                 reserve = Number(this.reserves[reverseLookup(this.translator, protection.pool.replace("BNT", ""))][1]);
                 }
