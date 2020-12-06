@@ -13,7 +13,10 @@ pylint = "*"
 web3 = "==5.10.0"
 python-dateutil = "*"
 pandas = "*"
+numpy = "*
 gql = "==3.0.0a1"
+python-binance = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.8"

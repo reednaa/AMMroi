@@ -207,10 +207,10 @@ let app = new Vue({
             if (protection.token == "BNT") {
                 const token = protection.pool.replace("BNT", "");
                 const tokenAddress = reverseLookup(this.translator, token);
-                r1 = 1/(this.TKNprices[tokenAddress]);
+                r1 = (this.TKNprices[tokenAddress]);
             } else {
                 const tokenAddress = reverseLookup(this.translator, protection.token);
-                r1 = this.TKNprices[tokenAddress];
+                r1 = 1/this.TKNprices[tokenAddress];
             }
             return (2 * Math.sqrt(r1/r0))/(1+r1/r0);
         },
