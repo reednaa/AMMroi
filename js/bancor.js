@@ -16,6 +16,7 @@ async function getAllProtections() {
     }
 }
 
+
 async function createTranslator() {
     for (let protection in app.protections) {
         const pp = app.protections[protection][1]
@@ -26,6 +27,18 @@ async function createTranslator() {
             await ST.methods.symbol().call().then(function(value) {
                 Vue.set(app.translator, pp[1], value);
             });
+        }
+        if (app.translator[pp[2]]) {
+        } else {
+            try {
+            const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
+            await EC20.methods.symbol().call().then(function(value) {
+                Vue.set(app.translator, pp[2], value);
+            });
+            }
+            catch(err) {
+                console.log(pp[2]);
+            }
         }
 }
 
