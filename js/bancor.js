@@ -16,6 +16,20 @@ async function getAllProtections() {
     }
 }
 
+async function createTranslator() {
+    for (let protection in app.protections) {
+        const pp = app.protections[protection][1]
+
+        if (app.translator[pp[1]]) {
+        } else {
+            const ST = new app.web3.eth.Contract(SmartToken, pp[1]);
+            await ST.methods.symbol().call().then(function(value) {
+                Vue.set(app.translator, pp[1], value);
+            });
+        }
+}
+
+
 async function parseProtections() {
     for (let protection in app.protections) {
         const pp = app.protections[protection][1]
@@ -45,9 +59,10 @@ async function parseProtections() {
                 app.parsedProtections[protection].token = pp[2];
             }
         }
+        const opposite_token = app.translator[pp[1]].replace("BNT", "");
+
         if (app.decimals[pp[2]]) {
             if (pp[2] == "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C") {
-                const opposite_token = app.translator[pp[1]].replace("BNT", "");
                 if (app.decimals[reverseLookup(app.translator, opposite_token)]) {
                     Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[reverseLookup(app.translator, opposite_token)]), ...app.parsedProtections[protection]});
                 } else {
@@ -72,7 +87,6 @@ async function parseProtections() {
                         if (app.decimals[reverseLookup(app.translator, opposite_token)]) {
                             Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[reverseLookup(app.translator, opposite_token)]), ...app.parsedProtections[protection]});
                         } else {
-                            const opposite_token = app.translator(pp[1]).replace("BNT", "");
                             const OT = new app.web3.eth.Contract(ERC20, reverseLookup(app.translator, opposite_token));
                             await OT.methods.decimals().call().then(function(value2) {
                                 Vue.set(app.decimals, pp[1], value2);
@@ -133,7 +147,7 @@ let app = new Vue({
         parsedProtections: [],
         parsedProtectionInc: 0,
         protectionMaxID: 5000,
-        translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR", "0xFEE7EeaA0c2f3F7C7e6301751a8dE55cE4D059Ec": "WBTCBNT", "0x1776e1f26f98b1a5df9cd347953a26dd3cb46671": "NMR"},
+        translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR", "0xFEE7EeaA0c2f3F7C7e6301751a8dE55cE4D059Ec": "WBTCBNT"},
         decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18},
         totalSupply: {},
         TKNprices: {},
@@ -179,7 +193,7 @@ let app = new Vue({
             }
             this.protections.sort((a,b) => a[0] - b[0]);
             setTimeout(function() {
-                parseProtections();
+                createTranslator.then(parseProtections());
             }, 500);
         },
         easyParse: function (toParse) {
