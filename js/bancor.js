@@ -46,9 +46,9 @@ async function parseProtections() {
             }
         }
         if (app.decimals[pp[2]]) {
-            if (pp[2] == "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c") {
-                const opposite_token = app.translator(pp[1]).replace("BNT", "");
-                if (app.decimals(opposite_token)) {
+            if (pp[2] == "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C") {
+                const opposite_token = app.translator[pp[1]].replace("BNT", "");
+                if (app.decimals[opposite_token]) {
                     Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[opposite_token]), ...app.parsedProtections[protection]});
                 } else {
                     const OT = new app.web3.eth.Contract(ERC20, opposite_token);
@@ -69,7 +69,7 @@ async function parseProtections() {
                     Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5], ...app.parsedProtections[protection]});
                 } else {
                     if (pp[2] == "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c") {  // Then this is BNT
-                        if (app.decimals(opposite_token)) {
+                        if (app.decimals[opposite_token]) {
                             Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[opposite_token]), ...app.parsedProtections[protection]});
                         } else {
                             const opposite_token = app.translator(pp[1]).replace("BNT", "");
