@@ -47,7 +47,16 @@ async function parseProtections() {
         }
         if (app.decimals[pp[2]]) {
             if (pp[2] == "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c") {
-                Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[pp[2]]), ...app.parsedProtections[protection]});
+                const opposite_token = app.translator(pp[1]).replace("BNT", "");
+                if (app.decimals(opposite_token)) {
+                    Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[opposite_token]), ...app.parsedProtections[protection]});
+                } else {
+                    const OT = new app.web3.eth.Contract(ERC20, opposite_token);
+                    await OT.methods.decimals().call().then(function(value) {
+                        Vue.set(app.decimals, pp[1], value);
+                        Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-value), ...app.parsedProtections[protection]});
+                    });
+                }
             } else {
                 Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: (pp[6]/pp[5])*10**(18-app.decimals[pp[2]]), ...app.parsedProtections[protection]});
             }
@@ -60,7 +69,15 @@ async function parseProtections() {
                     Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5], ...app.parsedProtections[protection]});
                 } else {
                     if (pp[2] == "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c") {  // Then this is BNT
-                        Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5]/10**(18-value), ...app.parsedProtections[protection]});
+                        if (app.decimals(opposite_token)) {
+                            Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[opposite_token]), ...app.parsedProtections[protection]});
+                        } else {
+                            const OT = new app.web3.eth.Contract(ERC20, opposite_token);
+                            await OT.methods.decimals().call().then(function(value2) {
+                                Vue.set(app.decimals, pp[1], value2);
+                                Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-value2), ...app.parsedProtections[protection]});
+                            });
+                        }
                     } else {
                         Vue.set(app.parsedProtections, protection, {decimals: value, rate: (pp[6]/pp[5])*10**(18-value), ...app.parsedProtections[protection]});
                     }
