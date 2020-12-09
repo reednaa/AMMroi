@@ -219,8 +219,11 @@
                                             <th>
                                                 {{(protection.pt/10**18).toFixed(4)}}
                                             </th>
-                                            <th>
+                                            <th v-if="protection.rate">
                                                 {{(protection.rate).toFixed(5)}}
+                                            </th>
+                                            <th v-else>
+                                                Correcting
                                             </th>
                                         </tr>
                                     </tbody>
