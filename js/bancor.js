@@ -51,7 +51,7 @@ async function parseProtections() {
                 if (app.decimals[opposite_token]) {
                     Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[opposite_token]), ...app.parsedProtections[protection]});
                 } else {
-                    const OT = new app.web3.eth.Contract(ERC20, opposite_token);
+                    const OT = new app.web3.eth.Contract(ERC20, reverseLookup(app.translator, opposite_token));
                     await OT.methods.decimals().call().then(function(value) {
                         Vue.set(app.decimals, pp[1], value);
                         Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-value), ...app.parsedProtections[protection]});
