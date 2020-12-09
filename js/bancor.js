@@ -205,7 +205,7 @@ let app = new Vue({
             }
             this.protections.sort((a,b) => a[0] - b[0]);
             setTimeout(function() {
-                createTranslator.then(parseProtections());
+                createTranslator().then(parseProtections());
             }, 500);
         },
         easyParse: function (toParse) {
