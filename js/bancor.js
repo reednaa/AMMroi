@@ -19,7 +19,7 @@ async function getAllProtections() {
 async function parseProtections() {
     for (let protection in app.protections) {
         const pp = app.protections[protection][1]
-        Vue.set(app.parsedProtections, protection, {id: app.protections[protection][0], owner: pp[0], rate: pp[6]/pp[5], reserve: pp[4], pt: pp[3], timestamp: pp[7]});
+        Vue.set(app.parsedProtections, protection, {id: app.protections[protection][0], owner: pp[0], reserve: pp[4], pt: pp[3], timestamp: pp[7]});
 
         if (app.translator[pp[1]]) {
             Vue.set(app.parsedProtections, protection, {pool: app.translator[pp[1]], ...app.parsedProtections[protection]});
@@ -51,7 +51,16 @@ async function parseProtections() {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
             await EC20.methods.decimals().call().then(function(value) {
                 Vue.set(app.decimals, pp[2], value);
-                Vue.set(app.parsedProtections, protection, {decimals: value, ...app.parsedProtections[protection]});
+                if (value == 18) {
+                    Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5], ...app.parsedProtections[protection]});
+                } else {
+                    if (pp[2] == "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c") {  // Then this is BNT
+                        Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5]/10**value, ...app.parsedProtections[protection]});
+                    } else {
+                        Vue.set(app.parsedProtections, protection, {decimals: value, rate: (pp[6]/pp[5])*10**value, ...app.parsedProtections[protection]});
+                    }
+                }
+                
             });
         }
     }
