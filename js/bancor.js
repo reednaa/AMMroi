@@ -63,7 +63,7 @@ async function parseProtections() {
             
         } else {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
-            await EC20.methods.decimals().call().then(function(value) {
+            await EC20.methods.decimals().call().then(async function(value) {
                 Vue.set(app.decimals, pp[2], value);
                 if (value == 18) {
                     Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5], ...app.parsedProtections[protection]});
