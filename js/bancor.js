@@ -133,7 +133,7 @@ let app = new Vue({
         parsedProtections: [],
         parsedProtectionInc: 0,
         protectionMaxID: 5000,
-        translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR", "0xFEE7EeaA0c2f3F7C7e6301751a8dE55cE4D059Ec": "WBTCBNT"},
+        translator: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": "ETH", "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": "MKR", "0xFEE7EeaA0c2f3F7C7e6301751a8dE55cE4D059Ec": "WBTCBNT", "0x1776e1f26f98b1a5df9cd347953a26dd3cb46671": "NMR"},
         decimals: {"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 18, "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": 18},
         totalSupply: {},
         TKNprices: {},
