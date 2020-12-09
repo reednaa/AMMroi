@@ -46,7 +46,12 @@ async function parseProtections() {
             }
         }
         if (app.decimals[pp[2]]) {
-            Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], ...app.parsedProtections[protection]});
+            if (pp[2] == "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c") {
+                Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[pp[2]]), ...app.parsedProtections[protection]});
+            } else {
+                Vue.set(app.parsedProtections, protection, {decimals: value, rate: (pp[6]/pp[5])*10**(18-app.decimals[pp[2]]), ...app.parsedProtections[protection]});
+            }
+            
         } else {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
             await EC20.methods.decimals().call().then(function(value) {
