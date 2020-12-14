@@ -135,9 +135,9 @@ async function ensurePrices(pools) {
         const poolAddress = await ST.methods.owner().call();
         const pool = new app.web3.eth.Contract(poolAbi, poolAddress);
         // Prices are BNT/TKN
-        let reserve1 = await pool.methods.reserveTokens(1).call();
+        let reserve1 = await pool.methods.connectorTokens(1).call();
         if (app.translator[reserve1] == "BNT") {
-            reserve1 = await pool.methods.reserveTokens(0).call();
+            reserve1 = await pool.methods.connectorTokens(0).call();
         } // This is because I am 100% lazy. reserve1 is always non-bnt
 
         const reserve0Balance = await pool.methods.reserveBalance(reserve0).call()/10**18;
