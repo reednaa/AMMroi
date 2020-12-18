@@ -139,6 +139,7 @@
                 <li @click="site = 0" :class="{'is-active': site == 0}"><a>Pools</a></li>
                 <li @click="site = 1" :class="{'is-active': site == 1}"><a>Protections</a></li>
                 <li @click="site = 2" :class="{'is-active': site == 2}"><a>User</a></li>
+                <li @click="toCSV(parsedProtections)" v-if="calculatedReady"><a>Download Data</a></li>
             </ul>
         </div>
 
@@ -279,6 +280,6 @@
 <script type="text/javascript" src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
 
 <script src="/js/abi.js"></script>
-<script src="/js/bancor.js?v=21"></script>
+<script src="/js/bancor.js?v=22"></script>
 
 </html>

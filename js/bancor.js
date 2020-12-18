@@ -170,6 +170,38 @@ let app = new Vue({
         site: 1,
     },
     methods: {
+        toCSV: function(arr) {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            // Check if the array contains parsed prices.
+            const translator = {timestamp: "timestamp", id: "id", owner: "owner", pool: "pool", token: "token", price: "rate", poolAmount: "pt", reserveAmount: "reserve", impermanentLoss: "IL", fees: "fees"};
+            
+            const header = ["timestamp", "id", "owner", "pool", "token", "price", "poolAmount", "reserveAmount", "impermanentLoss", "fees"];
+
+            csvContent += header.join(",");
+            csvContent += "\n";
+            for (protection of arr) {
+                let tempArr = [];
+                for (part of header) {
+                    if (part == "reserveAmount") {
+                        tempArr.push(Number(protection[translator[part]])/10**protection["decimals"]);
+                    } else if (part == "poolAmount") {
+                        tempArr.push(protection[translator[part]]/10**18);
+                    } else {
+                        tempArr.push(protection[translator[part]]);
+                    }
+                }
+                csvContent += tempArr.join(",");
+                csvContent += "\n";
+            }
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "parsedProtection.csv");
+            document.body.appendChild(link); // Required for FF
+
+            link.click();
+            
+        },
         setProvider: function() {
             app.setupWeb3();
         },
