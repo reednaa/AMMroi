@@ -12,8 +12,8 @@ from time import time, sleep
 import logging
 logger = logging.getLogger(__name__)  
 
-formatter = '%(asctime)s : %(levelname)s : %(message)s'
-logging.basicConfig(format=formatter, level=logging.INFO)
+# formatter = '%(asctime)s : %(levelname)s : %(message)s'
+# logging.basicConfig(format=formatter, level=logging.INFO)
 
 
 infura = "https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e"
@@ -94,13 +94,13 @@ def query_data(all_pairs, df_dic, id_to_symbol, blocknumber, tries=5):
                 responce = client.execute(query)
                 exchange_data += responce["pairs"]
             except Exception as E:
-                # logging.error(E)
-                logging.info(f"Query broke. Potentially bad connection. We will try again in {i} second, trying {tries-i} more times.")
+                # logger.error(E)
+                logger.info(f"Query broke. Potentially bad connection. We will try again in {i} second, trying {tries-i} more times.")
                 sleep(i)
             else:
                 break
         if i == tries:
-            logging.info("We can't continue. Saving data")
+            logger.info("We can't continue. Saving data")
             for key in df_dic:
                 df_dic[key].to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) +".csv", index=False)
             raise(gql.transport.exceptions.TransportServerError)
@@ -115,13 +115,13 @@ def get_initial_blocknum():
             }
         }""")
     blocknum = int(client.execute(query)["pair"]["createdAtBlockNumber"])
-    logging.info(f"Our benchmark block is {blocknum}")
+    logger.info(f"Our benchmark block is {blocknum}")
     return blocknum
 
 
 def get_tokens(num=5):
     num_arr = split_num_tokens_fairly(num)
-    logging.info(f"Doing {num_arr}, {sum(num_arr)} tokens")
+    logger.info(f"Doing {num_arr}, {sum(num_arr)} tokens")
     # Find pairs with ETH as token 0 first.
     query = gql("""
         {
@@ -150,12 +150,12 @@ def get_tokens(num=5):
         }
     }""")
     pairs = client.execute(query)
-    logging.info("Pair queries complete. Saving to tokens.json")
+    logger.info("Pair queries complete. Saving to tokens.json")
     for pair in pairs["pairs"]:
         results.append(dict(id=pair["token0"]["symbol"].lower(), text=pair["token0"]["symbol"].upper(), pair_id=pair["id"]))
     with open(os.path.join(datafolder, "tokens.json"), "w") as f:
         f.write(json.dumps(dict(results=results), indent=4))
-    logging.info("tokens.json has been updated and saved. Remember to check ROI for missing data")
+    logger.info("tokens.json has been updated and saved. Remember to check ROI for missing data")
     
 
 def get_roi(restart=False, resolution=1500):
@@ -183,7 +183,7 @@ def get_roi(restart=False, resolution=1500):
         try:
             blocknumber = int(df_dic[all_pairs[0]]["block"].iloc[-1]) + resolution
         except IndexError:
-            logging.info("It seems like we are restarting anyway. If this is a mistake, cancel now.")
+            logger.info("It seems like we are restarting anyway. If this is a mistake, cancel now.")
             sleep(0.8)
             for pair in pairs:
                 all_pairs.append(pair["pair_id"])
@@ -195,7 +195,7 @@ def get_roi(restart=False, resolution=1500):
             blocknumber = int(get_initial_blocknum())
 
     set_time = time()
-    logging.info(f"Current, Starting blocknumber {current_block, blocknumber}, difference {current_block-blocknumber} blocks.")
+    logger.info(f"Current, Starting blocknumber {current_block, blocknumber}, difference {current_block-blocknumber} blocks.")
     
     while blocknumber < current_block:
         blocknumber_timestamp = block_to_timestamp(int(blocknumber))
@@ -223,11 +223,11 @@ def get_roi(restart=False, resolution=1500):
         
         rounds_per_set = 10
         if round((current_block-blocknumber)/resolution) % rounds_per_set == 0:
-            logging.info(f"{current_block-blocknumber} blocks remaning, {round((current_block-blocknumber)/resolution)} rounds left. Last set took {round(time()-set_time,3)} seconds, {round((time()-set_time)/rounds_per_set,3)} seconds per round. Time remaning: {round((time()-set_time)/rounds_per_set*(current_block-blocknumber)/resolution)} seconds")
+            logger.info(f"{current_block-blocknumber} blocks remaning, {round((current_block-blocknumber)/resolution)} rounds left. Last set took {round(time()-set_time,3)} seconds, {round((time()-set_time)/rounds_per_set,3)} seconds per round. Time remaning: {round((time()-set_time)/rounds_per_set*(current_block-blocknumber)/resolution)} seconds")
             set_time = time()
         blocknumber += resolution
     
-    logging.info("Saving to .csv")
+    logger.info("Saving to .csv")
     for key in df_dic:
         df_dic[key].to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) +".csv", index=False)
 
@@ -238,7 +238,7 @@ def check_for_restart():
     
     for pair in pairs:
         if not os.path.isfile(os.path.join(datafolder, "roi", pair["id"])+".csv"):
-            logging.info(f"{pair['id']} is missing")
+            logger.info(f"{pair['id']} is missing")
             return True
     return False
 
