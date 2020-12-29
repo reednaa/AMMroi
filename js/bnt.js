@@ -315,7 +315,9 @@ let app = new Vue({
         fetchAllTokens: function() {
             let url = '/data/bancor/files.json';
             fetch(url).then(res => res.json()).then((out) => {
-                app.listOfTokens = (out.forEach((x) => x.replace(".parsed.csv", ""))).sort((a,b) => (a.id > b.id));
+                let temp_list = [];
+                out.forEach((x) => temp_list.push(x.replace(".parsed.csv", "")));
+                app.listOfTokens = temp_list.sort((a,b) => (a > b));
             });
         }
     },

@@ -69,8 +69,8 @@
                                 <div class="select">
                                     <select v-model="selectedAsset">
                                         <option value="false">Select Asset</option>
-                                        <option :value="dict.id" v-for="dict in listOfTokens">
-                                            {{dict.id}}
+                                        <option :value="pool" v-for="pool in listOfTokens">
+                                            {{pool}}
                                         </option>
                                     </select>
                                 </div>
@@ -131,6 +131,6 @@
         </span>
     </a>
 </body>
-<script src="js/bnt.js?v=1"></script>
+<script src="js/bnt.js?v=2"></script>
 
 </html>
