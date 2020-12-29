@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <title>Bancor Network information</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.css"
+        integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"
+        integrity="sha256-Xjq9HM9n3XzT47n/NmSEaJUwPi7hme++D8mxHfSr+0Q=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@1.1.6/dist/chartjs-plugin-crosshair.min.js"
+        integrity="sha256-r/9biws8g6l28IaMAzQW4jw/wTmuDPmcEaXn1qqD9iM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"
+        integrity="sha256-BSZ2gjTJLE5ZEGH1e6beyHYNOITz6M26XFre9lEBdx8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/l10n/da.js"
+        integrity="sha256-btg10M6OuilEf55qRv0f370emD4TckUGmmEm03YaJtE=" crossorigin="anonymous"></script>
+    <style>
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        .is-shake {
+            animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        .address {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div style="margin-top: 10px; margin-right:10px;" v-if="!calculatedReady">
+            <div class="field is-horizontal">
+                <div class="field is-grouped" v-if="parsedProtections.length == 0">
+                    <div class="field-label">
+                        <label class="label">Loading data</label>
+                    </div>
+                    <div class="field-body">
+                        <template v-if="protections.length  == 0">
+                            <div class="field">
+                                <div class="control">
+                                    <button @click="getAllProtections()" class="button">Load protections</button>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input placeholder="Last protcetionID to fecth" class="input" v-model="protectionMaxID">
+                                </div>
+                            </div>
+                        </template>
+                        <div class="field" v-else>
+                            <div class="control">
+                                <progress class="progress" style="width: 20vw;" :value="protections.length" :max="protectionMaxID"></progress>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                {{protections.length}}/{{protectionMaxID}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-grouped" v-else-if="!ready">
+                    <div class="field-label">
+                        <label class="label">Parsing</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <progress class="progress is-link" style="width: 20vw;" :value="parsedProtections.length" :max="protections.length"></progress>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                {{parsedProtections.length}}/{{protections.length}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-grouped" v-else-if="!pricesReady">
+                    <div class="field-label">
+                        <label class="label">Getting pool data</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <progress class="progress is-danger" style="width: 20vw;" :value="dictLength(totalSupply)*2" :max="dictLength(translator)" v-key="totalSupply"></progress>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-grouped" v-else-if="!calculatedReady">
+                    <div class="field-label">
+                        <label class="label">Calculating</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <progress class="progress is-success" style="width: 20vw;" max="1"></progress>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <ul>
+                <li @click="site = 0" :class="{'is-active': site == 0}"><a>Pools</a></li>
+                <li @click="site = 1" :class="{'is-active': site == 1}"><a>Protections</a></li>
+                <li @click="site = 2" :class="{'is-active': site == 2}"><a>User</a></li>
+                <li @click="toCSV(parsedProtections)" v-if="calculatedReady"><a>Download Data</a></li>
+            </ul>
+        </div>
+
+        <div v-if="parsedProtections">
+            <table class="table" v-if="site == 0">
+                <thead>
+                    <tr>
+                        <th>Pool</th>
+                        <th>Token</th>
+                        <th>Staked</th>
+                        <th></th>
+                        <th>Token</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody v-for="element in filterDict(translator, false, (e) => (e.includes('BNT')) && (e != 'BNT'))">
+                    <tr>
+                        <td>{{element}}</td>
+                        <td>{{element.replace("BNT","")}}</th>
+                        <td>
+                            {{((dictSum(filterDict(parsedProtections, "token", (e) => e == element.replace("BNT","")), "reserve"))/10**decimals[reverseLookup(translator, element.replace("BNT", ""))]).toFixed(2)}}
+                        </td>
+                        <td></td>
+                        <td>BNT</td>
+                        <td>
+                            {{((dictSum(filterDict(filterDict(parsedProtections, "pool", (e) => e == element), "token", (e) => e == "BNT"), "reserve"))/10**18).toFixed(2)}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="columns is-multiline" v-else-if="site == 1">
+                <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections"
+                    :key="protection.id">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-left">
+                                    <svg :data-jdenticon-value="protection.owner.substring(0,20)" width="48"
+                                        height="48">
+                                        Jdenticon
+                                    </svg>
+                                </div>
+                                <div class="media-content">
+                                    <p class="title is-4 address is-hidden-mobile" style="width: 35vw;">
+                                        {{protection.owner}}</p>
+                                    <p class="title is-4 address is-hidden-tablet" style="width:80vw;">
+                                        {{protection.owner}}, {{protection.id}}</p>
+                                    <p class="subtitle is-6" style="text-overflow: ellipsis;">
+                                        {{toHumanTime(protection.timestamp)}}, {{protection.id}}</p>
+                                </div>
+                            </div>
+                            <div class="content" style="overflow: scroll;">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                {{protection.pool}}
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                            <th>
+                                                Pool Tokens
+                                            </th>
+                                            <th>
+                                                Rate
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {{protection.token}}
+                                            </td>
+                                            <th>
+                                                {{(protection.reserve/10**protection.decimals).toFixed(4)}}
+                                            </th>
+                                            <th>
+                                                {{(protection.pt/10**18).toFixed(4)}}
+                                            </th>
+                                            <th v-if="protection.rate">
+                                                {{(protection.rate).toFixed(5)}}
+                                            </th>
+                                            <th v-else>
+                                                Correcting
+                                            </th>
+                                        </tr>
+                                    </tbody>
+                                    <template v-if="protection.fees">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    IL
+                                                </th>
+                                                <th>
+                                                    Fees
+                                                </th>
+                                                <th>
+                                                    Unprotected
+                                                </th>
+                                                <th>
+                                                    Protected
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    {{((1 - protection.IL)*100).toFixed(4)}}%
+                                                </td>
+                                                <th>
+                                                    {{((protection.fees-1)*100).toFixed(4)}}%
+                                                </th>
+                                                <th>
+                                                    {{((protection.fees * protection.IL - 1)*100).toFixed(4)}}%
+                                                </th>
+                                                <th>
+                                                    {{(((protection.fees - 1) * protection.IL)*100).toFixed(4)}}%
+                                                </th>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-else>
+            Loading
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.0.1" async>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
+
+<script src="/js/abi.js"></script>
+<script src="/js/bancor.js?v=22"></script>
+
+</html>

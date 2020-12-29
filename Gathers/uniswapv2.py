@@ -172,7 +172,7 @@ def get_roi(restart=False, resolution=1500):
             _df.to_csv(os.path.join(datafolder, "roi", pair["id"]) +".csv", index=False)
         id_to_symbol[pair["pair_id"]] = pair["id"]
         
-        df_dic[pair["pair_id"]] = pd.read_csv(os.path.join(datafolder, "roi", pair["id"]) +".csv")
+        df_dic[pair["pair_id"]] = pd.read_csv(os.path.join(datafolder, "roi", pair["id"]) +".csv", dtypes={"block": int, "timestamp": int, "ROI": float, "Token Price": float, "Trade Volume": float, "sINV": float})
         
 
     #TODO adjust the token, delete incorrect ones and adjust the list to solve the other ones. Then complete the remanining
