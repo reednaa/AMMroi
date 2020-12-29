@@ -248,7 +248,7 @@ let app = new Vue({
             if (!start_date) {
                 start_date = moment.unix(1);
             }
-            Papa.parse("/data/bancor/roi/" + currency + ".csv", {
+            Papa.parse("/data/bancor/roi/" + currency + ".parsed.csv", {
                 download: true,
                 complete: function(results) {
                     let [outputFees, outputTP, outputROI, outputProtected, bancorProtected] = convertData(results.data, start_date);
