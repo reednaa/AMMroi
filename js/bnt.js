@@ -33,9 +33,9 @@ function convertData(json_data, start_date) {
     if (!start_date) {
         start_date = moment.unix(1);
     }
-    let index_ROI = json_data[0].indexOf("ROI");
-    let index_TP = json_data[0].indexOf("Token Price");
-    let index_time = json_data[0].indexOf("timestamp");
+    let index_ROI = json_data[0].indexOf("sINV");
+    let index_TP = json_data[0].indexOf("price");
+    let index_time = json_data[0].indexOf("Timestamp");
     let start_index;
     for (arr_index in json_data.slice(1)) {
         if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
