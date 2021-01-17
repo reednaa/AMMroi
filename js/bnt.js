@@ -37,11 +37,19 @@ function convertData(json_data, start_date) {
     let index_TP = json_data[0].indexOf("price");
     let index_time = json_data[0].indexOf("Timestamp");
     let start_index;
-    for (arr_index in json_data.slice(1)) {
-        if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
-            start_index = Number(arr_index)+1;
-            break;
+    if (!(typeof start_date === 'number')) {
+        for (arr_index in json_data.slice(1)) {
+            if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
+                start_index = Number(arr_index)+1;
+                break;
+            }
         }
+    } else {
+        start_index = start_date;
+    }
+    
+    if (!start_index) {
+        start_index = 1;
     }
     if (!start_index) {
         start_index = 1;
@@ -143,6 +151,7 @@ let app = new Vue({
     el: "#structure",
     data: {
         charts: [],
+        help: true,
         listOfTokens: [],
         selectedAsset: false,
         selectedDate: "",
@@ -153,7 +162,7 @@ let app = new Vue({
         bancorProtected: false,
     },
     methods: {
-        addChart: function() {
+        addChart: function(selectedDate = this.selectedDate) {
             if (!this.selectedAsset) {
                 this.isShake = true;
                 setTimeout(function() {
@@ -244,9 +253,14 @@ let app = new Vue({
                 app.addData(chart, app.selectedAsset, moment(app.selectedDate));
             }, 500);
         },
-        addData: function(chart, currency, start_date) {
-            if (!start_date) {
-                start_date = moment.unix(1);
+        addData: function(chart, currency, sstart_date) {
+            let start_date;
+            if (!(typeof sstart_date === 'number')) {
+                start_date = new moment(sstart_date)
+            } else if (!sstart_date) {
+                start_date = new moment.unix(1);
+            } else {
+                start_date = sstart_date
             }
             Papa.parse("/data/bancor/roi/" + currency + ".parsed.csv", {
                 download: true,
@@ -308,7 +322,9 @@ let app = new Vue({
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
-                    app.charts[app.lastChart]["name"] = app.selectedAsset + " " + outputProtected[0]["x"].format('YYYY-MM-DD') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD');
+                    app.charts[app.lastChart]["name"] = app.selectedAsset + " " + outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
+                    app.charts[app.lastChart]["start_index"] = start_index;
+                    app.charts[app.lastChart]["token"] = app.selectedAsset;
                 }
             });
         },
@@ -353,6 +369,19 @@ let app = new Vue({
     },
     created() {
         this.fetchAllTokens();
+
+        let counter = 1;
+        if (window.location.search.substr(1)) {
+            for (let graph of window.location.search.substr(1).split("!")) {
+                setTimeout(function() {
+                    let [asset, date] = graph.split("&");
+                    app.selectedAsset = asset;
+                    app.addChart(Number(date));
+                }, counter);
+                counter += 800;
+            }
+
+        }
     }
 });
 
