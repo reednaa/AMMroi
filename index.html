@@ -106,13 +106,13 @@
                     <div class="card">
                         <header class="card-header">
                             <p class="card-header-title">
-                                {{card.name}}
-                                <a :href="card.token + '&' + card.start_index" class="card-header-icon">
-                                    <span class="icon">
-                                        <i class="fas fa-link"></i>
-                                    </span>
-                                </a>
+                                {{card.name}}  
                             </p>
+                            <a :href="card.token + '&' + card.start_index" class="card-header-icon">
+                                <span class="icon">
+                                    <i class="fas fa-link"></i>
+                                </span>
+                            </a>
                         </header>
                         <div class="card-content">
                             <canvas :id="card.id" width="100" height="100"></canvas>
