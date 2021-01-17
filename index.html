@@ -128,10 +128,10 @@
             <div class="notification" v-if="help">
                 <button @click="help = false" class="delete"></button>
                 When using the default date, the picker might select a dataset that includes an early datapoint. The first datapoints' price might be outliers, since the market have yet to settle on a token price.
-                I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME. (Resolution ~6 hours)
+                I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME. 
                 <template v-if="selectedAsset">
                     <br>
-                    <a :href="'/data/uniswapv2/roi/' + selectedAsset + '.csv'"> {{'/data/uniswapv2/roi/' + selectedAsset + '.csv'}}</a>
+                    <a :href="'/data/uniswapv2/roi/' + selectedAsset + '.csv'"> {{'/data/uniswapv2/roi/' + selectedAsset + '.csv'}}</a> (Resolution ~6 hours)
                 </template>
             </div>
         </div>
