@@ -136,8 +136,8 @@
                 I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME. 
                 <template v-if="selectedAsset">
                     <br>
-                    <a :href="'/data/bancor/roi/' + selectedAsset + '.csv'"> {{'/data/bancor/roi/' + selectedAsset + '.csv'}}</a> or 
-                    <a :href="'https://github.com/Lindgrenium/AMMroi/blob/gh-pages/data/bancor/roi/' + selectedAsset + '.csv'">
+                    <a :href="'/data/bancor/roi/' + selectedAsset + 'parsed.csv'"> {{'/data/bancor/roi/' + selectedAsset + '.csv'}}</a> or 
+                    <a :href="'https://github.com/Lindgrenium/AMMroi/blob/gh-pages/data/bancor/roi/' + selectedAsset + '.parsed.csv'">
                         <span class="icon">
                         <i class="fas fa-table"></i>
                     </span>
