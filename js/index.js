@@ -259,9 +259,9 @@ let app = new Vue({
         addData: function(chart, currency, sstart_date) {
             let start_date;
             if (!(typeof sstart_date === 'number')) {
-                start_date = moment(start_date)
+                start_date = new moment(sstart_date)
             } else if (!sstart_date) {
-                start_date = moment.unix(1);
+                start_date = new moment.unix(1);
             } else {
                 start_date = sstart_date
             }
