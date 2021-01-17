@@ -106,7 +106,7 @@
                     <div class="card">
                         <header class="card-header">
                             <p class="card-header-title">
-                                {{card.name}}
+                                {{card.name}} {{card.start_index}}
                             </p>
                         </header>
                         <div class="card-content">
@@ -131,7 +131,12 @@
                 I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME. 
                 <template v-if="selectedAsset">
                     <br>
-                    <a :href="'/data/uniswapv2/roi/' + selectedAsset + '.csv'"> {{'/data/uniswapv2/roi/' + selectedAsset + '.csv'}}</a> (Resolution ~6 hours)
+                    <a :href="'/data/uniswapv2/roi/' + selectedAsset + '.csv'"> {{'/data/uniswapv2/roi/' + selectedAsset + '.csv'}}</a> or 
+                    <a :href="'https://github.com/Lindgrenium/AMMroi/blob/gh-pages/data/uniswapv2/roi/' + selectedAsset + '.csv'">
+                        <span class="icon">
+                        <i class="fab fa-github"></i>
+                    </span>
+                </a> (Resolution ~6 hours)
                 </template>
             </div>
         </div>
@@ -148,6 +153,6 @@
 </div>
     
 </body>
-<script src="js/index.js?v=21"></script>
+<script src="js/index.js?v=22"></script>
 
 </html>
