@@ -375,7 +375,7 @@ let app = new Vue({
             const qur = window.location.search.substr(1);
             let [asset, date] = qur.split("&");
             this.selectedAsset = asset;
-            this.addChart(date);
+            this.addChart(Number(date));
 
         }
     }
