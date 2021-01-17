@@ -14,7 +14,7 @@ formatter = "%(asctime)s : %(levelname)s : %(message)s"
 logging.basicConfig(format=formatter, level=logging.INFO)
 
 
-alchemy = "https://eth-mainnet.alchemyapi.io/v2/*"
+alchemy = "https://eth-mainnet.alchemyapi.io/v2/crJBCdgZbHdSqbyNFQth0IcPOuGO9MaW"
 infura = "https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e"
 
 web3 = Web3(Web3.HTTPProvider(alchemy))
@@ -62,30 +62,30 @@ def in_df(df, li):
 tokens_to_scan = in_df(
     tokens_to_scan,
     [
-        # "ETH",
-        # "LINK",
-        # "USDC",
-        # "USDT",
-        # "WBTC",
-        # "DAI",
-        # "OCEAN",
-        # "YFI",
-        # "REN",
-        # "renBTC",
-        # "SNX",
-        # "ANT",
-        # "RPL",
-        # "NMR",
+        "ETH",
+        "LINK",
+        "USDC",
+        "USDT",
+        "WBTC",
+        "DAI",
+        "OCEAN",
+        "YFI",
+        "REN",
+        "renBTC",
+        "SNX",
+        "ANT",
+        "RPL",
+        "NMR",
         "MKR",
     ],
 )  # [tokens_to_scan["reserve symbol"] == "REN"]
 
+    
 
 resolution = 1500 # * 10  # Blocks
 latest = web3.eth.getBlock("latest")["number"]
 
 # df: block, timestamp, reserve0, reserve1, totalsupply, reserve0tkn, reserve1tkn
-
 
 for row_entry in tokens_to_scan.iterrows():
     its, token_row = row_entry
@@ -132,7 +132,14 @@ for row_entry in tokens_to_scan.iterrows():
         with open(os.path.join(datafolder, "tokens.json"), "w") as f:
             json.dump(tokens, f)
 
-    blocknumber = start + resolution
+
+    # TODO Check if true, then disable line
+    if os.path.isfile(os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")):
+        df = pd.read_csv(os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"))
+
+        blocknumber = int(df["Block"].iloc[-1]) + resolution
+    else:
+        blocknumber = start + resolution
     stage = 0
     data = []
     while blocknumber < latest:
@@ -208,6 +215,6 @@ for row_entry in tokens_to_scan.iterrows():
             # "roi",
         ],
     )
-    converterDataframe.to_csv(
+    pd.concat([df, converterDataframe]).to_csv(
         os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"), index=False
     )

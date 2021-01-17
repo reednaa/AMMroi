@@ -115,7 +115,7 @@ logger.info("\n" + str(converterDataframe))
 with open(os.path.join(datafolder, "pools.json"), "r") as f:
     pool_translator = json.load(f)
 
-with open(os.path.join(datafolder, "tokens.json"), "r") as f:
+with open(os.path.join(datafolder, "pool_tokens.json"), "r") as f:
     tokens = json.load(f)
 
 # Fix the token list first.
@@ -142,7 +142,7 @@ for i in pools_to_get:
             name = DStoken.functions.name().call()
             tokens[ptToken_address] = dict(symbol=symbol, name=name, decimals=decimals)
 
-            with open(os.path.join(datafolder, "tokens.json"), "w") as f:
+            with open(os.path.join(datafolder, "pool_tokens.json"), "w") as f:
                 json.dump(tokens, f)
 
         pool_translator[i] = dict(token=ptToken_address)
@@ -175,7 +175,7 @@ converterDataframe.to_csv(os.path.join(datafolder, "converters.csv"), index=Fals
 
 # Construct pool path. We will index by pool token
 
-with open(os.path.join(datafolder, "tokens.json"), "r") as f:
+with open(os.path.join(datafolder, "pool_tokens.json"), "r") as f:
     tokens = json.load(f)
 
 construction = {}
@@ -196,17 +196,20 @@ for pt in tokens:
 
     # We will now search for activation for the first pool on in the list.
     start_block = 10566778 - 50000
-
-    logs = web3.eth.getLogs(
-        dict(
-            fromBlock=start_block,
-            toBlock=latest,
-            address=pools[0],
-            topics=[
-                "0x6b08c2e2c9969e55a647a764db9b554d64dc42f1a704da11a6d5b129ad163f2c"
-            ],
+    try:
+        logs = web3.eth.getLogs(
+            dict(
+                fromBlock=start_block,
+                toBlock=latest,
+                address=pools[0],
+                topics=[
+                    "0x6b08c2e2c9969e55a647a764db9b554d64dc42f1a704da11a6d5b129ad163f2c"
+                ],
+            )
         )
-    )
+    except IndexError as E:
+        print(pools, pol, pt)
+        raise E
     try:
         if (
             web3.toHex(logs[0]["topics"][3])
