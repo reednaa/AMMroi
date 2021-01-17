@@ -34,3 +34,12 @@ if __name__ == "__main__":
         restart_required = uniswapv2.check_for_restart()
         logger.info(f"Restart of data is {'reccomended' if restart_required else 'not reccomended'}. We follow the reccomendation.")
     uniswapv2.get_roi(restart=restart_required, resolution=500) # The resolution has a direct corrolation to how many rounds we need to fecth. It is, therefore, reccomended to keep it relativly low.
+    
+    
+    #
+    # BANCOR
+    #
+    
+    from Gathers import bancor_init
+    from Gathers import bancor
+    from Gathers import bancor_parser
