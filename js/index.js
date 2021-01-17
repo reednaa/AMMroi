@@ -327,7 +327,7 @@ let app = new Vue({
                     chart.update();
                     app.charts[app.lastChart]["name"] = app.selectedAsset + " " + outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
                     app.charts[app.lastChart]["start_index"] = start_index;
-                    app.charts[app.lastChart]["token"] = this.selectedAsset;
+                    app.charts[app.lastChart]["token"] = app.selectedAsset;
                 }
             });
         },
