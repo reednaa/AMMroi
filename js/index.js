@@ -43,7 +43,7 @@ function convertData(json_data, start_date) {
     let index_TP = json_data[0].indexOf("Token Price");
     let index_time = json_data[0].indexOf("timestamp");
     let start_index;
-    if (Number(start_date) == NaN) {
+    if (math.isnan(Number(start_date))) {
         for (arr_index in json_data.slice(1)) {
             if (moment.unix(json_data[arr_index][index_time]) >= start_date) {
                 start_index = Number(arr_index)+1;
@@ -51,7 +51,7 @@ function convertData(json_data, start_date) {
             }
         }
     } else {
-        start_index = start_date
+        start_index = start_date;
     }
     
     if (!start_index) {
@@ -258,7 +258,7 @@ let app = new Vue({
         },
         addData: function(chart, currency, sstart_date) {
             let start_date;
-            if (Number(start_date) == NaN) {
+            if (math.isnan(Number(start_date))) {
                 start_date = moment(start_date)
             } else if (!sstart_date) {
                 start_date = moment.unix(1);
