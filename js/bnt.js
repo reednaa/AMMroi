@@ -114,7 +114,7 @@ function convertData(json_data, start_date) {
             }
         );
     }
-    return [outputFees, outputTP, outputROI, outputProtected, bancorProtected]
+    return [outputFees, outputTP, outputROI, outputProtected, bancorProtected, start_index]
 }
 
 
@@ -265,7 +265,7 @@ let app = new Vue({
             Papa.parse("/data/bancor/roi/" + currency + ".parsed.csv", {
                 download: true,
                 complete: function(results) {
-                    let [outputFees, outputTP, outputROI, outputProtected, bancorProtected] = convertData(results.data, start_date);
+                    let [outputFees, outputTP, outputROI, outputProtected, bancorProtected, start_index] = convertData(results.data, start_date);
                     if (app.showProtected) {
                         chart.data.datasets.push(
                             {
