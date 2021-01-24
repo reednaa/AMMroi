@@ -373,6 +373,24 @@ let app = new Vue({
         let counter = 1;
         if (window.location.search.substr(1)) {
             for (let graph of window.location.search.substr(1).split("&")) {
+            let [element, value] = graph.split("=");
+            if (element == "P") {
+                if (value == 0) {
+                    this.showProtected = false;
+                    this.bancorProtected = false;
+                } else if (value == 1) {
+                    this.showProtected = true;
+                    this.bancorProtected = false;
+                } else if (value == 2) {
+                    this.showProtected = false;
+                    this.bancorProtected = true;
+                }
+            }
+        }
+            for (let graph of window.location.search.substr(1).split("&")) {
+                if (graph.split("=")[0] == "P") {
+                    continue
+                }
                 setTimeout(function() {
                     let [asset, date] = graph.split("=");
                     app.selectedAsset = asset;
