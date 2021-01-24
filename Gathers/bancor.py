@@ -72,6 +72,7 @@ tokens_to_scan = in_df(
         "YFI",
         "REN",
         "renBTC",
+        "AAVE",
         "SNX",
         "ANT",
         "RPL",
