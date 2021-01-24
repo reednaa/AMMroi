@@ -373,9 +373,9 @@ let app = new Vue({
 
         let counter = 1;
         if (window.location.search.substr(1)) {
-            for (let graph of window.location.search.substr(1).split("!")) {
+            for (let graph of window.location.search.substr(1).split("&")) {
                 setTimeout(function() {
-                    let [asset, date] = graph.split("&");
+                    let [asset, date] = graph.split("=");
                     app.selectedAsset = asset;
                     app.addChart(Number(date));
                 }, counter);
