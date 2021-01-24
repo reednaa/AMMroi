@@ -334,7 +334,7 @@ let app = new Vue({
         fetchAllTokens: function() {
             let url = '/data/uniswapv2/tokens.json';
             fetch(url).then(res => res.json()).then((out) => {
-                app.listOfTokens = (out["results"]).sort((a,b) => (a.id > b.id));
+                app.listOfTokens = (out["results"]).sort((a,b) => ((a.id).localeCompare(b.id)));
             });
         }
     },

@@ -333,7 +333,7 @@ let app = new Vue({
             fetch(url).then(res => res.json()).then((out) => {
                 let temp_list = [];
                 out.forEach((x) => temp_list.push(x.replace(".parsed.csv", "")));
-                app.listOfTokens = temp_list.sort((a,b) => (a > b));
+                app.listOfTokens = temp_list.sort((a,b) => (a.localeCompare(b)));
             });
         }
     },
