@@ -250,7 +250,7 @@ let app = new Vue({
                 new_chart["chart"] = chart;
                 new_chart["name"] = app.selectedAsset;
                 Vue.set(app.charts, dictSearch(app.charts, "name", name), new_chart);
-                app.addData(chart, app.selectedAsset, moment(app.selectedDate));
+                app.addData(chart, app.selectedAsset, selectedDate);
             }, 500);
         },
         addData: function(chart, currency, sstart_date) {
@@ -373,23 +373,23 @@ let app = new Vue({
         let counter = 1;
         if (window.location.search.substr(1)) {
             for (let graph of window.location.search.substr(1).split("&")) {
-            let [element, value] = graph.split("=");
-            if (element == "P") {
-                if (value == 0) {
-                    this.showProtected = false;
-                    this.bancorProtected = false;
-                } else if (value == 1) {
-                    this.showProtected = true;
-                    this.bancorProtected = false;
-                } else if (value == 2) {
-                    this.showProtected = false;
-                    this.bancorProtected = true;
+                let [element, value] = graph.split("=");
+                if (element == "P") {
+                    if (value == 0) {
+                        this.showProtected = false;
+                        this.bancorProtected = false;
+                    } else if (value == 1) {
+                        this.showProtected = true;
+                        this.bancorProtected = false;
+                    } else if (value == 2) {
+                        this.showProtected = false;
+                        this.bancorProtected = true;
+                    }
                 }
             }
-        }
             for (let graph of window.location.search.substr(1).split("&")) {
                 if (graph.split("=")[0] == "P") {
-                    continue
+                    continue;
                 }
                 setTimeout(function() {
                     let [asset, date] = graph.split("=");

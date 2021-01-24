@@ -390,7 +390,7 @@ let app = new Vue({
             }
             for (let graph of window.location.search.substr(1).split("&")) {
                 if (graph.split("=")[0] == "P") {
-                    continue
+                    continue;
                 }
                 setTimeout(function() {
                     let [asset, date] = graph.split("=");
