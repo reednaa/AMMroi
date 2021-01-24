@@ -81,9 +81,8 @@ tokens_to_scan = in_df(
     ],
 )  # [tokens_to_scan["reserve symbol"] == "REN"]
 
-    
 
-resolution = 1500 # * 10  # Blocks
+resolution = 1500  # * 10  # Blocks
 latest = web3.eth.getBlock("latest")["number"]
 
 # df: block, timestamp, reserve0, reserve1, totalsupply, reserve0tkn, reserve1tkn
@@ -106,7 +105,7 @@ for row_entry in tokens_to_scan.iterrows():
     reserve1tkn = PoolConverter.functions.connectorTokens(1).call(
         block_identifier=start + 1
     )
-    
+
     # Ensure they are in tokens.json
     if not tokens.get(reserve0tkn):
         erc20 = web3.eth.contract(
@@ -133,14 +132,18 @@ for row_entry in tokens_to_scan.iterrows():
         with open(os.path.join(datafolder, "tokens.json"), "w") as f:
             json.dump(tokens, f)
 
-
     # TODO Check if true, then disable line
-    if os.path.isfile(os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")):
-        df = pd.read_csv(os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"))
+    if os.path.isfile(
+        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
+    ):
+        df = pd.read_csv(
+            os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
+        )
 
         blocknumber = int(df["Block"].iloc[-1]) + resolution
     else:
         blocknumber = start + resolution
+        df = pd.DataFrame()
     stage = 0
     data = []
     while blocknumber < latest:
@@ -150,7 +153,12 @@ for row_entry in tokens_to_scan.iterrows():
         ):  # Then stage is the correct stage
             stage += 1
 
-        print(tokens[pool_token]['symbol'], blocknumber, stage, pool_construction[pool_token]["pools"][stage])
+        print(
+            tokens[pool_token]["symbol"],
+            blocknumber,
+            stage,
+            pool_construction[pool_token]["pools"][stage],
+        )
         # Now we ensured that pool_construction[pool_token]["pool"][stage] is the pool that contains active trading.
 
         PoolConverter = web3.eth.contract(
@@ -164,7 +172,7 @@ for row_entry in tokens_to_scan.iterrows():
             block_identifier=blocknumber
         )
         if totalsupply == 0:
-            blocknumber += 2*resolution
+            blocknumber += 2 * resolution
             continue
         reserve0 = PoolConverter.functions.getConnectorBalance(reserve0tkn).call(
             block_identifier=blocknumber
@@ -173,7 +181,14 @@ for row_entry in tokens_to_scan.iterrows():
             block_identifier=blocknumber
         )
         if reserve0 == 0 or reserve1 == 0:
-            print("ALERT, reserve0, reserve1", reserve0 == 0, reserve1 == 0, blocknumber, "totalsupply", totalsupply)
+            print(
+                "ALERT, reserve0, reserve1",
+                reserve0 == 0,
+                reserve1 == 0,
+                blocknumber,
+                "totalsupply",
+                totalsupply,
+            )
             blocknumber += resolution
             continue
 
@@ -217,5 +232,6 @@ for row_entry in tokens_to_scan.iterrows():
         ],
     )
     pd.concat([df, converterDataframe]).to_csv(
-        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"), index=False
+        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"),
+        index=False,
     )
