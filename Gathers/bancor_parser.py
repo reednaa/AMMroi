@@ -99,4 +99,4 @@ def sort_folder_alt(arr):
     return dat
 
 with open(os.path.join(datafolder, "files.json"), "w") as f:
-    json.dump(sort_folder_alt(folder), f)
+    json.dump(sort_folder_alt(os.listdir(os.path.join(datafolder, "roi"))), f)
