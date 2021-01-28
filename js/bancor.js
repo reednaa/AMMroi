@@ -168,6 +168,8 @@ let app = new Vue({
         ready: false,
         calculatedReady: false,
         site: 1,
+        sortAddr: false,
+        addrToSort: "",
     },
     methods: {
         toCSV: function(arr) {
