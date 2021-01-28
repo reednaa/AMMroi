@@ -144,7 +144,7 @@
                 <div class="field-body">
                     <div class="field is-grouped">
                         <div class="control">
-                            <input class="input" placeholder="Address" arial-placeholder="Address" v-value="addrToSort">
+                            <input class="input" placeholder="Address" arial-placeholder="Address" v-model="addrToSort">
                         </div>
                         <div class="control">
                             <button @click="sortAddr = !sortAddr" class="button" :class="{'is-success': sortAddr}">Enable Sort By Address</button>
