@@ -63,6 +63,21 @@
 
 <body>
     <div id="app">
+        <div class="field is-grouped" v-if="site == 1">
+            <div class="field-label">
+                <label class="label">Address</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" placeholder="Address" arial-placeholder="Address" v-value="addrToSort">
+                    </div>
+                    <div class="control">
+                        <button @click="sortAddr = !sortAddr" class="button" :class="{'is-success': sortAddr}"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div style="margin-top: 10px; margin-right:10px;" v-if="!calculatedReady">
             <div class="field is-horizontal">
                 <div class="field is-grouped" v-if="parsedProtections.length == 0">
@@ -131,21 +146,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="field is-grouped" v-else-if="calculatedReady">
-                    <div class="field-label">
-                        <label class="label">Address</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input class="input" placeholder="Address" arial-placeholder="Address" v-value="addrToSort">
-                            </div>
-                            <div class="control">
-                                <button @click="sortAddr = !sortAddr" class="button" :class="{'is-success': sortAddr}"></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
 
@@ -187,8 +188,8 @@
             </table>
             <div class="columns is-multiline" v-else-if="site == 1">
                 <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections"
-                    :key="protection.id">
-                    <div class="card" v-if="sortAddr || addrToSort == protection.owner">
+                    :key="protection.id" v-if="ready">
+                    <div class="card" v-if="!sortAddr || addrToSort == protection.owner">
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-left">
