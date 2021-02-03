@@ -312,7 +312,7 @@ let app = new Vue({
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
-                    app.charts[app.lastChart]["name"] = app.selectedPair + " " + outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
+                    app.charts[app.lastChart]["name"] = this.protocols[this.protocol] + " " + app.selectedPair + " " + outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
                     app.charts[app.lastChart]["start_index"] = start_index;
                     app.charts[app.lastChart]["token"] = app.selectedPair;
                 }
