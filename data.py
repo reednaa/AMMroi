@@ -1,4 +1,5 @@
-from Gathers import uniswapv2, sushiswap
+from Gathers import uniswapv2_alt as uniswapv2
+from Gathers import sushiswap
 
 import logging
 
@@ -7,7 +8,8 @@ logfile = "log.log"
 
 formatter = "%(asctime)s : %(levelname)s : %(message)s"
 logging.basicConfig(
-    format=formatter, level=logging.INFO, #handlers=[logging.FileHandler(logfile)]
+    format=formatter,
+    level=logging.INFO,  # handlers=[logging.FileHandler(logfile)]
 )
 logger = logging.getLogger(__name__)
 
@@ -39,12 +41,10 @@ if __name__ == "__main__":
         restart=restart_required_uniswap, resolution=1000
     )  # The resolution has a direct corrolation to how many rounds we need to fecth. It is, therefore, reccomended to keep it relativly low.
     uniswapv2.filesjson()
-    
-    # sushiswap.get_roi(
-    #     restart=restart_required_sushiswap, resolution=1000
-    # )
-    sushiswap.filesjson()
-    
+
+    # sushiswap.get_roi(restart=restart_required_sushiswap, resolution=1000)
+    # sushiswap.filesjson()
+
     #
     # BANCOR
     #

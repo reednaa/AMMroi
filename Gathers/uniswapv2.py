@@ -8,6 +8,7 @@ import os
 from asyncio.exceptions import TimeoutError
 from math import sqrt, ceil
 from time import time, sleep
+import numpy as np
 
 import logging
 
@@ -227,7 +228,7 @@ def get_roi(restart=False, resolution=1000):
             logger.info(
                 "It seems like we are restarting anyway. If this is a mistake, cancel now."
             )
-            sleep(2)
+            sleep(5)
             for pair in pairs:
                 all_pairs.append(pair["pair_id"])
                 _df = pd.DataFrame(
@@ -278,12 +279,24 @@ def get_roi(restart=False, resolution=1000):
     except KeyboardInterrupt:
         pass
     logger.info("Saving to .csv")
+    print(len(arr_dic))
+    blocks = []
     for key in arr_dic:
         df = pd.DataFrame(arr_dic[key], columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
         df["price"] = df["reserve0"].apply(float)/df["reserve1"].apply(float)
         df["sINV"] = (df["reserve0"].apply(float)*df["reserve1"].apply(float)).apply(sqrt)/df["total supply"].apply(float)
         
         df = df_dic[key].append(df)
+        try:
+            if df.iloc[-1]["block"] not in blocks:
+                print(id_to_symbol[key])
+                blocks.append(df.iloc[-1]["block"])
+                print(np.unique(blocks))
+            else:
+                blocks.append(df.iloc[-1]["block"])
+                
+        except IndexError:
+            pass
         
         df.to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) + ".csv", index=False)
 

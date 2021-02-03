@@ -224,7 +224,7 @@ def get_roi(restart=False, resolution=1000):
     else:
         try:
             blocknumber = int(df_dic["0x397ff1542f962076d0bfe58ea045ffa2d347aca0"]["block"].iloc[-1]) + resolution
-        except IndexError:
+        except KeyError:
             logger.info(
                 "It seems like we are restarting anyway. If this is a mistake, cancel now."
             )
