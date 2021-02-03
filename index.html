@@ -192,7 +192,7 @@
                 When using the default date, the picker might select a dataset that includes an early datapoint. The
                 first datapoints' price might be outliers, since the market have yet to settle on a token price.
                 I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME.
-                <template v-if="selectedAsset1">
+                <template v-if="selectedPair">
                     <br>
                     <a :href="'/data/' + this.protocols[this.protocol] + '/roi/' + selectedPair + '.csv'"> {{'/data/' + this.protocols[this.protocol] + '/roi/' + selectedPair
                         + '.csv'}}</a> or

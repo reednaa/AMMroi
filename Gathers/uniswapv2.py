@@ -107,9 +107,9 @@ def query_data(all_pairs, df_dic, arr_dic, id_to_symbol, blocknumber, tries=5):
             except Exception as E:
                 # logger.error(E)
                 logger.info(
-                    f"Query broke. Potentially bad connection. We will try again in {i} second, trying {tries-i} more times."
+                    f"Query broke. Potentially bad connection. We will try again in {i*10} second, trying {tries-i} more times."
                 )
-                sleep(i)
+                sleep(i*10)
             else:
                 break
         if i == tries:
@@ -222,12 +222,12 @@ def get_roi(restart=False, resolution=1000):
         blocknumber = round(get_initial_blocknum()/1000)*1000+1000
     else:
         try:
-            blocknumber = int(df_dic[all_pairs[0]]["block"].iloc[-1]) + resolution
+            blocknumber = int(df_dic["0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852"]["block"].iloc[-1]) + resolution
         except IndexError:
             logger.info(
                 "It seems like we are restarting anyway. If this is a mistake, cancel now."
             )
-            sleep(0.8)
+            sleep(2)
             for pair in pairs:
                 all_pairs.append(pair["pair_id"])
                 _df = pd.DataFrame(
