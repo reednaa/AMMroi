@@ -431,7 +431,7 @@ let app = new Vue({
         },
     },
     created() {
-        this.fetchAllTokens();
+        // this.fetchAllTokens();
 
         // let counter = 1;
         // if (window.location.search.substr(1)) {
