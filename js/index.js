@@ -372,9 +372,19 @@ let app = new Vue({
                 this.selectedPair = val + "BNT"
                 this.resetCalender();
             } else {
-                this.tokenlist2 = this.tokenlist_complete.filter(function(value, index, self) {
-                    return (self.split("&")).includes(val);
+                let temp_list = this.tokenlist_complete.filter(function(value, index, self) {
+                    return (value.split("&")).includes(val);
                 });
+                this.tokenlist2 = [];
+                temp_list.forEach(function(x) {
+                    let x_splitted = x.split("&");
+                    if (x_splitted[0] == app.selectedAsset1) {
+                        app.tokenlist2.push(x_splitted[1]);
+                    } else {
+                        app.tokenlist2.push(x_splitted[0]);
+                    }
+                });
+                this.tokenlist2 = this.tokenlist2.sort((a, b) => (a.localeCompare(b)));
                 if (this.tokenlist2.includes(this.selectedAsset2)) {
                     if (this.tokenlist_complete.includes(this.selectedAsset1 + "&" + this.selectedAsset2)) {
                         this.selectedPair = this.selectedAsset1 + "&" + this.selectedAsset2;
