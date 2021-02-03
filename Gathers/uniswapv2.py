@@ -80,9 +80,9 @@ def dividor(array, parts=0, length=0):  # Need either parts or length
 #
 
 
-def query_data(all_pairs, df_dic, id_to_symbol, blocknumber, tries=5):
+def query_data(all_pairs, df_dic, arr_dic, id_to_symbol, blocknumber, tries=5):
     exchange_data = []
-    for pairs in dividor(all_pairs, length=26):
+    for pairs in dividor(all_pairs, length=1000):  # The dividor doesn't work very well. 
         for i in range(1, tries + 1):
             try:
                 query_txt = (
@@ -114,11 +114,14 @@ def query_data(all_pairs, df_dic, id_to_symbol, blocknumber, tries=5):
                 break
         if i == tries:
             logger.info("We can't continue. Saving data")
-            for key in df_dic:
-                df_dic[key].to_csv(
-                    os.path.join(datafolder, "roi", id_to_symbol[key]) + ".csv",
-                    index=False,
-                )
+            for key in arr_dic:
+                df = pd.DataFrame(arr_dic[key], columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
+                df["price"] = df["reserve0"].apply(float)/df["reserve1"].apply(float)
+                df["sINV"] = (df["reserve0"].apply(float)*df["reserve1"].apply(float)).apply(sqrt)/df["total supply"].apply(float)
+                
+                df = df_dic[key].append(df)
+                
+                df.to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) + ".csv", index=False)
             raise (gql.transport.exceptions.TransportServerError)
     return exchange_data
 
@@ -182,6 +185,7 @@ def get_roi(restart=False, resolution=1000):
 
     all_pairs = []
     df_dic = {}
+    arr_dic = {}
     id_to_symbol = {}
     for pair in pairs:
         all_pairs.append(pair["pair_id"])
@@ -190,14 +194,7 @@ def get_roi(restart=False, resolution=1000):
             or restart
         ):
             _df = pd.DataFrame(
-                columns=[
-                    "block",
-                    "timestamp",
-                    "ROI",
-                    "Token Price",
-                    "Trade Volume",
-                    "sINV",
-                ]
+                columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume", "price", "sINV"]
             )
             _df.to_csv(
                 os.path.join(datafolder, "roi", pair["id"]) + ".csv", index=False
@@ -209,12 +206,15 @@ def get_roi(restart=False, resolution=1000):
             dtype={
                 "block": int,
                 "timestamp": int,
-                "ROI": float,
-                "Token Price": float,
-                "Trade Volume": float,
-                "sINV": float,
+                "reserve0": float,
+                "reserve1": float,
+                "total supply": float,
+                "trade volume": float,
+                "price": float,
+                "sINV": float
             },
         )
+        arr_dic[pair["pair_id"]] = []
 
     # TODO adjust the token, delete incorrect ones and adjust the list to solve the other ones. Then complete the remanining
     # Get dataframe for all pairs.
@@ -231,21 +231,14 @@ def get_roi(restart=False, resolution=1000):
             for pair in pairs:
                 all_pairs.append(pair["pair_id"])
                 _df = pd.DataFrame(
-                    columns=[
-                        "block",
-                        "timestamp",
-                        "ROI",
-                        "Token Price",
-                        "Trade Volume",
-                        "sINV",
-                    ]
+                    columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume", "price", "sINV"]
                 )
                 _df.to_csv(
                     os.path.join(datafolder, "roi", pair["id"]) + ".csv", index=False
                 )
                 id_to_symbol[pair["pair_id"]] = pair["id"]
-
-                df_dic[pair["pair_id"]] = []
+                
+                arr_dic[pair["pair_id"]] = []
             blocknumber = round(get_initial_blocknum()/1000)*1000+1000
 
     set_time = time()
@@ -255,9 +248,8 @@ def get_roi(restart=False, resolution=1000):
     try:
         while blocknumber < current_block:
             blocknumber_timestamp = block_to_timestamp(int(blocknumber))
-            tryings = 4
 
-            exchange_data = query_data(all_pairs, df_dic, id_to_symbol, blocknumber)
+            exchange_data = query_data(all_pairs, df_dic, arr_dic, id_to_symbol, blocknumber)
 
             for pair in exchange_data:
                 if float(pair["totalSupply"]) == 0:
@@ -274,9 +266,9 @@ def get_roi(restart=False, resolution=1000):
                     pair["totalSupply"],
                     pair["volumeToken0"]
                 ]
-                df_dic[pair["id"]].append(data)
+                arr_dic[pair["id"]].append(data)
 
-            rounds_per_set = 10
+            rounds_per_set = 1
             if round((current_block - blocknumber) / resolution) % rounds_per_set == 0:
                 logger.info(
                     f"{current_block-blocknumber} blocks remaning, {round((current_block-blocknumber)/resolution)} rounds left. Last set took {round(time()-set_time,3)} seconds, {round((time()-set_time)/rounds_per_set,3)} seconds per round. Time remaning: {round((time()-set_time)/rounds_per_set*(current_block-blocknumber)/resolution)} seconds"
@@ -286,10 +278,13 @@ def get_roi(restart=False, resolution=1000):
     except KeyboardInterrupt:
         pass
     logger.info("Saving to .csv")
-    for key in df_dic:
-        df = pd.DataFrame(df_dic[key], columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
+    for key in arr_dic:
+        df = pd.DataFrame(arr_dic[key], columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
         df["price"] = df["reserve0"].apply(float)/df["reserve1"].apply(float)
         df["sINV"] = (df["reserve0"].apply(float)*df["reserve1"].apply(float)).apply(sqrt)/df["total supply"].apply(float)
+        
+        df = df_dic[key].append(df)
+        
         df.to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) + ".csv", index=False)
 
 
@@ -321,4 +316,4 @@ if __name__ == "__main__":
     num = 20
     get_tokens(num)
     restart_required = check_for_restart()
-    get_roi(restart=restart_required, resolution=1500)
+    get_roi(restart=restart_required, resolution=1000)

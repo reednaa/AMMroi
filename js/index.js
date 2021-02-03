@@ -161,7 +161,7 @@ let app = new Vue({
         lastChart: "",
         bancorProtected: false,
         protocol: 0,
-        protocols: ["bancor", "uniswapv2", "sushiswap"]
+        protocols: ["bancor", "sushiswap", "uniswapv2"]
     },
     methods: {
         addChart: function(selectedDate = this.selectedDate) {
@@ -353,10 +353,11 @@ let app = new Vue({
                     let temp_list = [];
                     out.forEach((x) => temp_list.push(x.replace(".csv", "")));
                     app.tokenlist_complete = temp_list;
+                    let temp_list1 = [];
                     temp_list.forEach(function(x) {
-                        temp_list.push(x.replace("BNT", ""));
+                        temp_list1.push(x.replace("BNT", ""));
                     });
-                    app.tokenlist1 = temp_list.sort((a, b) => (a.localeCompare(b)));
+                    app.tokenlist1 = temp_list1.sort((a, b) => (a.localeCompare(b)));
                     app.tokenlist2 = ["BNT"];
                 });
             } else {
