@@ -175,7 +175,7 @@ def query_function(pair, resolution=1000):  #TODO make resolution configurable
             },
         )
         startblock = int(storage_df.iloc[-1]["block"]) + resolution
-    except FileNotFoundError:
+    except (FileNotFoundError, IndexError):
         storage_df = pd.DataFrame(columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume", "price", "sINV"])
         startblock = round(get_initial_blocknum(pair["pair_id"])/1000)*1000+1000
         
