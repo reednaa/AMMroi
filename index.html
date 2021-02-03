@@ -147,7 +147,10 @@
                     <div class="column is-one-fifth">
                         <div class="field">
                             <label class="label"></label>
-                            <button class="button is-large" @click="addChart()"
+                            <button class="button is-large is-tablet is-hidden-mobile" @click="addChart()"
+                                :class="{'is-danger': !selectedPair, 'is-shake': isShake}">Add
+                                Chart</button>
+                            <button class="button is-hidden-tablet" @click="addChart()"
                                 :class="{'is-danger': !selectedPair, 'is-shake': isShake}">Add
                                 Chart</button>
                         </div>
