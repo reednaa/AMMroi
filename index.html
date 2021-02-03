@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-    <title>Uniswap v2 pool information</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-checkradio@1.1.1/dist/css/bulma-checkradio.min.css"
+        integrity="sha256-ej+83V4GB9ok2X22EvJ/ggEzzJ+gaZjm7G/Neq7wboQ=" crossorigin="anonymous">
+    <title>Compare AMM returns</title>
     <script defer src="https://use.fontawesome.com/releases/v5.15.1/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
         integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
@@ -61,52 +63,104 @@
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title">
-                        Uniswap v2, TKN/ETH and ETH/TKN pairs
+                        Compare Automated Market Maker returns
                     </h1>
-                    <h2 class="subtitle">
+                    <!-- <h2 class="subtitle">
+                        A
+                    </h2> -->
+                </div>
+
+
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <nav class="tabs is-toggle is-fullwidth">
+                    <div class="container">
+                        <ul>
+                            <li @click="protocol=0" :class="{'is-active': protocol==0}">
+                                <a>Bancor</a>
+                            </li>
+                            <li @click="protocol=1" :class="{'is-active': protocol==1}">
+                                <a>Sushiswap</a>
+                            </li>
+                            <li @click="protocol=2" :class="{'is-active': protocol==2}">
+                                <a>Uniswap</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="columns">
+                    <div class="column">
+                        <label class="label">Asset and Datetime:</label>
                         <div class="field has-addons">
                             <div class="control">
                                 <div class="select">
-                                    <select v-model="selectedAsset">
-                                        <option value="false">Select Asset</option>
-                                        <option :value="dict.id" v-for="dict in listOfTokens">
-                                            {{dict.id}}
+                                    <select v-model="selectedAsset1">
+                                        <option value="false">Asset 1</option>
+                                        <option :value="asset" v-for="asset in tokenlist1">
+                                            {{asset}}
                                         </option>
                                     </select>
                                 </div>
                             </div>
                             <div class="control">
+                                <button class="button" disabled v-if="protocol==0">
+                                    <span>BNT</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down"></i>
+                                      </span>
+                                </button>
+                                <div class="select" v-else-if="selectedAsset1">
+                                    <select v-model="selectedAsset2">
+                                        <option value="false">Asset 2</option>
+                                        <option :value="asset" v-for="asset in tokenlist2">
+                                            {{asset}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <button class="button" disabled v-else>
+                                    <span>Asset 2</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down"></i>
+                                      </span>
+                                </button>
+                            </div>
+                            <div class="control">
                                 <input id="startDate" class="input" v-model="selectedDate" type="date" />
                             </div>
                         </div>
-                        <div class="control">
-                            <button class="button" @click="addChart()"
-                                :class="{'is-sucess': selectedAsset, 'is-danger': !selectedAsset, 'is-shake': isShake}">Add
-                                Chart</button>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Show:</label>
+                            <input class="is-checkradio" id="IL" type="radio" name="Protection" v-model="showProtected">
+                            <label for="IL">Without IL</label>
+                            <input class="is-checkradio" id="BP" type="radio"
+                                name="Protection" v-model="bancorProtected">
+                            <label for="BP">Bancor Protection</label>
+                            <input class="is-checkradio" id="data" type="radio"
+                                name="Protection" 
+                                checked="checked">
+                            <label for="data">Only Data</label>
                         </div>
-                        <div class="control">
-                            <label class="checkbox">
-                                <input type="checkbox" v-model="showProtected">
-                                Show without impermanent loss
-                            </label>
-                        </div>
-                        <div class="control">
-                            <label class="checkbox">
-                                <input type="checkbox" v-model="bancorProtected">
-                                Bancor impermanent loss protected
-                            </label>
-                        </div>
-                    </h2>
+                    </div>
+                </div>
+                <div class="control">
+                    <button class="button" @click="addChart()"
+                        :class="{'is-sucess': selectedAsset1, 'is-danger': !selectedAsset1, 'is-shake': isShake}">Add
+                        Chart</button>
                 </div>
             </div>
         </section>
+
         <section class="section">
             <div class="columns is-multiline">
                 <div class="column is-half" v-for="card, index in charts">
                     <div class="card">
                         <header class="card-header">
                             <p class="card-header-title">
-                                {{card.name}}  
+                                {{card.name}}
                             </p>
                             <a :href="'?' + card.token + '=' + card.start_index" class="card-header-icon">
                                 <span class="icon">
@@ -132,30 +186,33 @@
         <div class="container">
             <div class="notification" v-if="help">
                 <button @click="help = false" class="delete"></button>
-                When using the default date, the picker might select a dataset that includes an early datapoint. The first datapoints' price might be outliers, since the market have yet to settle on a token price.
-                I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME. 
-                <template v-if="selectedAsset">
+                When using the default date, the picker might select a dataset that includes an early datapoint. The
+                first datapoints' price might be outliers, since the market have yet to settle on a token price.
+                I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME.
+                <template v-if="selectedAsset1">
                     <br>
-                    <a :href="'/data/uniswapv2/roi/' + selectedAsset + '.csv'"> {{'/data/uniswapv2/roi/' + selectedAsset + '.csv'}}</a> or 
-                    <a :href="'https://github.com/Lindgrenium/AMMroi/blob/gh-pages/data/uniswapv2/roi/' + selectedAsset + '.csv'">
+                    <a :href="'/data/uniswapv2/roi/' + selectedAsset1 + '.csv'"> {{'/data/uniswapv2/roi/' + selectedAsset1
+                        + '.csv'}}</a> or
+                    <a
+                        :href="'https://github.com/Lindgrenium/AMMroi/blob/gh-pages/data/uniswapv2/roi/' + selectedAsset1 + '.csv'">
                         <span class="icon">
-                        <i class="fas fa-table"></i>
-                    </span>
-                </a> (Resolution ~6 hours)
+                            <i class="fas fa-table"></i>
+                        </span>
+                    </a> (Resolution ~6 hours)
                 </template>
             </div>
         </div>
     </div>
 
-    
-    
 
-        <a href="http://github.com/Lindgrenium/AMMroi">
+
+
+    <a href="http://github.com/Lindgrenium/AMMroi">
         <span class="icon">
             <i class="fab fa-github"></i>
         </span>
     </a>
-    
+
 </body>
 <script src="js/index.js?v=34"></script>
 

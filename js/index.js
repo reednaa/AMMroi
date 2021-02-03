@@ -14,10 +14,11 @@ function round(num, n) {
     return Math.round(num * rounder) / rounder;
 }
 
+
 let data;
 let chart;
-function fetchDataForPair(pair) {
-    Papa.parse("/data/uniswapv2/roi/" + pair + ".csv", {
+function fetchDataForPair(pair, protocol) {
+    Papa.parse("/data/" + protocol + "/roi/" + pair + ".csv", {
         download: true,
         complete: function(results) {
             console.log(results.data);
@@ -26,21 +27,13 @@ function fetchDataForPair(pair) {
     });
 }
 
-let list_of_tokens;
-function fetchAllTokens() {
-    let url = '/data/uniswapv2/tokens.json';
-    fetch(url).then(res => res.json()).then((out) => {
-    list_of_tokens = out;
-    });
-}
-// console.log(fetchDataForPair("wbtc"));
 
 function convertData(json_data, start_date) {
     if (!start_date) {
         start_date = moment.unix(1);
     }
-    let index_ROI = json_data[0].indexOf("ROI");
-    let index_TP = json_data[0].indexOf("Token Price");
+    let index_ROI = json_data[0].indexOf("sINV");
+    let index_TP = json_data[0].indexOf("price");
     let index_time = json_data[0].indexOf("timestamp");
     let start_index;
     if (!(typeof start_date === 'number')) {
@@ -155,14 +148,20 @@ let app = new Vue({
     data: {
         charts: [],
         help: true,
-        listOfTokens: [],
-        selectedAsset: false,
+        tokenlist_complete: [],
+        tokenlist1: [],
+        tokenlist2: [],
+        selectedAsset1: false,
+        selectedAsset2: false,
+        selectedPair: false,
         selectedDate: "",
         isShake: false,
         calender: "",
-        showProtected: true,
+        showProtected: false,
         lastChart: "",
         bancorProtected: false,
+        protocol: 0,
+        protocols: ["bancor", "uniswapv2", "sushiswap"]
     },
     methods: {
         addChart: function(selectedDate = this.selectedDate) {
@@ -331,17 +330,9 @@ let app = new Vue({
                 }
             });
         },
-        fetchAllTokens: function() {
-            let url = '/data/uniswapv2/tokens.json';
-            fetch(url).then(res => res.json()).then((out) => {
-                app.listOfTokens = (out["results"]).sort((a,b) => ((a.id).localeCompare(b.id)));
-            });
-        }
-    },
-    watch: {
-        selectedAsset: function() {
+        resetCalender: function() {
             calender.destroy();
-            Papa.parse("/data/uniswapv2/roi/" + this.selectedAsset + ".csv", {
+            Papa.parse("/data/" + this.protocols[this.protocol] + "/roi/" + this.selectedPair + ".csv", {
                 download: true,
                 complete: function(results) {
                     calender = flatpickr("#startDate", { "enableTime": true, "locale": "da", minDate: moment.unix(results.data[1][1]).toDate(), maxDate: "today", defaultDate: moment.unix(results.data[1][1]).toDate(),
@@ -352,6 +343,77 @@ let app = new Vue({
                     app.selectedDate = moment.unix(results.data[1][1]).format("YYYY-MM-DD HH:mm");
                 }
             });
+        }
+    },
+    watch: {
+        protocol: function(val, oldval) {
+            if (this.protocol == 0) {
+                let url = '/data/' + this.protocols[this.protocol] + '/files.json';
+                fetch(url).then(res => res.json()).then((out) => {
+                    let temp_list = [];
+                    out.forEach((x) => temp_list.push(x.replace(".csv", "")));
+                    app.tokenlist_complete = temp_list;
+                    temp_list.forEach(function(x) {
+                        temp_list.push(x.replace("BNT", ""));
+                    });
+                    app.tokenlist1 = temp_list.sort((a, b) => (a.localeCompare(b)));
+                    app.tokenlist2 = ["BNT"];
+                });
+            } else {
+                let url = '/data/' + this.protocols[this.protocol] + '/files.json';
+                fetch(url).then(res => res.json()).then((out) => {
+                    let temp_list = [];
+                    out.forEach((x) => temp_list.push(x.replace(".csv", "")));
+                    app.tokenlist_complete = temp_list;
+                    let temp_list1 = [];
+                    let temp_list2 = [];
+                    temp_list.forEach(function(x) {
+                        let [a, b] = x.split("&");
+                        temp_list1.push(a);
+                        temp_list2.push(b);
+                    });
+                    temp_list = [].concat(temp_list1, temp_list2);
+                    let uniques = [...new Set(temp_list)];
+                    app.tokenlist1 = uniques.sort((a, b) => (a.localeCompare(b)));
+                });
+            }
+        },
+        selectedAsset1: function (val, oldval) {
+            if (this.protocol == 0) {
+                this.selectedAsset2 = "BNT";
+                this.selectedPair = val + "BNT"
+                this.resetCalender();
+            } else {
+                this.tokenlist2 = this.tokenlist_complete.filter(function(value, index, self) {
+                    return (self.split("&")).includes(val);
+                });
+                if (this.tokenlist2.includes(this.selectedAsset2)) {
+                    if (this.tokenlist_complete.includes(this.selectedAsset1 + "&" + this.selectedAsset2)) {
+                        this.selectedPair = this.selectedAsset1 + "&" + this.selectedAsset2;
+                    } else {
+                        this.selectedPair = this.selectedAsset2 + "&" + this.selectedAsset1;
+                    }
+                    this.resetCalender();
+                } else {
+                    this.selectedAsset2 = false;
+                    this.selectedPair = false;
+                }
+            }
+        },
+        selectedAsset2: function(val, oldval) {
+            if (this.protocol == 0) {
+                this.selectedAsset2 = "BNT";
+            } else {
+                if (val) {
+                    if (this.tokenlist_complete.includes(this.selectedAsset1 + "&" + this.selectedAsset2)) {
+                        this.selectedPair = this.selectedAsset1 + "&" + this.selectedAsset2;
+                    } else {
+                        this.selectedPair = this.selectedAsset2 + "&" + this.selectedAsset1;
+                    }
+                    this.resetCalender()
+                }
+            }
+            
         },
         showProtected: function(val, oldval) {
             if (val) {
@@ -371,36 +433,36 @@ let app = new Vue({
     created() {
         this.fetchAllTokens();
 
-        let counter = 1;
-        if (window.location.search.substr(1)) {
-            for (let graph of window.location.search.substr(1).split("&")) {
-                let [element, value] = graph.split("=");
-                if (element == "P") {
-                    if (value == 0) {
-                        this.showProtected = false;
-                        this.bancorProtected = false;
-                    } else if (value == 1) {
-                        this.showProtected = true;
-                        this.bancorProtected = false;
-                    } else if (value == 2) {
-                        this.showProtected = false;
-                        this.bancorProtected = true;
-                    }
-                }
-            }
-            for (let graph of window.location.search.substr(1).split("&")) {
-                if (graph.split("=")[0] == "P") {
-                    continue;
-                }
-                setTimeout(function() {
-                    let [asset, date] = graph.split("=");
-                    app.selectedAsset = asset;
-                    app.addChart(Number(date));
-                }, counter);
-                counter += 800;
-            }
+        // let counter = 1;
+        // if (window.location.search.substr(1)) {
+        //     for (let graph of window.location.search.substr(1).split("&")) {
+        //         let [element, value] = graph.split("=");
+        //         if (element == "P") {
+        //             if (value == 0) {
+        //                 this.showProtected = false;
+        //                 this.bancorProtected = false;
+        //             } else if (value == 1) {
+        //                 this.showProtected = true;
+        //                 this.bancorProtected = false;
+        //             } else if (value == 2) {
+        //                 this.showProtected = false;
+        //                 this.bancorProtected = true;
+        //             }
+        //         }
+        //     }
+        //     for (let graph of window.location.search.substr(1).split("&")) {
+        //         if (graph.split("=")[0] == "P") {
+        //             continue;
+        //         }
+        //         setTimeout(function() {
+        //             let [asset, date] = graph.split("=");
+        //             app.selectedAsset = asset;
+        //             app.addChart(Number(date));
+        //         }, counter);
+        //         counter += 800;
+        //     }
 
-        }
+        // }
     }
 });
 

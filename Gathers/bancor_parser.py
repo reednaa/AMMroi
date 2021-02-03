@@ -88,13 +88,13 @@ for pool in tokens_to_parse:
     df["Reserve1TKN"] = df["Reserve1TKN"].apply(address_to_symbol)
     
     df.to_csv(
-        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.parsed.csv"), index=False
+        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.csv"), index=False
     )
 
 def sort_folder_alt(arr):
     dat = []
     for i in arr:
-        if (len(i.split(".")) == 3) and (i.split(".")[-1] == "csv") and (i.split(".")[-2] == "parsed"):
+        if (len(i.split(".")) == 2) and (i.split(".")[-1] == "csv"):
             dat.append(i)
     return dat
 
