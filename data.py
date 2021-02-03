@@ -1,4 +1,4 @@
-from Gathers import uniswapv2
+from Gathers import uniswapv2, sushiswap
 
 import logging
 
@@ -24,19 +24,26 @@ if __name__ == "__main__":
     # Contrary to popular belif, we don't need to update the token list. Once we have a suffecient list, we can simply use that. That also enables us to edit it to our desires, instead of relying on top pools. It also gives us the ability to not refetch the list every time a popular token is created.
 
     if UPDATE_TOKEN_LIST:
-        num = 200
-        uniswapv2.get_tokens(num)
+        uniswapv2.get_tokens(num=200)
+        sushiswap.get_tokens(num=100)
     if FORCE_RESTART:
-        restart_required = FORCE_RESTART
+        restart_required_uniswap = FORCE_RESTART
+        restart_required_sushiswap = FORCE_RESTART
     else:
-        restart_required = uniswapv2.check_for_restart()
+        restart_required_uniswap = uniswapv2.check_for_restart()
+        restart_required_sushiswap = sushiswap.check_for_restart()
         logger.info(
-            f"Restart of data is {'reccomended' if restart_required else 'not reccomended'}. We follow the reccomendation."
+            f"Restart of data is {'reccomended' if [restart_required_uniswap, restart_required_sushiswap] else 'not reccomended'}. We follow the reccomendation."
         )
     uniswapv2.get_roi(
-        restart=restart_required, resolution=1000
+        restart=restart_required_uniswap, resolution=1000
     )  # The resolution has a direct corrolation to how many rounds we need to fecth. It is, therefore, reccomended to keep it relativly low.
     uniswapv2.filesjson()
+    
+    # sushiswap.get_roi(
+    #     restart=restart_required_sushiswap, resolution=1000
+    # )
+    sushiswap.filesjson()
     
     #
     # BANCOR

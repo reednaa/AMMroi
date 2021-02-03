@@ -147,7 +147,7 @@ def get_tokens(num=5):
         """
         {
         pairs(first: """
-        + str(num)
+        + str(int(num))
         + """ orderBy: trackedReserveETH orderDirection: desc) {
             id
             token0 {
