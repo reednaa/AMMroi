@@ -335,6 +335,8 @@ let app = new Vue({
     },
     watch: {
         protocol: function(val, oldval) {
+            this.selectedAsset2 = "";
+            this.selectedAsset1 = "";
             if (this.protocol == 0) {
                 let url = '/data/' + this.protocols[this.protocol] + '/files.json';
                 fetch(url).then(res => res.json()).then((out) => {
