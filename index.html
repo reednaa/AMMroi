@@ -134,14 +134,13 @@
                     <div class="column">
                         <div class="field">
                             <label class="label">Show:</label>
-                            <input class="is-checkradio" id="IL" type="radio" name="Protection" v-model="showProtected">
-                            <label for="IL">Without IL</label>
-                            <input class="is-checkradio" id="BP" type="radio"
-                                name="Protection" v-model="bancorProtected">
+                            <input class="is-checkradio" id="IL" value=1 type="radio" name="Protection" v-model="ilDisplay">
+                            <label for="IL" >Without IL</label>
+                            <input class="is-checkradio" id="BP" value=2 type="radio"
+                                name="Protection" v-model="ilDisplay">
                             <label for="BP">Bancor Protection</label>
-                            <input class="is-checkradio" id="data" type="radio"
-                                name="Protection" 
-                                checked="checked">
+                            <input class="is-checkradio" id="data" value=0 type="radio"
+                                name="Protection" v-model="ilDisplay">
                             <label for="data">Only Data</label>
                         </div>
                     </div>
@@ -214,6 +213,6 @@
     </a>
 
 </body>
-<script src="js/index.js?v=36"></script>
+<script src="js/index.js?v=37"></script>
 
 </html>

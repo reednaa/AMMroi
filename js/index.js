@@ -147,7 +147,8 @@ let app = new Vue({
         showProtected: false,
         lastChart: "",
         bancorProtected: false,
-        protocol: 0,
+        ilDisplay: 0,
+        protocol: -1,
         protocols: ["bancor", "sushiswap", "uniswapv2"]
     },
     methods: {
@@ -255,7 +256,7 @@ let app = new Vue({
                 download: true,
                 complete: function(results) {
                     let [outputFees, outputTP, outputROI, outputProtected, bancorProtected, start_index] = convertData(results.data, start_date);
-                    if (app.showProtected) {
+                    if (app.ilDisplay == 1) {
                         chart.data.datasets.push(
                             {
                                 label: "Return w.o. IL.",
@@ -267,7 +268,7 @@ let app = new Vue({
                             }
                         );
                     };
-                    if (app.bancorProtected) {
+                    if (app.ilDisplay == 2) {
                         chart.data.datasets.push(
                             {
                                 label: "Bancor Protected",
