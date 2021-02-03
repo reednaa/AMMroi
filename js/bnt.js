@@ -27,8 +27,6 @@ function fetchDataForPair(pair) {
 }
 
 
-// console.log(fetchDataForPair("wbtc"));
-
 function convertData(json_data, start_date) {
     if (!start_date) {
         start_date = moment.unix(1);
@@ -48,9 +46,6 @@ function convertData(json_data, start_date) {
         start_index = start_date;
     }
     
-    if (!start_index) {
-        start_index = 1;
-    }
     if (!start_index) {
         start_index = 1;
     }
