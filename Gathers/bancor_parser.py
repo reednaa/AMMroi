@@ -62,30 +62,30 @@ tokens_to_parse = sort_folder(folder)
 
 for pool in tokens_to_parse:
     df = pd.read_csv(os.path.join(datafolder, "roi", pool), dtype={
-        "Block": str,
-        "Timestamp": str,
-        "Reserve0": float,
-        "Reserve1": float,
-        "totalSupply": float,
-        "Reserve0TKN": str,
-        "Reserve1TKN": str,
+        "block": str,
+        "timestamp": str,
+        "reserve0": float,
+        "reserve1": float,
+        "totalsupply": float,
+        "reserve0tkn": str,
+        "reserve1tkn": str,
     })
     
-    df["Reserve0"] = df["Reserve0"]/10**tokens[df["Reserve0TKN"].iloc[1]]["decimals"]
-    df["Reserve1"] = df["Reserve1"]/10**tokens[df["Reserve1TKN"].iloc[1]]["decimals"]
-    if reserve_dict(tokens[df["Reserve0TKN"].iloc[1]]["symbol"] + "BNT", tokens, "symbol"):
-        pool_token = reserve_dict(tokens[df["Reserve0TKN"].iloc[1]]["symbol"] + "BNT", tokens, "symbol")
+    df["reserve0"] = df["reserve0"]/10**tokens[df["reserve0tkn"].iloc[1]]["decimals"]
+    df["reserve1"] = df["reserve1"]/10**tokens[df["reserve1tkn"].iloc[1]]["decimals"]
+    if reserve_dict(tokens[df["reserve0tkn"].iloc[1]]["symbol"] + "BNT", tokens, "symbol"):
+        pool_token = reserve_dict(tokens[df["reserve0tkn"].iloc[1]]["symbol"] + "BNT", tokens, "symbol")
     else:
-        pool_token = reserve_dict(tokens[df["Reserve1TKN"].iloc[1]]["symbol"] + "BNT", tokens, "symbol")
+        pool_token = reserve_dict(tokens[df["reserve1tkn"].iloc[1]]["symbol"] + "BNT", tokens, "symbol")
     
     
-    df["totalSupply"] = df["totalSupply"]/10**tokens[pool_token]["decimals"]
+    df["totalsupply"] = df["totalsupply"]/10**tokens[pool_token]["decimals"]
     
-    df["price"] = df["Reserve0"]/df["Reserve1"]
-    df["sINV"] = df["Reserve0"].apply(sqrt)*df["Reserve1"].apply(sqrt) / df["totalSupply"]
+    df["price"] = df["reserve0"]/df["reserve1"]
+    df["sINV"] = df["reserve0"].apply(sqrt)*df["reserve1"].apply(sqrt) / df["totalsupply"]
     
-    df["Reserve0TKN"] = df["Reserve0TKN"].apply(address_to_symbol)
-    df["Reserve1TKN"] = df["Reserve1TKN"].apply(address_to_symbol)
+    df["reserve0tkn"] = df["reserve0tkn"].apply(address_to_symbol)
+    df["reserve1tkn"] = df["reserve1tkn"].apply(address_to_symbol)
     
     df.to_csv(
         os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.csv"), index=False

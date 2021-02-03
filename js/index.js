@@ -15,19 +15,6 @@ function round(num, n) {
 }
 
 
-let data;
-let chart;
-function fetchDataForPair(pair, protocol) {
-    Papa.parse("/data/" + protocol + "/roi/" + pair + ".csv", {
-        download: true,
-        complete: function(results) {
-            console.log(results.data);
-            data=results.data;
-        }
-    });
-}
-
-
 function convertData(json_data, start_date) {
     if (!start_date) {
         start_date = moment.unix(1);
@@ -165,12 +152,12 @@ let app = new Vue({
     },
     methods: {
         addChart: function(selectedDate = this.selectedDate) {
-            if (!this.selectedAsset) {
+            if (!this.selectedPair) {
                 this.isShake = true;
                 setTimeout(function() {
                     app.isShake = false;
                 }, 820);
-                return this.selectedAsset;
+                return this.selectedPair;
             }
             let id = this.charts.length;
             let new_chart = {name: id, id: id};
@@ -250,9 +237,9 @@ let app = new Vue({
                 } 
                 });
                 new_chart["chart"] = chart;
-                new_chart["name"] = app.selectedAsset;
+                new_chart["name"] = app.selectedPair;
                 Vue.set(app.charts, dictSearch(app.charts, "name", name), new_chart);
-                app.addData(chart, app.selectedAsset, selectedDate);
+                app.addData(chart, app.selectedPair, selectedDate);
             }, 500);
         },
         addData: function(chart, currency, sstart_date) {
@@ -264,7 +251,7 @@ let app = new Vue({
             } else {
                 start_date = sstart_date
             }
-            Papa.parse("/data/uniswapv2/roi/" + currency + ".csv", {
+            Papa.parse("/data/" + this.protocols[this.protocol] + "/roi/" + currency + ".csv", {
                 download: true,
                 complete: function(results) {
                     let [outputFees, outputTP, outputROI, outputProtected, bancorProtected, start_index] = convertData(results.data, start_date);
@@ -324,9 +311,9 @@ let app = new Vue({
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
-                    app.charts[app.lastChart]["name"] = app.selectedAsset + " " + outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
+                    app.charts[app.lastChart]["name"] = app.selectedPair + " " + outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
                     app.charts[app.lastChart]["start_index"] = start_index;
-                    app.charts[app.lastChart]["token"] = app.selectedAsset;
+                    app.charts[app.lastChart]["token"] = app.selectedPair;
                 }
             });
         },

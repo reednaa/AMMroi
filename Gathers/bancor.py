@@ -140,7 +140,7 @@ for row_entry in tokens_to_scan.iterrows():
             os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
         )
 
-        blocknumber = int(df["Block"].iloc[-1]) + resolution
+        blocknumber = int(df["block"].iloc[-1]) + resolution
     else:
         blocknumber = start + resolution
         df = pd.DataFrame()
@@ -219,13 +219,13 @@ for row_entry in tokens_to_scan.iterrows():
     converterDataframe = pd.DataFrame(
         data,
         columns=[
-            "Block",
-            "Timestamp",
-            "Reserve0",
-            "Reserve1",
-            "totalSupply",
-            "Reserve0TKN",
-            "Reserve1TKN",
+            "block",
+            "timestamp",
+            "reserve0",
+            "reserve1",
+            "totalsupply",
+            "reserve0tkn",
+            "reserve1tkn",
             # "price",
             # "sINV",
             # "roi",
