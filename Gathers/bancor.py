@@ -82,8 +82,8 @@ tokens_to_scan = in_df(
 )  # [tokens_to_scan["reserve symbol"] == "REN"]
 
 
-resolution = 1500  # * 10  # Blocks
-latest = web3.eth.getBlock("latest")["number"]
+resolution = 1000  # * 10  # Blocks
+latest = round(web3.eth.getBlock("latest")["number"]/1000)-1000
 
 # df: block, timestamp, reserve0, reserve1, totalsupply, reserve0tkn, reserve1tkn
 
@@ -142,7 +142,7 @@ for row_entry in tokens_to_scan.iterrows():
 
         blocknumber = int(df["block"].iloc[-1]) + resolution
     else:
-        blocknumber = start + resolution
+        blocknumber = round(start + resolution/1000)*1000
         df = pd.DataFrame()
     stage = 0
     data = []
