@@ -5,7 +5,7 @@ import pandas as pd
 import os
 from math import sqrt, ceil
 from time import time, sleep
-
+from multiprocessing import Pool
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ infura = "https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e"
 
 web3 = Web3(Web3.HTTPProvider(alchemy))
 infura_web3 = Web3(Web3.HTTPProvider(infura))  # It is cheaper
-print(web3.isConnected(), infura_web3.isConnected())
+logger.info([web3.isConnected(), infura_web3.isConnected()])
 
 
 def block_to_timestamp(block):
@@ -83,11 +83,13 @@ tokens_to_scan = in_df(
 
 
 resolution = 1000  # * 10  # Blocks
-latest = round(web3.eth.getBlock("latest")["number"]/1000)-1000
+latest = round(web3.eth.getBlock("latest")["number"]/1000)*1000-1000
 
 # df: block, timestamp, reserve0, reserve1, totalsupply, reserve0tkn, reserve1tkn
 
-for row_entry in tokens_to_scan.iterrows():
+
+
+def query_data(row_entry):
     its, token_row = row_entry
 
     pool_token = token_row["pool address"]
@@ -139,26 +141,28 @@ for row_entry in tokens_to_scan.iterrows():
         df = pd.read_csv(
             os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
         )
-
-        blocknumber = int(df["block"].iloc[-1]) + resolution
+        try:
+            start_number = int(df["block"].iloc[-1]) + resolution
+        except IndexError:
+            start_number = round((start + resolution)/1000)*1000
     else:
-        blocknumber = round(start + resolution/1000)*1000
+        start_number = round((start + resolution)/1000)*1000
         df = pd.DataFrame()
     stage = 0
     data = []
-    while blocknumber < latest:
+    for blocknumber in range(start_number, latest, resolution):
         # Find the pool we need to use.
         while (stage != len(pool_construction[pool_token]["blocks"]) - 1) and (
             not (blocknumber < pool_construction[pool_token]["blocks"][stage + 1])
         ):  # Then stage is the correct stage
             stage += 1
 
-        print(
+        logger.info([
             tokens[pool_token]["symbol"],
             blocknumber,
             stage,
             pool_construction[pool_token]["pools"][stage],
-        )
+        ])
         # Now we ensured that pool_construction[pool_token]["pool"][stage] is the pool that contains active trading.
 
         PoolConverter = web3.eth.contract(
@@ -172,7 +176,6 @@ for row_entry in tokens_to_scan.iterrows():
             block_identifier=blocknumber
         )
         if totalsupply == 0:
-            blocknumber += 2 * resolution
             continue
         reserve0 = PoolConverter.functions.getConnectorBalance(reserve0tkn).call(
             block_identifier=blocknumber
@@ -181,15 +184,14 @@ for row_entry in tokens_to_scan.iterrows():
             block_identifier=blocknumber
         )
         if reserve0 == 0 or reserve1 == 0:
-            print(
-                "ALERT, reserve0, reserve1",
+            logger.info(
+                ["ALERT, reserve0, reserve1",
                 reserve0 == 0,
                 reserve1 == 0,
                 blocknumber,
                 "totalsupply",
-                totalsupply,
+                totalsupply,]
             )
-            blocknumber += resolution
             continue
 
         #
@@ -214,8 +216,6 @@ for row_entry in tokens_to_scan.iterrows():
         # print(f"{data[0]}, {data[-1]}")
         # data[-1] = [*data[-1], data[-1][8] / data[0][8]]  # This is ROI
 
-        blocknumber += resolution
-
     converterDataframe = pd.DataFrame(
         data,
         columns=[
@@ -235,3 +235,8 @@ for row_entry in tokens_to_scan.iterrows():
         os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"),
         index=False,
     )
+
+
+
+for row_entry in tokens_to_scan.iterrows():
+    query_data(row_entry)

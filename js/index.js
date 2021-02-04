@@ -311,7 +311,7 @@ let app = new Vue({
                     );
                     chart.data.datasets.push(
                         {
-                            label: "Uniswap Return",
+                            label: "Pool Return",
                             data: outputROI,
                             backgroundColor: window.chartColors.green,
 					        borderColor: window.chartColors.green,

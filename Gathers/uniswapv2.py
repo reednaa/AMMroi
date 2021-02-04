@@ -9,6 +9,8 @@ from asyncio.exceptions import TimeoutError
 from math import sqrt, ceil
 from time import time, sleep
 import numpy as np
+from multiprocessing import Pool
+import signal
 
 import logging
 
@@ -18,7 +20,8 @@ logger = logging.getLogger(__name__)
 # logging.basicConfig(format=formatter, level=logging.INFO)
 
 
-infura = "https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e"
+# infura = "https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e"
+infura = "https://mainnet.infura.io/v3/681ab0b8b0eb4fa0a9c26751c49a4367"  # Michael
 
 web3 = Web3(Web3.HTTPProvider(infura))
 print(web3.isConnected())
@@ -27,6 +30,8 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+
+network = "uniswapv2"
 ENDPOINT = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
 
 transport = AIOHTTPTransport(url=ENDPOINT)
@@ -37,12 +42,14 @@ client = Client(transport=transport, fetch_schema_from_transport=True)
 #
 # Globals
 
+
+
 dirname = os.path.dirname(__file__)
 if not os.path.isdir(os.path.join(dirname, "../", "data")):
     os.mkdir(os.path.join(dirname, "../", "data"))
-if not os.path.isdir(os.path.join(dirname, "../", "data", "uniswapv2")):
-    os.mkdir(os.path.join(dirname, "../", "data", "uniswapv2"))
-datafolder = os.path.join(dirname, "../", "data", "uniswapv2")
+if not os.path.isdir(os.path.join(dirname, "../", "data", network)):
+    os.mkdir(os.path.join(dirname, "../", "data", network))
+datafolder = os.path.join(dirname, "../", "data", network)
 
 
 current_block = web3.eth.getBlock("latest")["number"]
@@ -61,83 +68,57 @@ def block_to_timestamp(block):
 def block_to_datetime(block):
     return datetime.fromtimestamp(block_to_timestamp(block))
 
-
-def split_num_tokens_fairly(x, dist=1.1):
-    return [round(x / dist), x - round(x / dist)]
-
-
-def dividor(array, parts=0, length=0):  # Need either parts or length
-    if length:
-        size = length
-        parts = ceil(len(array) / size)
-    else:
-        size = ceil(len(array) / parts)
-    for part in range(0, parts):
-        yield array[size * part : size + size * part]
-
-
 #
 # Queries
 #
 
 
-def query_data(all_pairs, df_dic, arr_dic, id_to_symbol, blocknumber, tries=5):
-    exchange_data = []
-    for pairs in dividor(all_pairs, length=1000):  # The dividor doesn't work very well. 
-        for i in range(1, tries + 1):
-            try:
-                query_txt = (
-                    """
-                    {
-                    pairs(block: {number: """
-                    + str(blocknumber)
-                    + """} where: {id_in: """
-                    + json.dumps(pairs)
-                    + """ }) {
-                        id
-                        reserve0
-                        reserve1
-                        totalSupply
-                        volumeToken0
-                        }
-                    }"""
-                )
-                query = gql(query_txt)
-                responce = client.execute(query)
-                exchange_data += responce["pairs"]
-            except Exception as E:
-                # logger.error(E)
-                logger.info(
-                    f"Query broke. Potentially bad connection. We will try again in {i*10} second, trying {tries-i} more times."
-                )
-                sleep(i*10)
-            else:
-                break
-        if i == tries:
-            logger.info("We can't continue. Saving data")
-            for key in arr_dic:
-                df = pd.DataFrame(arr_dic[key], columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
-                df["price"] = df["reserve0"].apply(float)/df["reserve1"].apply(float)
-                df["sINV"] = (df["reserve0"].apply(float)*df["reserve1"].apply(float)).apply(sqrt)/df["total supply"].apply(float)
-                
-                df = df_dic[key].append(df)
-                
-                df.to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) + ".csv", index=False)
-            raise (gql.transport.exceptions.TransportServerError)
-    return exchange_data
+def query_data(pair, blocknumber, tries=5):
+    for i in range(1, tries + 1):
+        try:
+            query_txt = (
+                '''
+                {
+                pair(block: {number: '''
+                + str(blocknumber)
+                + '''} id: "'''
+                + pair
+                + '''" ) {
+                    id
+                    reserve0
+                    reserve1
+                    totalSupply
+                    volumeToken0
+                    }
+                }'''
+            )
+            query = gql(query_txt)
+            responce = client.execute(query)
+            return responce["pair"]
+        except Exception as E:
+            # logger.error(E)
+            logger.info(
+                f"Query broke. Potentially bad connection. We will try again in {i*10} second, trying {tries-i} more times."
+            )
+            sleep(i*10)
+        else:
+            break
+    logger.info("We can't continue. ")  # Saving data")
+    print(E)
+    raise KeyboardInterrupt
 
 
-def get_initial_blocknum():
+def get_initial_blocknum(pair):
     query = gql(
-        """
+        '''
         {
-        pair(id: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852") {
+        pair(id: "''' + pair + '''") {
             createdAtBlockNumber
             }
-        }"""
+        }'''
     )
     blocknum = int(client.execute(query)["pair"]["createdAtBlockNumber"])
-    logger.info(f"Our benchmark block is {blocknum}")
+    # logger.info(f"Our benchmark block is {blocknum}")
     return blocknum
 
 
@@ -180,29 +161,11 @@ def get_tokens(num=5):
     )
 
 
-def get_roi(restart=False, resolution=1000):
-    with open(os.path.join(datafolder, "tokens.json"), "r") as f:
-        pairs = json.load(f)["results"]
-
-    all_pairs = []
-    df_dic = {}
-    arr_dic = {}
-    id_to_symbol = {}
-    for pair in pairs:
-        all_pairs.append(pair["pair_id"])
-        if (
-            not os.path.isfile(os.path.join(datafolder, "roi", pair["id"]) + ".csv")
-            or restart
-        ):
-            _df = pd.DataFrame(
-                columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume", "price", "sINV"]
-            )
-            _df.to_csv(
-                os.path.join(datafolder, "roi", pair["id"]) + ".csv", index=False
-            )
-        id_to_symbol[pair["pair_id"]] = pair["id"]
-
-        df_dic[pair["pair_id"]] = pd.read_csv(
+def query_function(pair, resolution=1000):  #TODO make resolution configurable
+    stop = False
+    try:
+        print(os.path.join(datafolder, "roi", pair["id"]) + ".csv")
+        storage_df = pd.read_csv(
             os.path.join(datafolder, "roi", pair["id"]) + ".csv",
             dtype={
                 "block": int,
@@ -215,101 +178,73 @@ def get_roi(restart=False, resolution=1000):
                 "sINV": float
             },
         )
-        arr_dic[pair["pair_id"]] = []
-
-    # TODO adjust the token, delete incorrect ones and adjust the list to solve the other ones. Then complete the remanining
-    # Get dataframe for all pairs.
-    if restart:
-        blocknumber = round(get_initial_blocknum()/1000)*1000+1000
-    else:
-        try:
-            blocknumber = int(df_dic["0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852"]["block"].iloc[-1]) + resolution
-        except IndexError:
-            logger.info(
-                "It seems like we are restarting anyway. If this is a mistake, cancel now."
-            )
-            sleep(5)
-            for pair in pairs:
-                all_pairs.append(pair["pair_id"])
-                _df = pd.DataFrame(
-                    columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume", "price", "sINV"]
-                )
-                _df.to_csv(
-                    os.path.join(datafolder, "roi", pair["id"]) + ".csv", index=False
-                )
-                id_to_symbol[pair["pair_id"]] = pair["id"]
-                
-                arr_dic[pair["pair_id"]] = []
-            blocknumber = round(get_initial_blocknum()/1000)*1000+1000
-
-    set_time = time()
-    logger.info(
-        f"Current, Starting blocknumber {current_block, blocknumber}, difference {current_block-blocknumber} blocks."
-    )
+        startblock = int(storage_df.iloc[-1]["block"]) + resolution
+    except (FileNotFoundError, IndexError):
+        storage_df = pd.DataFrame(columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume", "price", "sINV"])
+        startblock = round(get_initial_blocknum(pair["pair_id"])/1000)*1000+1000
+        
+        
+    data = []
     try:
-        while blocknumber < current_block:
+        for blocknumber in range(startblock, current_block, resolution):
+            print(blocknumber, pair["id"])
+            exchange_data = query_data(pair["pair_id"], blocknumber)
+
+            if float(exchange_data["totalSupply"]) == 0:
+                continue
+            if float(exchange_data["reserve1"]) / float(exchange_data["reserve0"]) < 10 ** (-18):
+                continue
+
+            
             blocknumber_timestamp = block_to_timestamp(int(blocknumber))
-
-            exchange_data = query_data(all_pairs, df_dic, arr_dic, id_to_symbol, blocknumber)
-
-            for pair in exchange_data:
-                if float(pair["totalSupply"]) == 0:
-                    continue
-                if float(pair["reserve1"]) / float(pair["reserve0"]) < 10 ** (-16):
-                    # This means the token is borderline worthless. If it was below 10**18, then it is literally worthless. In some cases, the pool can be very unbalanced initially and this happens. In those cases, we need to skip ahead untill it has acheived some reserve balances.
-                    continue
-                # print(id_to_symbol[pair["id"]])
-                data = [
-                    int(blocknumber),
-                    blocknumber_timestamp,
-                    pair["reserve0"],
-                    pair["reserve1"],
-                    pair["totalSupply"],
-                    pair["volumeToken0"]
-                ]
-                arr_dic[pair["id"]].append(data)
-
-            rounds_per_set = 1
-            if round((current_block - blocknumber) / resolution) % rounds_per_set == 0:
-                logger.info(
-                    f"{current_block-blocknumber} blocks remaning, {round((current_block-blocknumber)/resolution)} rounds left. Last set took {round(time()-set_time,3)} seconds, {round((time()-set_time)/rounds_per_set,3)} seconds per round. Time remaning: {round((time()-set_time)/rounds_per_set*(current_block-blocknumber)/resolution)} seconds"
-                )
-                set_time = time()
-            blocknumber += resolution
+            
+            data.append(
+                [int(blocknumber),
+                blocknumber_timestamp,
+                exchange_data["reserve0"],
+                exchange_data["reserve1"],
+                exchange_data["totalSupply"],
+                exchange_data["volumeToken0"]]
+            )
     except KeyboardInterrupt:
-        pass
-    logger.info("Saving to .csv")
-    print(len(arr_dic))
-    blocks = []
-    for key in arr_dic:
-        df = pd.DataFrame(arr_dic[key], columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
-        df["price"] = df["reserve0"].apply(float)/df["reserve1"].apply(float)
-        df["sINV"] = (df["reserve0"].apply(float)*df["reserve1"].apply(float)).apply(sqrt)/df["total supply"].apply(float)
-        
-        df = df_dic[key].append(df)
-        try:
-            if df.iloc[-1]["block"] not in blocks:
-                print(id_to_symbol[key])
-                blocks.append(df.iloc[-1]["block"])
-                print(np.unique(blocks))
-            else:
-                blocks.append(df.iloc[-1]["block"])
-                
-        except IndexError:
-            pass
-        
-        df.to_csv(os.path.join(datafolder, "roi", id_to_symbol[key]) + ".csv", index=False)
+        print("KeyboardInterrupt")
+        stop = True
+    data_df = pd.DataFrame(data, columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
+    data_df["price"] = data_df["reserve0"].apply(float)/data_df["reserve1"].apply(float)
+    data_df["sINV"] = (data_df["reserve0"].apply(float)*data_df["reserve1"].apply(float)).apply(sqrt)/data_df["total supply"].apply(float)
+    
+    storage_df = storage_df.append(data_df)
+    
+    
+    storage_df.to_csv(os.path.join(datafolder, "roi", pair["id"]) + ".csv", index=False)
+    if stop:
+        raise KeyboardInterrupt
+
+    return (pair, True)
 
 
-def check_for_restart():
+
+def get_roi(resolution=1000):
     with open(os.path.join(datafolder, "tokens.json"), "r") as f:
         pairs = json.load(f)["results"]
-
+        
+        
+        
     for pair in pairs:
-        if not os.path.isfile(os.path.join(datafolder, "roi", pair["id"]) + ".csv"):
-            logger.info(f"{pair['id']} is missing")
-            return True
-    return False
+        query_function(pair)
+        
+    
+    # with Pool(processes=1) as pool:
+    #     try:
+    #         pool.map(
+    #             query_function,
+    #             pairs
+    #         )
+    #         pool.join()
+    #     except KeyboardInterrupt:
+    #         pool.terminate()
+    #         pool.join()
+        
 
 
 def sort_folder_alt(arr):
@@ -326,7 +261,8 @@ def filesjson():
 
 if __name__ == "__main__":
     # If data has not been created, run below function. Otherwise, not.
-    num = 20
-    get_tokens(num)
-    restart_required = check_for_restart()
-    get_roi(restart=restart_required, resolution=1000)
+    # num = 20
+    # get_tokens(num)
+    # restart_required = check_for_restart()
+    get_roi(resolution=1000)
+    filesjson()

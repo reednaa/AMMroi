@@ -109,7 +109,7 @@ converterDataframe = pd.DataFrame(
         "toConverter",
     ],
 )
-logger.info("\n" + str(converterDataframe))
+# logger.info("\n" + str(converterDataframe))
 
 # Getting pool names
 with open(os.path.join(datafolder, "pools.json"), "r") as f:
