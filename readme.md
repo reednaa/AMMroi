@@ -1,18 +1,40 @@
 # AMMroi
 
-The program currently support the following data sources:
-- TheGraph
-
-And can gather data from:
-- Uniswap v2 - Only ETH & TKN pairs.
-- Bancor - Any pair
-
-It works by running data.py. If one wants to configure the program, it is currently done via data.py. The variable num represents the number of tokens the program gathers. 
-
-The tokens are sorted from the most liqud ones.
-The Bancor modules requires a tokenlist.
-
-IIf one wants to use a specific tokenlist, they should comment out the token updating command and edit the tokens.json file directly.
+amm.vav.me makes it easy to play around with impermanent loss for more than 300 pairs across Bancor (~16), Sushiswap (~100) and Uniswap (~200).
+It provides a convient way to understand and see how some people might never have noticed impermanent loss while others might have been impacted a lot. It all depends on the time you deposited.
 
 
-If possible, the program tries to create as few queries as possible. However, this means it is incapable of understanding where it should start collecting data from. It, therefore, relies on a check to see if it should continue from the most recent block it has stored or start over.
+## How to use:
+1. Pick the exchange you want to look at pairs from.
+2. Pick asset 1.
+3. Pick asset 2.
+4. The first (or second) datapoint is automatically selected. It is reccomended you pick a later one.
+5. (Optional) Select if you want to view the return with an impermanent loss insurance product.
+6. Add Chart.
+
+
+# Calculations
+All calculations assume the pool uses the constant product market maker, specifically, the following formula is true for t0 < t1. 
+- x0 · y0 < x1 · y1.
+
+## Impermanent loss
+- IL = 2 · sqrt(r_1/r_0)/(1+r_1/r_0) = 2 · sqrt(r_0/r_1)/(1+r_0/r_1)
+where r is the price.
+
+## Fees
+- Fees = Return - 1 = sINV1/sINV0 - 1 = (sqrt(x1·y1)/ts1) / (sqrt(x0·y0)/ts0) - 1
+where ts is the total supply of pool tokens.
+
+
+
+# Data colelction
+The tool uses data.py as an automatable way to easily update the data in 1 go. It connects to TheGraph, Infura and Alchemy.
+
+TheGraph is used for
+- Sushiswap
+- Uniswap
+
+Alchemy is used for
+- Bancor
+
+Infura is used to convert blocks into timestamps.
