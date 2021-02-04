@@ -181,7 +181,7 @@
             </div>
         </section>
 
-        <section class="section">
+        <div class="container">
             <div class="columns is-multiline">
                 <div class="column is-half" v-for="card, index in charts">
                     <div class="card">
@@ -210,7 +210,7 @@
             <!-- <div class="container">
                 <canvas id="mainChart" width="100" height="100"></canvas>
             </div> -->
-        </section>
+        </div>
         <div class="container">
             <div class="notification" v-if="help">
                 <button @click="help = false" class="delete"></button>
