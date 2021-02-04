@@ -15,6 +15,14 @@ function round(num, n) {
 }
 
 
+const capitalize = (str) => {
+    if(typeof str === 'string') {
+        return str.replace(/^\w/, c => c.toUpperCase());
+    } else {
+        return '';
+    }
+};
+
 function convertData(json_data, start_date) {
     if (!start_date) {
         start_date = moment.unix(1);
@@ -239,6 +247,7 @@ let app = new Vue({
                 });
                 new_chart["chart"] = chart;
                 new_chart["name"] = app.selectedPair;
+                new_chart["date"] = "";
                 Vue.set(app.charts, dictSearch(app.charts, "name", name), new_chart);
                 app.addData(chart, app.selectedPair, selectedDate);
             }, 500);
@@ -312,7 +321,8 @@ let app = new Vue({
                     );
                     chart.options.scales.xAxes[0].ticks.min = outputFees[0]["x"];
                     chart.update();
-                    app.charts[app.lastChart]["name"] = app.protocols[app.protocol] + " " + app.selectedPair + "    " + outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
+                    app.charts[app.lastChart]["name"] = capitalize(app.protocols[app.protocol].replace("v2", "")) + " " + app.selectedPair;
+                    app.charts[app.lastChart]["date"] = outputProtected[0]["x"].format('YYYY-MM-DD hh:mm') + " to " + outputProtected[outputProtected.length-2]["x"].format('YYYY-MM-DD hh:mm');
                     app.charts[app.lastChart]["start_index"] = start_index;
                     app.charts[app.lastChart]["token"] = app.selectedPair;
                 }
