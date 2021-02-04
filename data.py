@@ -1,5 +1,5 @@
 from Gathers import uniswapv2_alt as uniswapv2
-from Gathers import sushiswap
+# from Gathers import sushiswap
 
 import logging
 
@@ -27,16 +27,16 @@ if __name__ == "__main__":
 
     if UPDATE_TOKEN_LIST:
         uniswapv2.get_tokens(num=200)
-        sushiswap.get_tokens(num=100)
+        # sushiswap.get_tokens(num=100)
     if FORCE_RESTART:
         restart_required_uniswap = FORCE_RESTART
         restart_required_sushiswap = FORCE_RESTART
     else:
         restart_required_uniswap = uniswapv2.check_for_restart()
-        restart_required_sushiswap = sushiswap.check_for_restart()
-        logger.info(
-            f"Restart of data is {'reccomended' if [restart_required_uniswap, restart_required_sushiswap] else 'not reccomended'}. We follow the reccomendation."
-        )
+        # restart_required_sushiswap = sushiswap.check_for_restart()
+        # logger.info(
+        #     f"Restart of data is {'reccomended' if [restart_required_uniswap, restart_required_sushiswap] else 'not reccomended'}. We follow the reccomendation."
+        # )
     uniswapv2.get_roi(
         restart=restart_required_uniswap, resolution=1000
     )  # The resolution has a direct corrolation to how many rounds we need to fecth. It is, therefore, reccomended to keep it relativly low.

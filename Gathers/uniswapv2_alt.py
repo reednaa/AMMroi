@@ -11,7 +11,6 @@ from time import time, sleep
 import numpy as np
 from multiprocessing import Pool
 import signal
-import _thread
 
 import logging
 
@@ -21,7 +20,8 @@ logger = logging.getLogger(__name__)
 # logging.basicConfig(format=formatter, level=logging.INFO)
 
 
-infura = "https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e"
+# infura = "https://mainnet.infura.io/v3/4e3b160a19f845858bd42d301f00222e"
+infura = "https://mainnet.infura.io/v3/681ab0b8b0eb4fa0a9c26751c49a4367"  # Michael
 
 web3 = Web3(Web3.HTTPProvider(infura))
 print(web3.isConnected())
@@ -70,7 +70,6 @@ def block_to_datetime(block):
 
 
 def query_data(pair, blocknumber, tries=5):
-    exchange_data = [] 
     for i in range(1, tries + 1):
         try:
             query_txt = (
@@ -161,6 +160,7 @@ def get_tokens(num=5):
 def query_function(pair, resolution=1000):  #TODO make resolution configurable
     stop = False
     try:
+        print(os.path.join(datafolder, "roi", pair["id"]) + ".csv")
         storage_df = pd.read_csv(
             os.path.join(datafolder, "roi", pair["id"]) + ".csv",
             dtype={
@@ -203,6 +203,7 @@ def query_function(pair, resolution=1000):  #TODO make resolution configurable
                 exchange_data["volumeToken0"]]
             )
     except KeyboardInterrupt:
+        print("KeyboardInterrupt")
         stop = True
     data_df = pd.DataFrame(data, columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
     data_df["price"] = data_df["reserve0"].apply(float)/data_df["reserve1"].apply(float)
@@ -218,36 +219,28 @@ def query_function(pair, resolution=1000):  #TODO make resolution configurable
     return (pair, True)
 
 
-def get_roi(restart=False, resolution=1000):
+
+def get_roi(resolution=1000):
     with open(os.path.join(datafolder, "tokens.json"), "r") as f:
         pairs = json.load(f)["results"]
+        
+        
+        
+    for pair in pairs:
+        query_function(pair)
         
     
-    pool = Pool(processes=3)
-    pool.map(
-        query_function,
-        pairs
-    )
-    try:
-        pool.join()
-    except KeyboardInterrupt:
-        pool.terminate()
-        pool.join()
+    # with Pool(processes=1) as pool:
+    #     try:
+    #         pool.map(
+    #             query_function,
+    #             pairs
+    #         )
+    #         pool.join()
+    #     except KeyboardInterrupt:
+    #         pool.terminate()
+    #         pool.join()
         
-    # for pair in pairs:
-    #     query_function(pair, resolution)  #TODO Async it
-        
-
-
-def check_for_restart():
-    with open(os.path.join(datafolder, "tokens.json"), "r") as f:
-        pairs = json.load(f)["results"]
-
-    for pair in pairs:
-        if not os.path.isfile(os.path.join(datafolder, "roi", pair["id"]) + ".csv"):
-            logger.info(f"{pair['id']} is missing")
-            return True
-    return False
 
 
 def sort_folder_alt(arr):
@@ -266,5 +259,6 @@ if __name__ == "__main__":
     # If data has not been created, run below function. Otherwise, not.
     # num = 20
     # get_tokens(num)
-    restart_required = check_for_restart()
-    get_roi(restart=restart_required, resolution=1000)
+    # restart_required = check_for_restart()
+    get_roi(resolution=1000)
+    filesjson()
