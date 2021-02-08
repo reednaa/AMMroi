@@ -78,8 +78,9 @@ tokens_to_scan = in_df(
         "RPL",
         "NMR",
         "MKR",
+        "wNXM"
     ],
-)  # [tokens_to_scan["reserve symbol"] == "REN"]
+)
 
 
 resolution = 1000  # * 10  # Blocks

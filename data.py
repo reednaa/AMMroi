@@ -25,21 +25,21 @@ if __name__ == "__main__":
     # sushiswap.get_tokens(num=100)
 
     
-    # # UNISWAP
-    try:
-        uniswapv2.get_roi()
-        uniswapv2.filesjson()
-    except Exception as E:
-        print(E)
+    # UNISWAP
+    # try:
+    #     uniswapv2.get_roi()
+    #     uniswapv2.filesjson()
+    # except Exception as E:
+    #     print(E)
     
 
 
-    # # SUSHISWAP
-    try:
-        sushiswap.get_roi()
-        sushiswap.filesjson()
-    except Exception as E:
-        print(E)
+    # SUSHISWAP
+    # try:
+    #     sushiswap.get_roi()
+    #     sushiswap.filesjson()
+    # except Exception as E:
+    #     print(E)
 
 
     # BANCOR
