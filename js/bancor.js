@@ -97,7 +97,37 @@ async function parseProtections() {
             
         } else {
             const EC20 = new app.web3.eth.Contract(ERC20, pp[2]);
-            await EC20.methods.decimals().call().then(async function(value) {
+            try {
+                await EC20.methods.decimals().call().then(async function(value) {
+                    Vue.set(app.decimals, pp[2], value);
+                    if (value == 18) {
+                        Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5], ...app.parsedProtections[protection]});
+                    } else {
+                        if (pp[2] == "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c") {  // Then this is BNT
+                            if (app.decimals[reverseLookup(app.translator, opposite_token)]) {
+                                Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-app.decimals[reverseLookup(app.translator, opposite_token)]), ...app.parsedProtections[protection]});
+                            } else {
+                                const OT = new app.web3.eth.Contract(ERC20, reverseLookup(app.translator, opposite_token));
+                                try {
+                                    await OT.methods.decimals().call().then(function(value2) {
+                                        Vue.set(app.decimals, pp[1], value2);
+                                        Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-value2), ...app.parsedProtections[protection]});
+                                    });
+                                } catch {
+                                    console.log(opposite_token);
+                                    let value2 = 18;
+                                    Vue.set(app.decimals, pp[1], value2);
+                                    Vue.set(app.parsedProtections, protection, {decimals: app.decimals[pp[2]], rate: pp[6]/pp[5]/10**(18-value2), ...app.parsedProtections[protection]});
+                                }
+                            }
+                        } else {
+                            Vue.set(app.parsedProtections, protection, {decimals: value, rate: (pp[6]/pp[5])*10**(18-value), ...app.parsedProtections[protection]});
+                        }
+                    }
+                    
+                });
+            } catch {
+                let value = 18;
                 Vue.set(app.decimals, pp[2], value);
                 if (value == 18) {
                     Vue.set(app.parsedProtections, protection, {decimals: value, rate: pp[6]/pp[5], ...app.parsedProtections[protection]});
@@ -123,8 +153,7 @@ async function parseProtections() {
                         Vue.set(app.parsedProtections, protection, {decimals: value, rate: (pp[6]/pp[5])*10**(18-value), ...app.parsedProtections[protection]});
                     }
                 }
-                
-            });
+            }
         }
     }
     setTimeout(function () {
