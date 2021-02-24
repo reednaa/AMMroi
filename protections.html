@@ -192,8 +192,8 @@
             </table>
             <div class="columns is-multiline" v-else-if="site == 1">
                 <div style="min-width: 230px;" class="column is-half" v-for="protection in parsedProtections"
-                    :key="protection.id" v-if="ready">
-                    <div class="card" v-if="!sortAddr || addrToSort == protection.owner">
+                    :key="protection.id" v-if="ready && (!sortAddr || (protection.owner).includes(addrToSort))">
+                    <div class="card">
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-left">
