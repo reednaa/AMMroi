@@ -127,6 +127,7 @@ async function parseProtections() {
                     
                 });
             } catch {
+                console.log(pp[2]);
                 let value = 18;
                 Vue.set(app.decimals, pp[2], value);
                 if (value == 18) {
