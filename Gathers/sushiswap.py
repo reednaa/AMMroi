@@ -82,7 +82,7 @@ def query_data(pair, blocknumber, tries=5):
                 pair(block: {number: '''
                 + str(blocknumber)
                 + '''} id: "'''
-                + pair_id
+                + pair
                 + '''" ) {
                     id
                     reserve0
@@ -104,7 +104,7 @@ def query_data(pair, blocknumber, tries=5):
         else:
             break
     logger.info("We can't continue. ")  # Saving data")
-    print(E)
+    logger.info(E)
     raise KeyboardInterrupt
 
 
@@ -164,7 +164,7 @@ def get_tokens(num=5):
 def query_function(pair, resolution=1000):  #TODO make resolution configurable
     stop = False
     try:
-        print(os.path.join(datafolder, "roi", pair["id"]) + ".csv")
+        logger.info(os.path.join(datafolder, "roi", pair["id"]) + ".csv")
         storage_df = pd.read_csv(
             os.path.join(datafolder, "roi", pair["id"]) + ".csv",
             dtype={
@@ -189,7 +189,7 @@ def query_function(pair, resolution=1000):  #TODO make resolution configurable
     data = []
     # try:
     for blocknumber in range(startblock, current_block, resolution):
-        print(blocknumber, pair["id"])
+        logger.info([blocknumber, pair["id"], len(storage_df), "+", len(data)])
         exchange_data = query_data(pair["pair_id"], blocknumber)
         if float(exchange_data["totalSupply"]) == 0:
             continue
@@ -207,16 +207,16 @@ def query_function(pair, resolution=1000):  #TODO make resolution configurable
             exchange_data["totalSupply"],
             exchange_data["volumeToken0"]]
         )
-        print(data)
+        # print(data)
     # except KeyboardInterrupt:
     #     print("KeyboardInterrupt")
     #     stop = True
     data_df = pd.DataFrame(data, columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
     data_df["price"] = data_df["reserve0"].apply(float)/data_df["reserve1"].apply(float)
     data_df["sINV"] = (data_df["reserve0"].apply(float)*data_df["reserve1"].apply(float)).apply(sqrt)/data_df["total supply"].apply(float)
-    print(storage_df)
+    logger.info([len(storage_df), "+", len(data_df)])
     storage_df = storage_df.append(data_df)
-    print(storage_df)
+    # print(storage_df)
     
     
     storage_df.to_csv(os.path.join(datafolder, "roi", pair["id"]) + ".csv", index=False)
