@@ -70,15 +70,19 @@ for pool in tokens_to_parse:
         "reserve0tkn": str,
         "reserve1tkn": str,
     })
-    
+    if df.empty:
+        continue
+    print(pool)
     df["reserve0"] = df["reserve0"]/10**tokens[df["reserve0tkn"].iloc[1]]["decimals"]
     df["reserve1"] = df["reserve1"]/10**tokens[df["reserve1tkn"].iloc[1]]["decimals"]
     if reserve_dict(tokens[df["reserve0tkn"].iloc[1]]["symbol"] + "BNT", tokens, "symbol"):
+        print(tokens[df["reserve0tkn"].iloc[1]]["symbol"])
         pool_token = reserve_dict(tokens[df["reserve0tkn"].iloc[1]]["symbol"] + "BNT", tokens, "symbol")
     else:
+        print(tokens[df["reserve1tkn"].iloc[1]]["symbol"])
         pool_token = reserve_dict(tokens[df["reserve1tkn"].iloc[1]]["symbol"] + "BNT", tokens, "symbol")
     
-    
+    print(pool_token)
     df["totalsupply"] = df["totalsupply"]/10**tokens[pool_token]["decimals"]
     
     df["price"] = df["reserve0"]/df["reserve1"]

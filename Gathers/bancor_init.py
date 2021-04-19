@@ -61,6 +61,7 @@ def split_data(data):
 converter_addresses = [
     "0xCFF01c40fA47faFF359b6B31eBAc86F7958Be486",
     "0x92F18a07808b4e05DD4786955F3A69957a67D724",
+    "0x7DfB5180878B43C6Ff5aA6A2Ea55Db20Bcc87410"
 ]
 converters = []
 # for address in converter_addresses:
@@ -171,6 +172,10 @@ converterDataframe = pd.DataFrame(
         "toConverter",
     ],
 )
+converterDataframe.sort_values("Block", inplace=True, ignore_index=True)
+# We need to fix dublicate paths.
+# If there are multiple fromConverter then we should delete the oldest.
+converterDataframe.drop_duplicates(subset=['fromConverter'], keep='first', inplace=True, ignore_index=True)
 converterDataframe.to_csv(os.path.join(datafolder, "converters.csv"), index=False)
 
 # Construct pool path. We will index by pool token
@@ -189,10 +194,9 @@ for pt in tokens:
     if pt in ["0xD6bF84B5D6F4d1288C39f2486688e949B1423E62"]:  # If the pool loop fails, this is likely the culprint. Add the token it failed on here. The issue is that there is no single upgrade path, but someone decided to create multiple. Simply removing outliers are easier than fixing it. (Especially since there was only one when I made the script.) 
         continue
     blocks = []
-    pools = []
-    for pol in pool_translator:
-        if pool_translator[pol]["token"] == pt:
-            pools.append(pol)
+    pools_zero = str(converterDataframe[converterDataframe["Name"] == pt].iloc[0]["fromConverter"])
+    pools = [pools_zero] + list(converterDataframe[converterDataframe["Name"] == pt]["toConverter"])
+    print(pools)
 
     # We will now search for activation for the first pool on in the list.
     start_block = 10566778 - 50000
@@ -201,14 +205,14 @@ for pt in tokens:
             dict(
                 fromBlock=start_block,
                 toBlock=latest,
-                address=pools[0],
+                address=pools_zero,
                 topics=[
                     "0x6b08c2e2c9969e55a647a764db9b554d64dc42f1a704da11a6d5b129ad163f2c"
                 ],
             )
         )
     except IndexError as E:
-        print(pools, pol, pt)
+        print(pools_zero, pt)
         raise E
     try:
         if (
@@ -232,13 +236,12 @@ for pt in tokens:
 
     # Now we need to sort through converterDataframe to get the remaning blocks.
 
-    for pool in pools[:-1]:
-        dataframe_entry = converterDataframe[
-            converterDataframe["fromConverter"] == pool
-        ].iloc[
-            0
-        ]  # Thank R.
-        blocks.append(int(dataframe_entry["Block"]))
+    # print(len(converterDataframe[
+    #         converterDataframe["Name"] == pt
+    #     ]), len(pools[:-1]))
+
+    
+    blocks += list(converterDataframe[converterDataframe["Name"] == pt]["Block"])
 
     construction[pt] = dict(pools=pools, blocks=blocks)
 

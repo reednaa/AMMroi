@@ -49,6 +49,8 @@ with open(os.path.join(datafolder, "abi.json"), "r") as f:
 with open(os.path.join(datafolder, "tokens.json"), "r") as f:
     tokens = json.load(f)
 
+csv_tokens = pd.read_csv(os.path.join(datafolder, "tokens.csv"))
+
 
 tokens_to_scan = pd.read_csv(os.path.join(datafolder, "tokens.csv"))
 # 'ETH' 'LINK' 'USDC' 'USDT' 'WBTC' 'DAI' 'OCEAN' 'YFI' 'REN' 'renBTC' 'SNX' 'ANT' 'RPL' 'NMR' 'MKR'
@@ -59,28 +61,28 @@ def in_df(df, li):
     return pd.concat(dfs)
 
 
-tokens_to_scan = in_df(
-    tokens_to_scan,
-    [
-        "ETH",
-        "LINK",
-        "USDC",
-        "USDT",
-        "WBTC",
-        "DAI",
-        "OCEAN",
-        "YFI",
-        "REN",
-        "renBTC",
-        "AAVE",
-        "SNX",
-        "ANT",
-        "RPL",
-        "NMR",
-        "MKR",
-        "wNXM"
-    ],
-)
+#tokens_to_scan = in_df(
+#     tokens_to_scan,
+#     [
+#         "ETH",
+#         "LINK",
+#         "USDC",
+#         "USDT",
+#         "WBTC",
+#         "DAI",
+#         "OCEAN",
+#         "YFI",
+#         "REN",
+#         "renBTC",
+#         "AAVE",
+#         "SNX",
+#         "ANT",
+#         "RPL",
+#         "NMR",
+#         "MKR",
+#         "wNXM"
+#     ],
+# )
 
 
 resolution = 1000  # * 10  # Blocks
@@ -94,8 +96,47 @@ def query_data(row_entry):
     its, token_row = row_entry
 
     pool_token = token_row["pool address"]
+    logger.info(tokens[pool_token]["symbol"])
+    if tokens[pool_token]["symbol"] in ["BALBNT", "BUSDBNT", "BANDBNT", "BZRXBNT", "COMPBNT", "CROBNT", "ZRXBNT", "RARIBNT", "sBTCBNT", "sUSDBNT", "SXPBNT", "TOMOEBNT", "UMABNT"]:
+        #Check if the current total supply is 0
+        return 0
+    try:
+        start = pool_construction[pool_token]["blocks"][0]
+    except KeyError as E:
+        logger.error(f"{E} on {pool_token}. Skipping")
+        return 0
+    try:
+        tokens[pool_token]
+    except KeyError:
+        tkn_row = csv_tokens[csv_tokens["pool address"] == pool_token].iloc[0]
+        tokens[pool_token] = dict(
+            symbol=tkn_row["pool symbol"],
+            decimals=18
+        )
 
-    start = pool_construction[pool_token]["blocks"][0]
+    # TODO Check if true, then disable line
+    if os.path.isfile(
+        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
+    ):
+        df = pd.read_csv(
+            os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
+        )
+        try:
+            start_number = int(df["block"].iloc[-1]) + resolution
+            logger.info(f'{tokens[pool_token]["symbol"]}: {start_number}')
+        except IndexError as E:
+            start_number = round((start + resolution)/1000)*1000
+            logger.info(f'{tokens[pool_token]["symbol"]}: {start_number}, {E}')
+            df = pd.DataFrame()
+    else:
+        start_number = round((start + resolution)/1000)*1000
+        logger.info(f'{tokens[pool_token]["symbol"]}: {start_number}, no file')
+        df = pd.DataFrame()
+    if len(range(start_number, latest, resolution)) == 0:
+        return 0
+
+
+
 
     PoolToken = web3.eth.contract(address=pool_token, abi=abi["DStoken"])
     PoolConverter = web3.eth.contract(
@@ -115,6 +156,7 @@ def query_data(row_entry):
             address=reserve0tkn,
             abi=abi["DStoken"],
         )
+        logger.info(reserve0tkn)
         decimals = erc20.functions.decimals().call()
         symbol = erc20.functions.symbol().call()
         name = erc20.functions.name().call()
@@ -135,20 +177,7 @@ def query_data(row_entry):
         with open(os.path.join(datafolder, "tokens.json"), "w") as f:
             json.dump(tokens, f)
 
-    # TODO Check if true, then disable line
-    if os.path.isfile(
-        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
-    ):
-        df = pd.read_csv(
-            os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv")
-        )
-        try:
-            start_number = int(df["block"].iloc[-1]) + resolution
-        except IndexError:
-            start_number = round((start + resolution)/1000)*1000
-    else:
-        start_number = round((start + resolution)/1000)*1000
-        df = pd.DataFrame()
+    
     stage = 0
     data = []
     for blocknumber in range(start_number, latest, resolution):
@@ -178,9 +207,13 @@ def query_data(row_entry):
         )
         if totalsupply == 0:
             continue
-        reserve0 = PoolConverter.functions.getConnectorBalance(reserve0tkn).call(
-            block_identifier=blocknumber
-        )
+        try:
+            reserve0 = PoolConverter.functions.getConnectorBalance(reserve0tkn).call(
+                block_identifier=blocknumber
+            )
+        except ValueError:
+            print("ISSUE:", reserve0tkn)
+            continue
         reserve1 = PoolConverter.functions.getConnectorBalance(reserve1tkn).call(
             block_identifier=blocknumber
         )
@@ -232,10 +265,14 @@ def query_data(row_entry):
             # "roi",
         ],
     )
-    pd.concat([df, converterDataframe]).to_csv(
-        os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"),
-        index=False,
-    )
+    
+    if len(range(start_number, latest, resolution)) != 0:
+        logger.info(f'Saving, {tokens[pool_token]["symbol"]}')
+        pd.concat([df, converterDataframe], ignore_index=True).to_csv(
+            os.path.join(datafolder, "roi", f"{tokens[pool_token]['symbol']}.raw.csv"),
+            index=False,
+        )
+        logger.info(f'Saved, {tokens[pool_token]["symbol"]}')
 
 
 
