@@ -196,7 +196,6 @@ for pt in tokens:
     blocks = []
     pools_zero = str(converterDataframe[converterDataframe["Name"] == pt].iloc[0]["fromConverter"])
     pools = [pools_zero] + list(converterDataframe[converterDataframe["Name"] == pt]["toConverter"])
-    print(pools)
 
     # We will now search for activation for the first pool on in the list.
     start_block = 10566778 - 50000
