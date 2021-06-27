@@ -31,8 +31,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-network = "uniswapv2"
-ENDPOINT = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
+network = "sushiswap"
+ENDPOINT = "https://api.thegraph.com/subgraphs/name/zippoxer/sushiswap-subgraph-fork"
 
 transport = AIOHTTPTransport(url=ENDPOINT)
 
@@ -178,6 +178,8 @@ def query_function(pair, resolution=1000):  #TODO make resolution configurable
                 "sINV": float
             },
         )
+        if storage_df.empty:
+            raise FileNotFoundError
         startblock = int(storage_df.iloc[-1]["block"]) + resolution
     except (FileNotFoundError, IndexError):
         storage_df = pd.DataFrame(columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume", "price", "sINV"])
@@ -185,35 +187,36 @@ def query_function(pair, resolution=1000):  #TODO make resolution configurable
         
         
     data = []
-    try:
-        for blocknumber in range(startblock, current_block, resolution):
-            logger.info([blocknumber, pair["id"], len(storage_df), "+", len(data)])
-            exchange_data = query_data(pair["pair_id"], blocknumber)
+    # try:
+    for blocknumber in range(startblock, current_block, resolution):
+        logger.info([blocknumber, pair["id"], len(storage_df), "+", len(data)])
+        exchange_data = query_data(pair["pair_id"], blocknumber)
+        if float(exchange_data["totalSupply"]) == 0:
+            continue
+        if float(exchange_data["reserve1"]) / float(exchange_data["reserve0"]) < 10 ** (-18):
+            continue
 
-            if float(exchange_data["totalSupply"]) == 0:
-                continue
-            if float(exchange_data["reserve1"]) / float(exchange_data["reserve0"]) < 10 ** (-18):
-                continue
-
-            
-            blocknumber_timestamp = block_to_timestamp(int(blocknumber))
-            
-            data.append(
-                [int(blocknumber),
-                blocknumber_timestamp,
-                exchange_data["reserve0"],
-                exchange_data["reserve1"],
-                exchange_data["totalSupply"],
-                exchange_data["volumeToken0"]]
-            )
-    except KeyboardInterrupt:
-        print("KeyboardInterrupt")
-        stop = True
+        
+        blocknumber_timestamp = block_to_timestamp(int(blocknumber))
+        
+        data.append(
+            [int(blocknumber),
+            blocknumber_timestamp,
+            exchange_data["reserve0"],
+            exchange_data["reserve1"],
+            exchange_data["totalSupply"],
+            exchange_data["volumeToken0"]]
+        )
+        # print(data)
+    # except KeyboardInterrupt:
+    #     print("KeyboardInterrupt")
+    #     stop = True
     data_df = pd.DataFrame(data, columns=["block", "timestamp", "reserve0", "reserve1", "total supply", "trade volume"])
     data_df["price"] = data_df["reserve0"].apply(float)/data_df["reserve1"].apply(float)
     data_df["sINV"] = (data_df["reserve0"].apply(float)*data_df["reserve1"].apply(float)).apply(sqrt)/data_df["total supply"].apply(float)
     logger.info([len(storage_df), "+", len(data_df)])
     storage_df = storage_df.append(data_df)
+    # print(storage_df)
     
     
     storage_df.to_csv(os.path.join(datafolder, "roi", pair["id"]) + ".csv", index=False)

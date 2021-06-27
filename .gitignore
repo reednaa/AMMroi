@@ -1,8 +1,14 @@
 *.dump
 
-*.csv
-*.json
-js
+bancor_map.py
+bancor_plot.py
+bancor_protections.py
+shell.py
+histograms.py
+.gitignore
+parsedProtection*
+totalsupply.csv
+
 *.zip
 
 #

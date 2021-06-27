@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Compare automated market maker returns</title>
+    <meta name="title" content="Compare automated market maker returns">
+    <meta name="description" content="View and compare the performance of popular Bancor, Sushiswap and Uniswap pools against each other.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://amm.vav.me/">
+    <meta property="og:title" content="Compare automated market maker returns">
+    <meta property="og:description" content="View and compare the performance of popular Bancor, Sushiswap and Uniswap pools against each other.">
+    <!-- <meta property="og:image" content=""> -->
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="Compared AMMs">
+    <meta property="twitter:url" content="https://amm.vav.me/">
+    <meta property="twitter:title" content="Compare automated market maker returns">
+    <meta property="twitter:description" content="View and compare the performance of popular Bancor, Sushiswap and Uniswap pools against each other.">
+    <!-- <meta property="twitter:image" content=""> -->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-checkradio@1.1.1/dist/css/bulma-checkradio.min.css"
+        integrity="sha256-ej+83V4GB9ok2X22EvJ/ggEzzJ+gaZjm7G/Neq7wboQ=" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.15.1/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.css"
+        integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"
+        integrity="sha256-Xjq9HM9n3XzT47n/NmSEaJUwPi7hme++D8mxHfSr+0Q=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@1.1.6/dist/chartjs-plugin-crosshair.min.js"
+        integrity="sha256-r/9biws8g6l28IaMAzQW4jw/wTmuDPmcEaXn1qqD9iM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"
+        integrity="sha256-BSZ2gjTJLE5ZEGH1e6beyHYNOITz6M26XFre9lEBdx8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/l10n/da.js"
+        integrity="sha256-btg10M6OuilEf55qRv0f370emD4TckUGmmEm03YaJtE=" crossorigin="anonymous"></script>
+    <style>
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        .is-shake {
+            animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="structure">
+        <section class="hero is-info is-bold">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        Compare Automated Market Maker returns
+                    </h1>
+                    <!-- <h2 class="subtitle">
+                        A
+                    </h2> -->
+                </div>
+
+
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <nav class="tabs is-toggle is-fullwidth">
+                    <div class="container">
+                        <ul>
+                            <li @click="protocol=0" :class="{'is-active': protocol==0}">
+                                <a>Bancor</a>
+                            </li>
+                            <li @click="protocol=1" :class="{'is-active': protocol==1}">
+                                <a>Sushiswap</a>
+                            </li>
+                            <li @click="protocol=2" :class="{'is-active': protocol==2}">
+                                <a>Uniswap</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="columns">
+                    <div class="column">
+                        <label class="label">Asset and Datetime:</label>
+                        <div class="field has-addons">
+                            <div class="control">
+                                <div class="select">
+                                    <select v-model="selectedAsset1">
+                                        <option value="false">Asset 1</option>
+                                        <option :value="asset" v-for="asset in tokenlist1">
+                                            {{asset}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <button class="button" disabled v-if="protocol==0">
+                                    <span>BNT</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down"></i>
+                                      </span>
+                                </button>
+                                <div class="select" v-else-if="selectedAsset1">
+                                    <select v-model="selectedAsset2">
+                                        <option value="false">Asset 2</option>
+                                        <option :value="asset" v-for="asset in tokenlist2">
+                                            {{asset}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <button class="button" disabled v-else>
+                                    <span>Asset 2</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down"></i>
+                                      </span>
+                                </button>
+                            </div>
+                            <div class="control">
+                                <input id="startDate" class="input" v-model="selectedDate" type="date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-one-qu">
+                        <div class="field">
+                            <label class="label">Show:</label>
+                            <input class="is-checkradio" id="IL" value=1 type="radio" name="Protection" v-model="ilDisplay">
+                            <label for="IL" >Without IL</label>
+                            <input class="is-checkradio" id="BP" value=2 type="radio"
+                                name="Protection" v-model="ilDisplay">
+                            <label for="BP">Bancor Protection</label>
+                            <input class="is-checkradio" id="data" value=0 type="radio"
+                                name="Protection" v-model="ilDisplay">
+                            <label for="data">Only Data</label>
+                        </div>
+                    </div>
+                    <div class="column is-one-fifth">
+                        <div class="field">
+                            <label class="label"></label>
+                            <button class="button is-large is-tablet is-hidden-mobile" @click="addChart()"
+                                :class="{'is-danger': !selectedPair, 'is-shake': isShake}">Add
+                                Chart</button>
+                            <button class="button is-hidden-tablet" @click="addChart()"
+                                :class="{'is-danger': !selectedPair, 'is-shake': isShake}">Add
+                                Chart</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="columns is-multiline">
+                <div class="column is-half" v-for="card, index in charts">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                {{card.name}}
+                            </p>
+                            <!-- <a :href="'?' + card.token + '=' + card.start_index" class="card-header-icon">
+                                <span class="icon">
+                                    <i class="fas fa-link"></i>
+                                </span>
+                            </a> -->
+                        </header>
+                        <div class="card-content">
+                            <canvas :id="card.id" width="100" height="100"></canvas>
+                            <center>{{card.date}}</center>
+                        </div>
+                        <!-- <footer class="card-footer">
+                          <a href="#" class="card-footer-item">Save</a>
+                          <a href="#" class="card-footer-item">Edit</a>
+                          <a href="#" class="card-footer-item">Delete</a>
+                        </footer> -->
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="container">
+                <canvas id="mainChart" width="100" height="100"></canvas>
+            </div> -->
+        </div>
+        <div class="container">
+            <div class="notification" v-if="help">
+                <button @click="help = false" class="delete"></button>
+                When using the default date, the picker might select a dataset that includes an early datapoint. The
+                first datapoints' price might be outliers, since the market have yet to settle on a token price.
+                I advise using the datetime picker. It will pick the first datapoint after the selected date and TIME.
+                <template v-if="selectedPair">
+                    <br>
+                    <a :href="'/data/' + this.protocols[this.protocol] + '/roi/' + selectedPair + '.csv'"> {{'/data/' + this.protocols[this.protocol] + '/roi/' + selectedPair
+                        + '.csv'}}</a> or
+                    <a
+                        :href="'https://github.com/Lindgrenium/AMMroi/blob/gh-pages/data/' + this.protocols[this.protocol] + '/roi/' + selectedPair + '.csv'">
+                        <span class="icon">
+                            <i class="fas fa-table"></i>
+                        </span>
+                    </a> (Resolution ~4 hours)
+                </template>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <a href="http://github.com/Lindgrenium/AMMroi">
+        <span class="icon">
+            <i class="fab fa-github"></i>
+        </span>
+    </a>
+
+</body>
+<script src="js/index.js?v=43"></script>
+
+</html>
